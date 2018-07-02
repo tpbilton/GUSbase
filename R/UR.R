@@ -8,7 +8,7 @@ UR <- R6Class("UR",
               public = list(
                 ## variables
                 ## initialize function
-                initialize = function(R6obj){
+                initialize = function(R6obj,ploid){
                   private$genon     <- R6obj$.__enclos_env__$private$genon
                   private$ref       <- R6obj$.__enclos_env__$private$ref
                   private$alt       <- R6obj$.__enclos_env__$private$alt
@@ -21,51 +21,15 @@ UR <- R6Class("UR",
                   private$gform     <- R6obj$.__enclos_env__$private$gform
                   private$AFrq      <- R6obj$.__enclos_env__$private$AFrq
                   private$infilename<- R6obj$.__enclos_env__$private$infilename
-                },
-                ### Function for estimating the allele frequencies and error parameters for each SNP
-                p_est = function(snpsubset=NULL,indsubset=NULL, nClust=3, para=NULL, multerr=TRUE){
-                  ## Do some checks
-                  if(is.null(snpsubset)) snpsubset <- 1:private$nSnps
-                  else if(!is.vector(snpsubset) || !is.numeric(snpsubset) || min(snpsubset) < 0 || max(snpsubset) > private$nSnps)
-                    stop("Index for SNPs is invalid")
-                  if(is.null(indsubset)) indsubset <- 1:private$nInd
-                  else if(!is.vector(indsubset) || !is.numeric(indsubset) || min(indsubset) < 0 || max(indsubset) > private$nInd)
-                    stop("Index for individuals is invalid")
-                  else{
-                    ref <- private$ref[indsubset,snpsubset]
-                    alt <- private$alt[indsubset,snpsubset]
-                    ratio <- ref/(ref+alt)
-                  }
-                  if(!is.numeric(nClust) || nClust < 0 || round(nClust) != nClust)
-                    stop("Argument for the number of cores for the parallelization is invalid")
-                  ## inital value
-                  if(!is.null(para)){
-                    if(!is.list(para) || length(para) != 2)
-                      stop("Starting values for the parameters are invalid")
-                    if(is.null(para$p)) pinit <- colMeans(ratio, na.rm=T)
-                    else if(!vector(para$p) || !is.numeric(para$p) || length(para$p) != length(snpsubset) || any(para$p <= 0) || any(para$p >= 1) )
-                      stop("Starting values for the allele frequency parameters are invalid")
-                    else pinit <- para$p
-                    if(is.null(para$ep)) epinit <- 0.01
-                    else if(!vector(para$ep) || !is.numeric(para$ep) || length(para$ep) != length(snpsubset) || any(para$ep <= 0) || any(para$ep >= 0.5) )
-                      stop("Starting value for the error parameter parameter is invalid")
-                    else epinit <- para$ep
-                  }
-                  ## perform the estimation
-
-                  # Set up the Clusters
-                  cl <- makeCluster(nClust)
-                  registerDoSNOW(cl)
-                  res <- foreach(snp = iter(snpsubset)) %dopar% {
-                    dat <- private$ratio[,snp]
-                    pinit <- mean(dat, na.rm=T)
-                    optim
-                  }
-
-
-                 }
+                  private$ploid     <- as.integer(ploid)
+                  private$pfreq     <- NULL
+                  private$ep        <- NULL
+                }
               ),
               private = list(
+                ploid = NULL,
+                pfreq = NULL,
+                ep    = NULL,
                 ## Function for updating the private variables
                 updatePrivate = function(List){
                   if(!is.null(List$genon))
@@ -90,12 +54,75 @@ UR <- R6Class("UR",
                     private$masked       = List$masked
                   if(!is.null(List$AFrq))
                     private$AFrq         = List$AFrq
+                  if(!is.null(List$pfreq))
+                    private$pfreq        = List$pfreq
+                  if(!is.null(List$ep))
+                    private$ep        = List$ep
+                },
+                p_est = function(snpsubset=NULL,indsubset=NULL, nClust=3, para=NULL, multerr=TRUE){
+                  ## Do some checks
+                  if(is.null(snpsubset)) snpsubset <- 1:private$nSnps
+                  else if(!is.vector(snpsubset) || !is.numeric(snpsubset) || min(snpsubset) < 0 || max(snpsubset) > private$nSnps)
+                    stop("Index for SNPs is invalid")
+                  if(is.null(indsubset)) indsubset <- 1:private$nInd
+                  else if(!is.vector(indsubset) || !is.numeric(indsubset) || min(indsubset) < 0 || max(indsubset) > private$nInd)
+                    stop("Index for individuals is invalid")
+                  ref <- private$ref[indsubset,snpsubset]
+                  alt <- private$alt[indsubset,snpsubset]
+                  ratio <- ref/(ref+alt)
+                  nSnps <- length(snpsubset)
+                  nInd <- length(indsubset)
+                  if(!is.numeric(nClust) || nClust < 0 || round(nClust) != nClust)
+                    stop("Argument for the number of cores for the parallelization is invalid")
+                  ## inital value
+                  if(!is.null(para)){
+                    if(!is.list(para) || length(para) != 2)
+                      stop("Starting values for the parameters are invalid")
+                    if(is.null(para$p)) {
+                      pinit <- colMeans(ratio, na.rm=T)
+                      pinit[which(pinit > 0.99)] <- 0.99
+                      pinit[which(pinit < 0.01)] <- 0.01
+                    }
+                    else if(!vector(para$p) || !is.numeric(para$p) || length(para$p) != length(snpsubset) || any(para$p < 0.01) || any(para$p > 0.99) )
+                      stop("Starting values for the allele frequency parameters are invalid")
+                    else pinit <- para$p
+                    if(is.null(para$ep)) epinit <- rep(0.01, nSnps)
+                    else if(!vector(para$ep) || !is.numeric(para$ep) || length(para$ep) != length(snpsubset) || any(para$ep <= 0) || any(para$ep >= 0.5) )
+                      stop("Starting value for the error parameter parameter is invalid")
+                    else epinit <- para$ep
+                  }
+                  else{
+                    pinit <- colMeans(ratio, na.rm=T)
+                    pinit[which(pinit > 0.99)] <- 0.99
+                    pinit[which(pinit < 0.01)] <- 0.01
+                    epinit <- rep(0.01, nSnps)
+                  }
+                  ## perform the estimation
+
+                  # Set up the Clusters
+                  if(multerr){
+                    ploid = private$ploid
+                    cl <- makeCluster(nClust)
+                    registerDoSNOW(cl)
+                    res <- foreach(snp = iter(snpsubset), .combine="cbind") %dopar% {
+                      #parscale <- c(logit(p),logit2(ep))/10
+                      #parscale[which(abs(inv.logit(para[-(nSnps+1)]) - 0.5) < 0.0001)] <- 0.0001
+                      MLE <- optim(par = c(logit(pinit[snp]), logit2(epinit[snp])), fn=ll_pest, gr=score_pest, method="BFGS",
+                                   v=ploid, ref=ref[,snp], alt=alt[,snp], nInd=nInd, nSnps=as.integer(1))
+                      return(c(inv.logit(MLE$par[1]), inv.logit2(MLE$par[2])))
+                    }
+                    stopCluster(cl)
+                  }
+                  else{
+                    stop("Yet to be implemented")
+                  }
+                  return(res)
                 }
               )
 )
 
 #### Make an unrelated population
-makePop.UR <- function(R6obj, filter=list(MAF=0.05, MISS=0.2, HWdis=c(-0.05,1))){
+makePop.UR <- function(R6obj, filter=list(MAF=0.05, MISS=0.2), mafEst=TRUE){
 
   ## Do some checks
   if(is.null(filter$MAF)) filter$MAF <- 0.05
@@ -104,9 +131,9 @@ makePop.UR <- function(R6obj, filter=list(MAF=0.05, MISS=0.2, HWdis=c(-0.05,1)))
   if(is.null(filter$MISS)) filter$MISS <- 0.2
   else if( length(filter$MISS) != 1 || !is.numeric(filter$MISS) || filter$MISS<0 || filter$MISS>1 )
     stop("Proportion of missing data filter is invalid")
-  if(is.null(filter$HWdis)) filter$HWdis <- c(-0.05, 1)
-  else if(!is.vector(filter$HWdis) || length(filter$HWdis) != 2 || !is.numeric(filter$HWdis) || filter$HWdis<0 || filter$HWdis >1)
-    stop("Hardy Weinberg Equilibrium (HWE) filter is invalid")
+  #if(is.null(filter$HWdis)) filter$HWdis <- c(-0.05, 1)
+  #else if(!is.vector(filter$HWdis) || length(filter$HWdis) != 2 || !is.numeric(filter$HWdis) || filter$HWdis<0 || filter$HWdis >1)
+  #  stop("Hardy Weinberg Equilibrium (HWE) filter is invalid")
 
   cat("-------------\n")
   cat("Processing Data.\n\n")
@@ -120,33 +147,44 @@ makePop.UR <- function(R6obj, filter=list(MAF=0.05, MISS=0.2, HWdis=c(-0.05,1)))
   indID <- R6obj$.__enclos_env__$private$indID
   nSnps <- R6obj$.__enclos_env__$private$nSnps
   genon <- R6obj$.__enclos_env__$private$genon
-
   ## Calculate the MAF
-  maf <-  colMeans(genon, na.rm=T)/2
-  maf <- pmin(maf,1-maf)
+  if(mafEst){
+    temp <- R6obj$.__enclos_env__$private$p_est()
+    pfreq <- unname(temp[1,])
+    ep <- unname(temp[2,])
+  }
+  else{
+    ratio <- R6obj$.__enclos_env__$private$ref/(R6obj$.__enclos_env__$private$ref+R6obj$.__enclos_env__$private$alt)
+    pfreq <- colMeans(ratio, na.rm=T)
+    ep <- rep(0, nSnps)
+  }
+
   ## Calculate the proportion of missing data
   miss <- apply(genon,2, function(x) sum(is.na(x))/length(x))
 
-  ## Compute teh HWE distance
-  naa <- colSums(genon == 2, na.rm = TRUE)
-  nab <- colSums(genon == 1, na.rm = TRUE)
-  nbb <- colSums(genon == 0, na.rm = TRUE)
-  n1 <- 2 * naa + nab
-  n2 <- nab + 2 * nbb
-  n <- n1 + n2  #n alleles
-  p1 <- n1/n
-  p2 <- 1 - p1
-  HWdis <- naa/(naa + nab + nbb) - p1 * p1
+  # ## Compute the HWE distance
+  # naa <- colSums(genon == 2, na.rm = TRUE)
+  # nab <- colSums(genon == 1, na.rm = TRUE)
+  # nbb <- colSums(genon == 0, na.rm = TRUE)
+  # n1 <- 2 * naa + nab
+  # n2 <- nab + 2 * nbb
+  # n <- n1 + n2  #n alleles
+  # p1 <- n1/n
+  # p2 <- 1 - p1
+  # HWdis <- naa/(naa + nab + nbb) - p1 * p1
 
   ## Indx the filtered SNPs
-  indx <- (maf > filter$MAF) & (miss > filter$MISS) & (HWdis > filter$HWdis[1]) & (HWdis < filter$HWdis[2])
+  maf <- pmin(pfreq,1-pfreq)
+  indx <- (maf > filter$MAF) & (miss < filter$MISS) #& (HWdis > filter$HWdis[1]) & (HWdis < filter$HWdis[2])
 
   ## Update the data in the R6 object
   genon <- genon[,indx]
   ref <- R6obj$.__enclos_env__$private$ref[,indx]
   alt <- R6obj$.__enclos_env__$private$alt[,indx]
   SNP_Names <- R6obj$.__enclos_env__$private$SNP_Names[indx]
-  nSnps = sum(indx)
+  nSnps <- sum(indx)
+  pfreq <- pfreq[indx]
+  ep <- ep[indx]
   if(R6obj$.__enclos_env__$private$gform == "reference"){
     chrom = R6obj$.__enclos_env__$private$chrom[indx]
     pos = R6obj$.__enclos_env__$private$pos[indx]
@@ -160,7 +198,7 @@ makePop.UR <- function(R6obj, filter=list(MAF=0.05, MISS=0.2, HWdis=c(-0.05,1)))
   ## Update the R6 objective
   R6obj$.__enclos_env__$private$updatePrivate(list(
     genon = genon, ref = ref, alt = alt, chrom = chrom, pos = pos,
-    SNP_Names = SNP_Names, nSnps = nSnps, AFrq = AFrq)
+    SNP_Names = SNP_Names, nSnps = nSnps, AFrq = AFrq, pfreq = pfreq, ep = ep)
   )
 
   return(R6obj)

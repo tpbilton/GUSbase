@@ -118,7 +118,7 @@ readRA <- function(genofile, gform, sampthres = 0.01, excsamp = NULL){
   obj <- RA$new(
     list(genon = genon, ref = ref, alt = alt, chrom = chrom, pos = pos,
          SNP_Names = SNP_Names, indID = indID, nSnps = as.integer(nSnps), nInd = as.integer(nInd),
-         gform = gform, AFrq = AFrq, infilename = genfile)
+         gform = gform, AFrq = AFrq, infilename = genofile)
   )
 
   return(obj)

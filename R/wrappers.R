@@ -1,4 +1,4 @@
-
+#' @useDynLib GUSbase
 
 
 ## likelihood and score function for the allele and error estimation assuming HWE
