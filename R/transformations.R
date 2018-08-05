@@ -19,6 +19,11 @@
 ### Author: Timothy Bilton
 ### Date: 18/01/2017
 ### Edited: 23/03/2017
+#' @export logit
+#' @export logit2
+#' @export inv.logit
+#' @export inv.logit2
+
 
 ## Functions requred for transforming the recombination fraction parameters on the interval [0,0.5]
 ## to the interval [-inf,inf]

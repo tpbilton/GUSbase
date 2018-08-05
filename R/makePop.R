@@ -5,7 +5,7 @@ createPop <- function(R6obj, pop = "unrelated", ploid=2, ...){
 
   # Do some checks
   if(!all(class(R6obj) %in% c("RA","R6")))
-    stop("First argumented supplied is not of class 'R6' and 'RA'")
+    stop("First argument supplied is not of class 'R6' and 'RA'")
   if(!is.vector(pop) || !is.character(pop) || length(pop) != 1 ||
      all(pop !=  c("full-sib","unrelated")))
      stop("Population specified is invalid. Must be one of 'unrelated' or 'full-sib'")
