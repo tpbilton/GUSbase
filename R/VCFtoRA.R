@@ -1,5 +1,5 @@
 ##########################################################################
-# Genotyping Uncertainty with Sequencing data and linkage MAPping
+# Genotyping Uncertainty with Sequencing data (GUSbase)
 # Copyright 2017-2018 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@
 #' }
 #'
 #' @param infilename String giving the filename of the VCF file to be converted to RA format
-#' @param direct String of the directory (or relative to the working direct) where the RA file is to be written.
+#' @param direct String of the directory (or relative to the working direct) where the RA file is to be written. Defaults to current working directory
 #' @param makePed A logical value. If TRUE, a pedigree file is initialized.
 #' @return A string of the complete file path and name of the RA file created from the function.
 #' In addition to creating a RA file, a pedigree file is also initialized in the same folder as the RA file if
@@ -68,7 +68,7 @@
 # #' RAfile <- VCFtoRA(MKfile$vcf, makePed=F)
 #' @export VCFtoRA
 
-VCFtoRA <- function(infilename, direct="./", makePed=T){
+VCFtoRA <- function(infilename, direct="./", makePed=F){
 
   ## Do some checks
   if(!is.character(infilename) || length(infilename) !=1)

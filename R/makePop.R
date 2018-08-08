@@ -1,3 +1,37 @@
+##########################################################################
+# Genotyping Uncertainty with Sequencing data (GUSbase)
+# Copyright 2017-2018 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#########################################################################
+
+#' Create a population
+#'
+#' Function which creates a object containing information for specific population
+#'
+#' @param R6obj An object of classes 'RA' and 'R6' that was created from the \link{readRA} function
+#' @param pop A character string specifing the type of population to be created. Currently, only \code{unrelated} and \code{full-sib}
+#' are implemented.
+#' @param ploid Integer specifying the ploid level in polyploids populations. Only used in \code{unrelated} populations.
+#' @param ... Arguments passed to ?
+#'
+#' @return An \code{R6} object of classes \code{RA} and \code{UR} (for unrelated populations) or \code{FS} (for full-sib populations)
+#' @author Timothy P. Bilton.
+
+
+
+
 #' @export createPop
 
 #### Function for creating a particular population structure

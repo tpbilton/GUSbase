@@ -19,6 +19,13 @@
 ### Author: Timothy Bilton
 ### Date: 18/01/2017
 ### Edited: 23/03/2017
+
+#' Transformation functions.
+#'
+#' Transformation used in the GUSbase universe.
+#'
+#' @param p probability value
+#' @param logit_p logit probability value
 #' @export logit
 #' @export logit2
 #' @export inv.logit
