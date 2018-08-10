@@ -15,10 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
-#### Functions for converting VCF files to RA data
-#### Author: Timothy P. Bilton
-#### Adapted from a python script written by Rudiger Brauning and Rachael Ashby
-#### Date: 06/02/18
 
 #' Convert VCF file into RA (Reference/Alternative) file.
 #'
@@ -63,19 +59,19 @@
 #' specified and the named pedigree does not already exist.
 #' @author Timothy P. Bilton. Adapted from a Python script written by Rudiger Brauning and Rachael Ashby.
 #' @seealso \code{\link{readRA}}
-# #' @examples
-# #' MKfile <- Manuka11()
-# #' RAfile <- VCFtoRA(MKfile$vcf, makePed=F)
+#' @examples
+#' MKfile <- Manuka11()
+#' RAfile <- VCFtoRA(MKfile$vcf)
 #' @export VCFtoRA
 
 VCFtoRA <- function(infilename, direct="./", makePed=F){
 
   ## Do some checks
-  if(!is.character(infilename) || length(infilename) !=1)
+  if(!is.character(infilename) || !is.vector(infilename) || length(infilename) !=1)
     stop("The input file name is not a string of length 1.")
   if(!file.exists(infilename))
     stop("Input file does not exist. Check your wording or the file path.")
-  if(!is.character(direct) || length(direct) != 1)
+  if(!is.character(direct) || !is.vector(direct) || length(direct) != 1)
     stop("Invalid input for the path to the directory where the RA file is to be written.")
 
   cat("Processing VCF file: Converting to RA format.\n\n")

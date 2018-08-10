@@ -15,18 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
-#' @useDynLib GUSbase
 
+#' Produce a cometPlot
+#'
+#' Some discription
+#'
+#' @usage
+#' RAobj$comotPlot(model="random", alpha=NULL, filename=NULL, cex=1, maxdepth=500, ...)
+#'
+#' @name $cometPlot
+#'
+#'
+NULL
 
-## likelihood and score function for the allele and error estimation assuming HWE
-ll_pest <- function(para, v=v, ref=ref, alt=alt, nInd=nInd, nSnps=nSnps){
-  p = inv.logit(para[1:nSnps])
-  ep = inv.logit2(para[nSnps+1])
-  out <- .Call("pest_c", p=p, ep=ep, v=v, ref=ref, alt=alt, nInd=nInd, nSnps=nSnps)
-  assign(".score", -out[[2]], envir = parent.frame(3))
-  return(-out[[1]])
-}
-
-score_pest <- function(para, ...){
-  return(get(".score", envir = parent.frame(3)))
-}

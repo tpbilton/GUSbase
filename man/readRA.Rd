@@ -10,7 +10,8 @@ readRA(genofile, gform, sampthres = 0.01, excsamp = NULL)
 \item{gform}{Character string specifying whether the SNPs in the RA data have been called using Uneak (\code{gform="uneak"})
 or using an reference based assembly (\code{gform="reference"}).}
 
-\item{sampthres}{A numeric value giving the filtering threshold for which individual samples are removed.}
+\item{sampthres}{A numeric value giving the filtering threshold for which individual samples are removed. Default is 0.01
+which means that samples with an average number of reads per SNP that is less than 0.01 are removed.}
 
 \item{excsamp}{A character vector of the sample IDs that are to be excluded (or discarded). Note that the sample IDs must correspond
 to those given in the RA file that is to be processed.}
@@ -22,7 +23,7 @@ returned from the VCFtoRA function when the VCF file is converted to RA format.}
 An R6 object of class RA.
 }
 \description{
-Function which processes an RA file into R.
+Function which processes an RA file into RA object.
 }
 \details{
 RA format is a tab-delimited with columns, CHROM, POS, SAMPLES
@@ -34,6 +35,11 @@ CHROM \tab  POS  \tab   999220:C4TWKACXX:7:56 \tab  999204:C4TWKACXX:7:56 \cr
 1     \tab  443  \tab   1,0                   \tab  4,4                   \cr
 1     \tab  448  \tab   0,0                   \tab  0,2
 }
+}
+\examples{
+MKfile <- Manuka11()
+RAfile <- VCFtoRA(MKfile$vcf)
+MKdata <- readRA(RAfile)
 }
 \author{
 Timothy P. Bilton

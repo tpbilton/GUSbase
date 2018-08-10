@@ -4,12 +4,12 @@
 \alias{VCFtoRA}
 \title{Convert VCF file into RA (Reference/Alternative) file.}
 \usage{
-VCFtoRA(infilename, direct = "./", makePed = T)
+VCFtoRA(infilename, direct = "./", makePed = F)
 }
 \arguments{
 \item{infilename}{String giving the filename of the VCF file to be converted to RA format}
 
-\item{direct}{String of the directory (or relative to the working direct) where the RA file is to be written.}
+\item{direct}{String of the directory (or relative to the working direct) where the RA file is to be written. Defaults to current working directory}
 
 \item{makePed}{A logical value. If TRUE, a pedigree file is initialized.}
 }
@@ -52,6 +52,10 @@ Note that some samples can be from the same individual.
 \item Family: The name of the Family for a group of progeny with the same parents. Note that this is not necessary but if
 given must be the same for all the progeny.
 }
+}
+\examples{
+MKfile <- Manuka11()
+RAfile <- VCFtoRA(MKfile$vcf)
 }
 \seealso{
 \code{\link{readRA}}

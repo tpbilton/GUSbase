@@ -1,5 +1,5 @@
 ##########################################################################
-# Genotyping Uncertainty with Sequencing data and linkage MAPping
+# Genotyping Uncertainty with Sequencing data (GUSbase)
 # Copyright 2017-2018 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -15,13 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
-### R Function for reading in RA data.
-### Author: Timothy Bilton
-### Date: 6/02/18
 
 #' Read an Reference/Alternate (RA) file.
 #'
-#' Function which processes an RA file into R.
+#' Function which processes an RA file into RA object.
 #'
 #' RA format is a tab-delimited with columns, CHROM, POS, SAMPLES
 #' where SAMPLES consists of sampleIDs, which typically consist of a colon-delimited sampleID, flowcellID, lane, seqlibID.
@@ -37,21 +34,21 @@
 #' returned from the VCFtoRA function when the VCF file is converted to RA format.
 #' @param gform Character string specifying whether the SNPs in the RA data have been called using Uneak (\code{gform="uneak"})
 #' or using an reference based assembly (\code{gform="reference"}).
-#' @param sampthres A numeric value giving the filtering threshold for which individual samples are removed.
+#' @param sampthres A numeric value giving the filtering threshold for which individual samples are removed. Default is 0.01
+#' which means that samples with an average number of reads per SNP that is less than 0.01 are removed.
 #' @param excsamp A character vector of the sample IDs that are to be excluded (or discarded). Note that the sample IDs must correspond
 #' to those given in the RA file that is to be processed.
 #' @return An R6 object of class RA.
 #' @author Timothy P. Bilton
-# #' @examples
-# #' MKfile <- Manuka11()
-# #' RAfile <- VCFtoRA(MKfile$vcf, makePed=F)
-# #' MKdata <- readRA(RAfile, MKfile$ped)
-#' @export readRA
-
+#' @examples
+#' MKfile <- Manuka11()
+#' RAfile <- VCFtoRA(MKfile$vcf)
+#' MKdata <- readRA(RAfile)
+#' @export
 #### Function for reading in RA data and converting to genon and depth matrices.
 readRA <- function(genofile, gform, sampthres = 0.01, excsamp = NULL){
 
-  if(!is.character(genofile) || length(genofile) != 1)
+  if(!is.character(genofile) || !is.vector(genofile) || length(genofile) != 1)
     stop("File name of RA data set is not a string of length one")
   if(!is.character(gform) || length(gform) != 1 || !(gform %in% c("reference","uneak")))
     stop("gform argument must be either 'reference' or 'uneak'")

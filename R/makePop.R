@@ -16,15 +16,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 
-#' Create a population
+#' Create population
 #'
-#' Function which creates a object containing information for specific population
+#' Function which creates a object for storing information related to a specific population structure.
 #'
-#' @param R6obj An object of classes 'RA' and 'R6' that was created from the \link{readRA} function
-#' @param pop A character string specifing the type of population to be created. Currently, only \code{unrelated} and \code{full-sib}
-#' are implemented.
+#' @param RAobj An object of classes 'RA' and 'R6' that was created from the \code{\link{readRA}} function
+#' @param pop A character string specifying the type of population to be created. Currently, only \code{unrelated} and \code{full-sib}
+#' are implemented (see details below)
 #' @param ploid Integer specifying the ploid level in polyploids populations. Only used in \code{unrelated} populations.
-#' @param ... Arguments passed to ?
+#' @param ... Additional arguments passed to \code{\link{makePop}} function.
 #'
 #' @return An \code{R6} object of classes \code{RA} and \code{UR} (for unrelated populations) or \code{FS} (for full-sib populations)
 #' @author Timothy P. Bilton.
@@ -35,10 +35,10 @@
 #' @export createPop
 
 #### Function for creating a particular population structure
-createPop <- function(R6obj, pop = "unrelated", ploid=2, ...){
+createPop <- function(RAobj, pop = "unrelated", ploid=2, ...){
 
   # Do some checks
-  if(!all(class(R6obj) %in% c("RA","R6")))
+  if(!all(class(RAobj) %in% c("RA","R6")))
     stop("First argument supplied is not of class 'R6' and 'RA'")
   if(!is.vector(pop) || !is.character(pop) || length(pop) != 1 ||
      all(pop !=  c("full-sib","unrelated")))
@@ -50,9 +50,9 @@ createPop <- function(R6obj, pop = "unrelated", ploid=2, ...){
 
   ## Make new R6 object depending on the family type.
   if(pop == "full-sib")
-    newObj <- FS$new(R6obj)
+    newObj <- FS$new(RAobj)
   else if(pop == "unrelated")
-    newObj <- UR$new(R6obj, ploid)
+    newObj <- UR$new(RAobj, ploid)
   else
     stop(paste("Population structure",pop,"has not yet be implemented\n"))
 

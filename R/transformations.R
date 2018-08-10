@@ -15,27 +15,34 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
-### Transformation and inverse trnasformation for transforming the r.f's on the range [0,0.5] to [-Inf,Inf]
-### Author: Timothy Bilton
-### Date: 18/01/2017
-### Edited: 23/03/2017
 
 #' Transformation functions.
 #'
-#' Transformation used in the GUSbase universe.
+#' Transformation used in GUSbase.
 #'
-#' @param p probability value
-#' @param logit_p logit probability value
+#' Two transformations are used in the GUSverse. These are the standard logit transformation
+#' \deqn{logit(p) = log\left(\frac{p}{1-p}\right)}
+#' and a modified logit transformation
+#' \deqn{logit2(p) = log(\frac{2p}{1-2p}).}
+#'
+#' @param p Probability value
+#' @param logit_p Logit probability value
 #' @export logit
 #' @export logit2
 #' @export inv.logit
 #' @export inv.logit2
 
+## Functions requred for transforming the recombination fraction parameters on the interval [0,1]
+## to the interval [-inf,inf]
+logit <- function(p) qlogis(p)
+#' @rdname logit
+inv.logit <- function(logit_p) plogis(logit_p)
 
 ## Functions requred for transforming the recombination fraction parameters on the interval [0,0.5]
 ## to the interval [-inf,inf]
+#' @rdname logit
 logit2 <- function(p) log(2*p/(1-2*p))
-
+#' @rdname logit
 inv.logit2 <- function(logit_p) {
   p <- 1/(2*(1+1/exp(logit_p)))
   p.na <- is.na(p)
@@ -44,10 +51,7 @@ inv.logit2 <- function(logit_p) {
   return(p)
 }
 
-## Functions requred for transforming the recombination fraction parameters on the interval [0,1]
-## to the interval [-inf,inf]
-logit <- function(p) qlogis(p)
-inv.logit <- function(logit_p) plogis(logit_p)
+
 
 # Alternatives
 #logit3 <- function(p) qlogis(2*p)
