@@ -89,6 +89,11 @@ RA <- R6Class("RA",
                 nInd = NULL,
                 gform = NULL,
                 AFrq = NULL,
-                infilename = NULL
+                infilename = NULL,
+                updatePrivate = function(List){
+                  for(elem in names(List)){
+                    private[[elem]] <- List[[elem]]
+                  }
+                }
               )
 )
