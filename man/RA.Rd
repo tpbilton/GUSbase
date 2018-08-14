@@ -6,13 +6,12 @@
 \title{RA Object}
 \format{An object of class \code{R6ClassGenerator} of length 24.}
 \usage{
-RAobj <- readRA()
+RAobj <- readRA(genofile, gform, sampthres = 0.01, excsamp = NULL)
 
-RAobj$comotPlot()
+RAobj$cometPlot()
 }
 \description{
-Class for storing reference/alternative format data and methods for performing exporartory data analysis
-on the data
+Class for storing reference/alternative format data and methods for performing exporartory data analysis.
 }
 \section{Details}{
 
@@ -23,10 +22,13 @@ statistics of the dataset that have been computed, and functions (or methods) fo
 \section{Functions}{
 
 \describe{
-  \item{\code{\link{RAobj$cometPlot}}}{Function for create a comet plot}
+  \item{\code{\link{$cometPlot}}}{Function for create a comet plot}
 }
 }
 
+\seealso{
+\code{\link{readRA}}
+}
 \author{
 Timothy P. Bilton
 }

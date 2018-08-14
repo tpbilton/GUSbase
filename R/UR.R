@@ -15,6 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
+
+#' UR object
+#'
+#' Class for unrelated populations
+#'
+#' @usage
+#' URobj <- makeUR()
+#' @details
+#' An UR object is created from the \code{\link{makeUR}} function and contains RA data,
+#' various statistics of the dataset that have been computed, and functions (or methods)
+#' for analyzing the data. Information in an UR are specific to unrelated populations.
+#' @author Timothy P. Bilton
+#' @seealso \code{\link{makeUR}}
+#' @name UR
 #' @export UR
 
 

@@ -17,14 +17,13 @@
 #########################################################################
 #' RA Object
 #'
-#' Class for storing reference/alternative format data and methods for performing exporartory data analysis
-#' on the data
+#' Class for storing reference/alternative format data and methods for performing exporartory data analysis.
 #'
 #' @usage
 #'
-#' RAobj <- readRA()
+#' RAobj <- readRA(genofile, gform, sampthres = 0.01, excsamp = NULL)
 #'
-#' RAobj$comotPlot()
+#' RAobj$cometPlot()
 #'
 #' @section Details:
 #' An RA object is returned from the \code{\link{readRA}} function and contains the RA data, various
@@ -38,6 +37,7 @@
 #' @author Timothy P. Bilton
 #'
 #' @export
+#' @seealso \code{\link{readRA}}
 #' @name RA
 #'
 

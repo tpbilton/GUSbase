@@ -18,31 +18,37 @@
 
 #' Transformation functions.
 #'
-#' Transformation used in GUSbase.
+#' Functions used in the GUS universe to transform parameters estimation onto an unbounded
+#' interval. These functions are used in likelihood computations optimised using direct
+#' maximumization routines.
 #'
-#' Two transformations are used in the GUSverse. These are the standard logit transformation
-#' \deqn{logit(p) = log\left(\frac{p}{1-p}\right)}
-#' and a modified logit transformation
+#' Parameter transformations used in the GUS universe:
+#'
+#' 1. The logit transformation:
+#' \deqn{logit(p) = log(\frac{p}{1-p})}
+#' 2. A modified logit transformation (called logit2):
 #' \deqn{logit2(p) = log(\frac{2p}{1-2p}).}
 #'
 #' @param p Probability value
 #' @param logit_p Logit probability value
+#' @name transformations
 #' @export logit
 #' @export logit2
 #' @export inv.logit
 #' @export inv.logit2
 
-## Functions requred for transforming the recombination fraction parameters on the interval [0,1]
+## Functions required for transforming the recombination fraction parameters on the interval [0,1]
 ## to the interval [-inf,inf]
+#' @rdname transformations
 logit <- function(p) qlogis(p)
-#' @rdname logit
+#' @rdname transformations
 inv.logit <- function(logit_p) plogis(logit_p)
 
 ## Functions requred for transforming the recombination fraction parameters on the interval [0,0.5]
 ## to the interval [-inf,inf]
-#' @rdname logit
+#' @rdname transformations
 logit2 <- function(p) log(2*p/(1-2*p))
-#' @rdname logit
+#' @rdname transformations
 inv.logit2 <- function(logit_p) {
   p <- 1/(2*(1+1/exp(logit_p)))
   p.na <- is.na(p)
