@@ -1,5 +1,5 @@
 ##########################################################################
-# Genotyping Uncertainty with Sequencing data (GUSbase)
+# Genotyping Uncertainty with Sequencing data - Base package (GUSbase)
 # Copyright 2017-2018 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -16,14 +16,22 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 
-#' Make an unrelated population
+#' Make an unrelated (UR) population
 #'
-#' Some discription
+#' Create an UR object from an RA object and performs standard filtering and computes statistics specific to unrelated populations.
 #'
+#' If \code{mafEst=TRUE}, then the major allele frequency and sequencing error rate for each SNP is estimated based on optimizing the likelihood
+#' \deqn{P(Y=a) = \sum_{G} P(Y=a|G)P(G)}
+#' where \eqn{P(G)} are genotype probabilities under Hardy Weinberg Equilibrium (HWE) and \eqn{P(Y=a|G)} are the probilities given in Equation (5) of
+#' \insertCite{bilton2018genetics2;textual}{GUSbase}. Otherwise, the allele
+#' frequencies are taken as the mean of the allele ratio (defined as the number of reference reads divided by the total number of reads) and
+#' the sequencing error rate is assumed to zero.
+#'
+#' @section Filtering:
 #' The filtering criteria currently implemented are
 #' \itemize{
-#' \item{MAF}{Minor allele frequency}
-#' \item{MISS}{Proportion of missing data}
+#' \item{Minor allele frequency (MAF): }{SNPs are discarded if their MAF is less than the threshold (default is 0.05)}
+#' \item{Proportion of missing data (MISS): }{SNPs are discarded if the proportion of individuals with no reads (e.g. missing genotype) is greater than the threshold value (default is 0.5)}
 #' }
 #'
 #' @param RAobj Object of class RA created via the \code{\link{readRA}} function.
@@ -32,15 +40,17 @@
 #' @param ploid An integer number specifying two times the ploidy level of the population.
 #' @param mafEst Logical value indicating whether the allele frequences and sequencing
 #' error parameters are to estimated for each SNP.
-#'
+#' @return An R6 object of class UR.
 #' @author Timothy P. Bilton
+#' @references
+#' \insertRef{bilton2018genetics2}{GUSbase}
 #' @export
 
 
 
 
 #### Make an unrelated population
-makeUR <- function(RAobj, filter=list(MAF=0.05, MISS=0.2), ploid=1, mafEst=TRUE){
+makeUR <- function(RAobj, filter=list(MAF=0.05, MISS=0.5), ploid=1, mafEst=TRUE){
 
   ## Do some checks
   if(!all(class(RAobj) %in% c("RA","R6")))

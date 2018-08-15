@@ -1,5 +1,5 @@
 ##########################################################################
-# Genotyping Uncertainty with Sequencing data (GUSbase)
+# Genotyping Uncertainty with Sequencing data - Base package (GUSbase)
 # Copyright 2017-2018 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -17,29 +17,28 @@
 #########################################################################
 #' RA Object
 #'
-#' Class for storing reference/alternative format data and methods for performing exporartory data analysis.
+#' Class for storing reference/alternative (RA) data and methods for performing exporartory data analysis.
 #'
 #' @usage
-#'
+#' ## Create RA object
 #' RAobj <- readRA(genofile, gform, sampthres = 0.01, excsamp = NULL)
 #'
-#' RAobj$cometPlot()
+# #' ## RA Functions (Methods)
+# #' RAobj$cometPlot()
 #'
 #' @section Details:
 #' An RA object is returned from the \code{\link{readRA}} function and contains the RA data, various
 #' statistics of the dataset that have been computed, and functions (or methods) for analyzing the data.
 #'
-#' @section Functions:
-#' \describe{
-#'   \item{\code{\link{$cometPlot}}}{Function for create a comet plot}
-#' }
-#'
+# #' @section Functions(Methods):
+# #' \describe{
+# #'   \item{\code{\link{$cometPlot}}}{Function for create a comet plot}
+# #' }
+#' @format NULL
 #' @author Timothy P. Bilton
-#'
-#' @export
 #' @seealso \code{\link{readRA}}
 #' @name RA
-#'
+#' @export
 
 
 ### R6 class for data aligned to reference assembly
@@ -69,12 +68,12 @@ RA <- R6Class("RA",
                   cat("  Individuals:\t",private$nInd,"\n")
                   cat("  SNPs:\t\t",private$nSnps,"\n")
                   cat("  Reads:\t\t",sum(temp),"\n")
-                },
+                }
                 #### Diagonostic functions ####
                 ## Ratio of alleles for heterozygous genotype calls (observed vs expected)
-                cometPlot = function(model="random", alpha=NULL, filename=NULL, cex=1, maxdepth=500, ...){
-                  cometPlot(private$ref, private$alt, model=model, alpha=alpha, filename=filename, cex=cex, maxdepth=maxdepth, ...)
-                }
+                #cometPlot = function(model="random", alpha=NULL, filename=NULL, cex=1, maxdepth=500, ...){
+                #  cometPlot(private$ref, private$alt, model=model, alpha=alpha, filename=filename, cex=cex, maxdepth=maxdepth, ...)
+                #}
                 ###############################
               ),
               private = list(

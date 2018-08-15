@@ -4,26 +4,17 @@
 \name{RA}
 \alias{RA}
 \title{RA Object}
-\format{An object of class \code{R6ClassGenerator} of length 24.}
 \usage{
+## Create RA object
 RAobj <- readRA(genofile, gform, sampthres = 0.01, excsamp = NULL)
-
-RAobj$cometPlot()
 }
 \description{
-Class for storing reference/alternative format data and methods for performing exporartory data analysis.
+Class for storing reference/alternative (RA) data and methods for performing exporartory data analysis.
 }
 \section{Details}{
 
 An RA object is returned from the \code{\link{readRA}} function and contains the RA data, various
 statistics of the dataset that have been computed, and functions (or methods) for analyzing the data.
-}
-
-\section{Functions}{
-
-\describe{
-  \item{\code{\link{$cometPlot}}}{Function for create a comet plot}
-}
 }
 
 \seealso{

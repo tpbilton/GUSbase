@@ -1,5 +1,5 @@
 ##########################################################################
-# Genotyping Uncertainty with Sequencing data (GUSbase)
+# Genotyping Uncertainty with Sequencing data - Base package (GUSbase)
 # Copyright 2017-2018 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 
-#' Convert VCF file into RA (Reference/Alternative) file.
+#' Convert VCF file into reference/alternative (RA) file.
 #'
 #' Function for converting a VCF file into RA format.
 #'
@@ -27,10 +27,10 @@
 #' \item AO and RO fields
 #' \item DP4 field
 #' }
-#' Information regarding VCF files and their format can be found at the samtools \href{https://samtools.github.io/hts-specs/VCFv4.3.pdf}{github} page.
+#' Information regarding VCF files and their format can be found at the samtools \href{https://samtools.github.io/hts-specs/VCFv4.3.pdf}{GitHub} page.
 #'
 #' RA format is a tab-delimited with columns, CHROM, POS, SAMPLES
-#' where SAMPLES consists of sampleIDs, which typically consist of a colon-delimited sampleID, flowcellID, lane, seqlibID.
+#' where SAMPLES consists of sampleIDs, which typically (but not necessarily need to) consist of a colon-delimited sampleID, flowcellID, lane, seqlibID.
 #' e.g.,
 #' \tabular{llll}{
 #' CHROM \tab  POS  \tab   999220:C4TWKACXX:7:56 \tab  999204:C4TWKACXX:7:56 \cr
@@ -51,8 +51,8 @@
 #' given must be the same for all the progeny.
 #' }
 #'
-#' @param infilename String giving the filename of the VCF file to be converted to RA format
-#' @param direct String of the directory (or relative to the working direct) where the RA file is to be written. Defaults to current working directory
+#' @param infilename String giving the filename of the VCF file to be converted to RA format.
+#' @param direct String of the directory (or relative to the working direct) where the RA file is to be written. Defaults to current working directory.
 #' @param makePed A logical value. If TRUE, a pedigree file is initialized.
 #' @return A string of the complete file path and name of the RA file created from the function.
 #' In addition to creating a RA file, a pedigree file is also initialized in the same folder as the RA file if
@@ -60,7 +60,7 @@
 #' @author Timothy P. Bilton. Adapted from a Python script written by Rudiger Brauning and Rachael Ashby.
 #' @seealso \code{\link{readRA}}
 #' @examples
-#' MKfile <- Manuka11()
+#' MKfile <- GUSMap::Manuka11()
 #' RAfile <- VCFtoRA(MKfile$vcf)
 #' @export VCFtoRA
 

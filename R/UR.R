@@ -1,5 +1,5 @@
 ##########################################################################
-# Genotyping Uncertainty with Sequencing data (GUSbase)
+# Genotyping Uncertainty with Sequencing data - Base package (GUSbase)
 # Copyright 2017-2018 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 #' UR object
 #'
-#' Class for unrelated populations
+#' Class for storing RA data and associated functions for analysis with unrelated populations.
 #'
 #' @usage
 #' URobj <- makeUR()
@@ -26,13 +26,11 @@
 #' An UR object is created from the \code{\link{makeUR}} function and contains RA data,
 #' various statistics of the dataset that have been computed, and functions (or methods)
 #' for analyzing the data. Information in an UR are specific to unrelated populations.
+#' @format NULL
 #' @author Timothy P. Bilton
 #' @seealso \code{\link{makeUR}}
 #' @name UR
-#' @export UR
-
-
-
+#' @export
 ### R6 class for creating a data format for unrelated individuals
 UR <- R6Class("UR",
               inherit = RA,

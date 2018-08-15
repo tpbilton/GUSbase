@@ -1,5 +1,5 @@
 ##########################################################################
-# Genotyping Uncertainty with Sequencing data (GUSbase)
+# Genotyping Uncertainty with Sequencing data - Base package (GUSbase)
 # Copyright 2017-2018 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -16,15 +16,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 
-#' Produce a cometPlot
-#'
-#' Some discription
-#'
-#' @usage
-#' RAobj$comotPlot(model="random", alpha=NULL, filename=NULL, cex=1, maxdepth=500, ...)
-#'
-#' @name $cometPlot
-#'
-#'
-NULL
+#' #' Produce a cometPlot
+#' #'
+#' #' Some discription
+#' #'
+#' #' @usage
+#' #' RAobj$comotPlot(model="random", alpha=NULL, filename=NULL, cex=1, maxdepth=500, ...)
+#' #'
+#' #' @name $cometPlot
+#' #'
+#' #'
+#' NULL
 

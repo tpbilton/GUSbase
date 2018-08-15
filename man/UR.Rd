@@ -4,12 +4,11 @@
 \name{UR}
 \alias{UR}
 \title{UR object}
-\format{An object of class \code{R6ClassGenerator} of length 24.}
 \usage{
 URobj <- makeUR()
 }
 \description{
-Class for unrelated populations
+Class for storing RA data and associated functions for analysis with unrelated populations.
 }
 \details{
 An UR object is created from the \code{\link{makeUR}} function and contains RA data,

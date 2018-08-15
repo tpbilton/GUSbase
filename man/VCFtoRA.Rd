@@ -2,14 +2,14 @@
 % Please edit documentation in R/VCFtoRA.R
 \name{VCFtoRA}
 \alias{VCFtoRA}
-\title{Convert VCF file into RA (Reference/Alternative) file.}
+\title{Convert VCF file into reference/alternative (RA) file.}
 \usage{
 VCFtoRA(infilename, direct = "./", makePed = F)
 }
 \arguments{
-\item{infilename}{String giving the filename of the VCF file to be converted to RA format}
+\item{infilename}{String giving the filename of the VCF file to be converted to RA format.}
 
-\item{direct}{String of the directory (or relative to the working direct) where the RA file is to be written. Defaults to current working directory}
+\item{direct}{String of the directory (or relative to the working direct) where the RA file is to be written. Defaults to current working directory.}
 
 \item{makePed}{A logical value. If TRUE, a pedigree file is initialized.}
 }
@@ -29,10 +29,10 @@ fields (or group of fields) in a VCF file:
 \item AO and RO fields
 \item DP4 field
 }
-Information regarding VCF files and their format can be found at the samtools \href{https://samtools.github.io/hts-specs/VCFv4.3.pdf}{github} page.
+Information regarding VCF files and their format can be found at the samtools \href{https://samtools.github.io/hts-specs/VCFv4.3.pdf}{GitHub} page.
 
 RA format is a tab-delimited with columns, CHROM, POS, SAMPLES
-where SAMPLES consists of sampleIDs, which typically consist of a colon-delimited sampleID, flowcellID, lane, seqlibID.
+where SAMPLES consists of sampleIDs, which typically (but not necessarily need to) consist of a colon-delimited sampleID, flowcellID, lane, seqlibID.
 e.g.,
 \tabular{llll}{
 CHROM \tab  POS  \tab   999220:C4TWKACXX:7:56 \tab  999204:C4TWKACXX:7:56 \cr
@@ -54,7 +54,7 @@ given must be the same for all the progeny.
 }
 }
 \examples{
-MKfile <- Manuka11()
+MKfile <- GUSMap::Manuka11()
 RAfile <- VCFtoRA(MKfile$vcf)
 }
 \seealso{
