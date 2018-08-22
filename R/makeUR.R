@@ -50,7 +50,7 @@
 
 
 #### Make an unrelated population
-makeUR <- function(RAobj, filter=list(MAF=0.05, MISS=0.5), ploid=1, mafEst=TRUE){
+makeUR <- function(RAobj, filter=list(MAF=0.05, MISS=0.5), ploid=2, mafEst=TRUE){
 
   ## Do some checks
   if(!all(class(RAobj) %in% c("RA","R6")))
@@ -61,6 +61,8 @@ makeUR <- function(RAobj, filter=list(MAF=0.05, MISS=0.5), ploid=1, mafEst=TRUE)
   if(is.null(filter$MISS)) filter$MISS <- 0.2
   else if( length(filter$MISS) != 1 || !is.numeric(filter$MISS) || filter$MISS<0 || filter$MISS>1 )
     stop("Proportion of missing data filter is invalid")
+  if(!is.vector(ploid) || !is.numeric(ploid) || length(ploid) != 1 || round(ploid/2) != ploid/2)
+    stop("Argument for ploid level is invalid.")
   #if(is.null(filter$HWdis)) filter$HWdis <- c(-0.05, 1)
   #else if(!is.vector(filter$HWdis) || length(filter$HWdis) != 2 || !is.numeric(filter$HWdis) || filter$HWdis<0 || filter$HWdis >1)
   #  stop("Hardy Weinberg Equilibrium (HWE) filter is invalid")
