@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 
-#' Transformation functions.
+#' Transformation functions
 #'
 #' Functions used in the GUS universe to transform parameters estimation onto an unbounded
 #' interval. These functions are used in likelihood computations optimised using direct
