@@ -101,7 +101,7 @@ UR <- R6Class("UR",
                   ratio <- ref/(ref+alt)
                   nSnps <- length(snpsubset)
                   nInd <- length(indsubset)
-                  if(!is.numeric(nClust) || nClust < 0 || round(nClust) != nClust)
+                  if(!is.numeric(nClust) || length(nClust) != 1 || nClust < 0 || round(nClust) != nClust)
                     stop("Argument for the number of cores for the parallelization is invalid")
                   ## inital value
                   if(!is.null(para)){
@@ -138,7 +138,7 @@ UR <- R6Class("UR",
                       #parscale[which(abs(inv.logit(para[-(nSnps+1)]) - 0.5) < 0.0001)] <- 0.0001
                       MLE <- optim(par = c(logit(pinit[snp]), logit2(epinit[snp])), fn=ll_pest, gr=score_pest, method="BFGS",
                                    v=ploid, ref=ref[,snp], alt=alt[,snp], nInd=nInd, nSnps=as.integer(1))
-                      return(c(inv.logit(MLE$par[1]), inv.logit2(MLE$par[2])))
+                      return(c(inv.logit(MLE$par[1]), inv.logit2(MLE$par[2]), -MLE$value))
                     }
                     stopCluster(cl)
                   }

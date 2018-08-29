@@ -40,6 +40,8 @@
 #' @param ploid An integer number specifying two times the ploidy level of the population.
 #' @param mafEst Logical value indicating whether the allele frequences and sequencing
 #' error parameters are to estimated for each SNP.
+#' @param nClust Integer vector specifying the number of clusters to use in the foreach loop. Only used in the estimation of
+#' allele frequencies when \code{mafEst=TRUE}.
 #' @return An R6 object of class UR.
 #' @author Timothy P. Bilton
 #' @references
@@ -50,7 +52,7 @@
 
 
 #### Make an unrelated population
-makeUR <- function(RAobj, filter=list(MAF=0.05, MISS=0.5), ploid=2, mafEst=TRUE){
+makeUR <- function(RAobj, filter=list(MAF=0.05, MISS=0.5), ploid=2, mafEst=TRUE, nClust=3){
 
   ## Do some checks
   if(!all(class(RAobj) %in% c("RA","R6")))
@@ -63,6 +65,8 @@ makeUR <- function(RAobj, filter=list(MAF=0.05, MISS=0.5), ploid=2, mafEst=TRUE)
     stop("Proportion of missing data filter is invalid")
   if(!is.vector(ploid) || !is.numeric(ploid) || length(ploid) != 1 || round(ploid/2) != ploid/2)
     stop("Argument for ploid level is invalid.")
+  if(!is.numeric(nClust) || length(nClust) != 1 || nClust < 0 || round(nClust) != nClust)
+    stop("Argument for the number of cores for the parallelization is invalid")
   #if(is.null(filter$HWdis)) filter$HWdis <- c(-0.05, 1)
   #else if(!is.vector(filter$HWdis) || length(filter$HWdis) != 2 || !is.numeric(filter$HWdis) || filter$HWdis<0 || filter$HWdis >1)
   #  stop("Hardy Weinberg Equilibrium (HWE) filter is invalid")
@@ -84,7 +88,7 @@ makeUR <- function(RAobj, filter=list(MAF=0.05, MISS=0.5), ploid=2, mafEst=TRUE)
   genon <- URobj$.__enclos_env__$private$genon
   ## Calculate the MAF
   if(mafEst){
-    temp <- URobj$.__enclos_env__$private$p_est()
+    temp <- URobj$.__enclos_env__$private$p_est(nClust=nClust)
     pfreq <- unname(temp[1,])
     ep <- unname(temp[2,])
   }

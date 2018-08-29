@@ -66,9 +66,9 @@ SEXP pest_c(SEXP p, SEXP ep, SEXP v, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnps){
       sum = 0;
       sum_der1 = 0;
       sum_der2 = 0;
+      a = pref[ind + nInd_c*snp];
+      b = palt[ind + nInd_c*snp];
       for(x = 0; x < v_c+1; x++){
-        a = pref[ind + nInd_c*snp];
-        b = palt[ind + nInd_c*snp];
         temp_y = powl(pep[x], a) * powl(pepNeg[x], b);
         sum += temp_y * temp_x[x];
         sum_der1 += temp_y * temp_x[x] * (x - v_c*ptemp);
@@ -91,3 +91,85 @@ SEXP pest_c(SEXP p, SEXP ep, SEXP v, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnps){
   UNPROTECT(3);
   return out;
 }
+
+
+
+// estimate the genotype frequencies
+SEXP gest_c(SEXP geno, SEXP ep, SEXP v, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnps){
+
+  int ind, snp, x, nInd_c, nSnps_c, v_c, *pref, *palt, a, b;
+  double sum, temp_y, temp_v, ptemp, temp_ep, ep_c, *pgeno;
+  // Load R input variables into C
+  nInd_c = INTEGER(nInd)[0];
+  nSnps_c = INTEGER(nSnps)[0];
+  v_c = INTEGER(v)[0];
+  ep_c = REAL(ep)[0];
+  // Define the pointers to the other input R variables
+  pref = INTEGER(ref);
+  palt = INTEGER(alt);
+  pgeno = REAL(geno);
+  // Define the output variables
+  double score_c[(v_c-1)*nSnps_c+1], ll_c = 0;
+  for(snp = 0; snp < ((v_c-1)*nSnps_c+1); snp++){
+    score_c[snp] = 0;
+  }
+  double *pll, *pscore, temp_x[v_c+1];
+  SEXP out;
+  PROTECT(out = allocVector(VECSXP, 2));
+  SEXP ll;
+  PROTECT(ll = allocVector(REALSXP, 1));
+  SEXP score;
+  PROTECT(score = allocVector(REALSXP, (v_c-1)*nSnps_c+1));
+  pll = REAL(ll);
+  pscore = REAL(score);
+
+  // compute p_ep and 1-p_ep as these are unchanged for specific value of ep
+  double pep[v_c+1], pepNeg[v_c+1];
+  for(x = 0; x < v_c+1; x++){
+    pep[x] = x*(1-ep_c)/v_c + ((v_c-x)*ep_c)/v_c;
+    pepNeg[x] = 1 - pep[x];
+  }
+  temp_ep = ep_c*(1 - 2*ep_c);
+
+
+  double sum_der1[v_c-1], sum_der2 = 0;
+  // #pragma omp parallel for
+  for(snp = 0; snp < nSnps_c; snp++){
+    //gtemp = pgeno[snp];
+    //for(x = 0; x < v_c+1; x++){
+    //  temp_x[x] = binomial(x, v_c-x) * powl(ptemp, x) * powl(1-ptemp, v_c-x);
+    //}
+    for(ind = 0; ind < nInd_c; ind++){
+      sum = 0;
+      //compute ll
+      temp_v = powl(pep[v_c], a) * powl(pepNeg[v_c], b);
+      a = pref[ind + nInd_c*snp];
+      b = palt[ind + nInd_c*snp];
+      for(x = 0; x < v_c; x++){
+        temp_y = powl(pep[x], a) * powl(pepNeg[x], b);
+        sum += temp_y * pgeno[x + v_c*snp];
+        sum_der1[x] += (temp_y - temp_v) * pgeno[x + v_c*snp]*(1-pgeno[x + v_c*snp]);  // geno
+        sum_der2 += ((v_c - 2*x)* temp_ep)/v_c * der_ep(pep[x], a, b) * pgeno[x + v_c*snp]; // epsilon
+      }
+      sum += temp_v * pgeno[v_c + v_c*snp]; // contribution of ll at x=2_v
+      sum_der2 += (-1.0 * temp_ep)/v_c * der_ep(pep[v_c], a, b) * pgeno[v_c + v_c*snp]; // derivative of epsilon at x=2_v
+      // add contribution to likelihood
+      ll_c += log(sum);
+      // add contributions to score vector
+      for(x = 0; x < v_c; x++){
+        score_c[x + (v_c-1)*snp] += sum_der1[x]/sum;
+      }
+      //score_c[nSnps_c] += sum_der2;
+    }
+  }
+  score_c[(v_c-1)*nSnps_c] = sum_der2/ll_c;
+  pll[0] = ll_c;
+  for(snp = 0; snp < ((v_c-1)*nSnps_c+1); snp++){
+    pscore[snp] = score_c[snp];
+  }
+  SET_VECTOR_ELT(out, 0, ll);
+  SET_VECTOR_ELT(out, 1, score);
+  UNPROTECT(3);
+  return out;
+}
+
