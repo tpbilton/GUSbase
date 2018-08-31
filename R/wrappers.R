@@ -19,11 +19,17 @@
 
 
 ## likelihood and score function for the allele and error estimation assuming HWE
-ll_pest <- function(para, v=v, ref=ref, alt=alt, nInd=nInd, nSnps=nSnps){
+ll_pest <- function(para, v=v, ref=ref, alt=alt, nInd=nInd, nSnps=nSnps, seqErr=T, extra=0){
   p = inv.logit(para[1:nSnps])
-  ep = inv.logit2(para[nSnps+1])
+  if(seqErr)
+    ep = inv.logit2(para[nSnps+1])
+  else
+    ep = extra
   out <- .Call("pest_c", p=p, ep=ep, v=v, ref=ref, alt=alt, nInd=nInd, nSnps=nSnps)
-  assign(".score", -out[[2]], envir = parent.frame(3))
+  if(seqErr)
+    assign(".score", -out[[2]], envir = parent.frame(3))
+  else
+    assign(".score", -out[[2]][-(nSnps+1)], envir = parent.frame(3))
   return(-out[[1]])
 }
 
@@ -32,12 +38,18 @@ score_pest <- function(para, ...){
 }
 
 ## likelihood and score function for the allele and error estimation assuming HWE
-ll_gest <- function(para, v=v, ref=ref, alt=alt, nInd=nInd, nSnps=nSnps){
-  g = matrix(inv.logit(para[1:nSnps*(v-1)]), ncol=nSnps, nrow=v-1)
+ll_gest <- function(para, v=v, ref=ref, alt=alt, nInd=nInd, nSnps=nSnps, seqErr=T, extra=0){
+  g = matrix(inv.mlogit(para[1:(nSnps*v)], n=v), ncol=nSnps, nrow=v)
   g = rbind(g,1-colSums(g))
-  ep = inv.logit2(para[nSnps+1])
-  out <- .Call("pest_c", geno=g, ep=ep, v=v, ref=ref, alt=alt, nInd=nInd, nSnps=nSnps)
-  assign(".score", -out[[2]], envir = parent.frame(3))
+  if(seqErr)
+    ep = inv.logit2(para[nSnps*v+1])
+  else
+    ep = extra
+  out <- .Call("gest_c", geno=g, ep=ep, v=v, ref=ref, alt=alt, nInd=nInd, nSnps=nSnps)
+  if(seqErr)
+    assign(".score", -out[[2]], envir = parent.frame(3))
+  else
+    assign(".score", -out[[2]][-(nSnps*v+1)], envir = parent.frame(3))
   return(-out[[1]])
 }
 

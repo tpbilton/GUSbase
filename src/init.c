@@ -1,6 +1,6 @@
 /*
 ##########################################################################
-# Genotyping Uncertainty with Sequencing data (GUSbase)
+# Genotyping Uncertainty with Sequencing data - Base package (GUSbase)
 # Copyright 2017-2018 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -25,6 +25,7 @@
 
 static const R_CallMethodDef callMethods[] = {
   {"pest_c",                   (DL_FUNC) &pest_c,                   7},
+  {"gest_c",                   (DL_FUNC) &gest_c,                   7},
   {NULL,		                   NULL,	                              0}
 };
 
@@ -35,4 +36,5 @@ void R_init_GUSMap(DllInfo *info){
   R_useDynamicSymbols(info, TRUE);
 
   R_RegisterCCallable("GUSbase","pest_c",                     (DL_FUNC) &pest_c);
+  R_RegisterCCallable("GUSbase","gest_c",                     (DL_FUNC) &gest_c);
 }

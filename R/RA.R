@@ -67,7 +67,7 @@ RA <- R6Class("RA",
                   cat("Number of...\n")
                   cat("  Individuals:\t",private$nInd,"\n")
                   cat("  SNPs:\t\t",private$nSnps,"\n")
-                  cat("  Reads:\t\t",sum(temp),"\n")
+                  cat("  Reads:\t",sum(temp),"\n")
                 }
                 #### Diagonostic functions ####
                 ## Ratio of alleles for heterozygous genotype calls (observed vs expected)

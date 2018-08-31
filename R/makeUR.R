@@ -91,6 +91,7 @@ makeUR <- function(RAobj, filter=list(MAF=0.05, MISS=0.5), ploid=2, mafEst=TRUE,
     temp <- URobj$.__enclos_env__$private$p_est(nClust=nClust)
     pfreq <- unname(temp[1,])
     ep <- unname(temp[2,])
+    ll_HWE <- unname(temp[3,])
   }
   else{
     ratio <- URobj$.__enclos_env__$private$ref/(URobj$.__enclos_env__$private$ref+URobj$.__enclos_env__$private$alt)

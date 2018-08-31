@@ -57,6 +57,19 @@ inv.logit2 <- function(logit_p) {
   return(p)
 }
 
+mlogit <- function(x, n=length(x)){
+  xmat <- matrix(x, nrow=n-1)
+  x_ref <- matrix(1-colSums(xmat), nrow=n-1, ncol=ncol(xmat), byrow=T)
+  res <- log(xmat/x_ref)
+  res[which(is.na(res))] <- 0
+  return(res)
+}
+
+inv.mlogit <- function(y, n=length(y)){
+  ymat <- matrix(exp(y), nrow=n-1)
+  y_ref <- matrix(1+colSums(ymat), nrow=n-1, ncol=ncol(ymat), byrow=T)
+  return(ymat/y_ref)
+}
 
 
 # Alternatives

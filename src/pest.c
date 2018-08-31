@@ -1,3 +1,22 @@
+/*
+##########################################################################
+# Genotyping Uncertainty with Sequencing data - Base package (GUSbase)
+# Copyright 2017-2018 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#########################################################################
+ */
 
 #include <R.h>
 #include <Rinternals.h>
@@ -98,7 +117,7 @@ SEXP pest_c(SEXP p, SEXP ep, SEXP v, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnps){
 SEXP gest_c(SEXP geno, SEXP ep, SEXP v, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnps){
 
   int ind, snp, x, nInd_c, nSnps_c, v_c, *pref, *palt, a, b;
-  double sum, temp_y, temp_v, ptemp, temp_ep, ep_c, *pgeno;
+  double sum, temp_y, temp_v, temp_ep, ep_c, *pgeno;
   // Load R input variables into C
   nInd_c = INTEGER(nInd)[0];
   nSnps_c = INTEGER(nSnps)[0];
@@ -109,17 +128,17 @@ SEXP gest_c(SEXP geno, SEXP ep, SEXP v, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnp
   palt = INTEGER(alt);
   pgeno = REAL(geno);
   // Define the output variables
-  double score_c[(v_c-1)*nSnps_c+1], ll_c = 0;
-  for(snp = 0; snp < ((v_c-1)*nSnps_c+1); snp++){
+  double score_c[v_c*nSnps_c+1], ll_c = 0;
+  for(snp = 0; snp < (v_c*nSnps_c+1); snp++){
     score_c[snp] = 0;
   }
-  double *pll, *pscore, temp_x[v_c+1];
+  double *pll, *pscore;
   SEXP out;
   PROTECT(out = allocVector(VECSXP, 2));
   SEXP ll;
   PROTECT(ll = allocVector(REALSXP, 1));
   SEXP score;
-  PROTECT(score = allocVector(REALSXP, (v_c-1)*nSnps_c+1));
+  PROTECT(score = allocVector(REALSXP, v_c*nSnps_c+1));
   pll = REAL(ll);
   pscore = REAL(score);
 
@@ -132,7 +151,7 @@ SEXP gest_c(SEXP geno, SEXP ep, SEXP v, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnp
   temp_ep = ep_c*(1 - 2*ep_c);
 
 
-  double sum_der1[v_c-1], sum_der2 = 0;
+  double sum_der1[v_c], sum_der2 = 0;
   // #pragma omp parallel for
   for(snp = 0; snp < nSnps_c; snp++){
     //gtemp = pgeno[snp];
@@ -142,9 +161,9 @@ SEXP gest_c(SEXP geno, SEXP ep, SEXP v, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnp
     for(ind = 0; ind < nInd_c; ind++){
       sum = 0;
       //compute ll
-      temp_v = powl(pep[v_c], a) * powl(pepNeg[v_c], b);
       a = pref[ind + nInd_c*snp];
       b = palt[ind + nInd_c*snp];
+      temp_v = powl(pep[v_c], a) * powl(pepNeg[v_c], b);
       for(x = 0; x < v_c; x++){
         temp_y = powl(pep[x], a) * powl(pepNeg[x], b);
         sum += temp_y * pgeno[x + v_c*snp];
@@ -157,14 +176,14 @@ SEXP gest_c(SEXP geno, SEXP ep, SEXP v, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnp
       ll_c += log(sum);
       // add contributions to score vector
       for(x = 0; x < v_c; x++){
-        score_c[x + (v_c-1)*snp] += sum_der1[x]/sum;
+        score_c[x + v_c*snp] += sum_der1[x]/sum;
       }
       //score_c[nSnps_c] += sum_der2;
     }
   }
-  score_c[(v_c-1)*nSnps_c] = sum_der2/ll_c;
+  score_c[v_c*nSnps_c] = sum_der2/ll_c;
   pll[0] = ll_c;
-  for(snp = 0; snp < ((v_c-1)*nSnps_c+1); snp++){
+  for(snp = 0; snp < (v_c*nSnps_c+1); snp++){
     pscore[snp] = score_c[snp];
   }
   SET_VECTOR_ELT(out, 0, ll);
