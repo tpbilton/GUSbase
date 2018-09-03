@@ -60,8 +60,8 @@
 #' @author Timothy P. Bilton. Adapted from a Python script written by Rudiger Brauning and Rachael Ashby.
 #' @seealso \code{\link{readRA}}
 #' @examples
-#' MKfile <- GUSMap::Manuka11()
-#' RAfile <- VCFtoRA(MKfile$vcf)
+#' file <- simDS()
+#' RAfile <- VCFtoRA(file$vcf)
 #' @export VCFtoRA
 
 VCFtoRA <- function(infilename, direct="./", makePed=F){

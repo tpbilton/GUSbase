@@ -18,7 +18,7 @@
 
 #' Read an Reference/Alternate (RA) file.
 #'
-#' Function which processes an RA file into RA object.
+#' Function which processes an RA file into an RA object.
 #'
 #' RA format is a tab-delimited with columns, CHROM, POS, SAMPLES
 #' where SAMPLES consists of sampleIDs, which typically consist of a colon-delimited sampleID, flowcellID, lane, seqlibID.
@@ -32,8 +32,8 @@
 #'
 #' @param RAfile Character string giving the path to the RA file to be read into R. Typically the required string is
 #' returned from the VCFtoRA function when the VCF file is converted to RA format.
-#' @param gform Character string specifying whether the SNPs in the RA data have been called using Uneak (\code{gform="uneak"})
-#' or using an reference based assembly (\code{gform="reference"}).
+# #' @param gform Character string specifying whether the SNPs in the RA data have been called using Uneak (\code{gform="uneak"})
+# #' or using an reference based assembly (\code{gform="reference"}).
 #' @param sampthres A numeric value giving the filtering threshold for which individual samples are removed. Default is 0.01
 #' which means that samples with an average number of reads per SNP that is less than 0.01 are removed.
 #' @param excsamp A character vector of the sample IDs that are to be excluded (or discarded). Note that the sample IDs must correspond
@@ -41,17 +41,19 @@
 #' @return An R6 object of class RA.
 #' @author Timothy P. Bilton
 #' @examples
-#' MKfile <- Manuka11()
-#' RAfile <- VCFtoRA(MKfile$vcf)
-#' MKdata <- readRA(RAfile)
+#' file <- simDS()
+#' RAfile <- VCFtoRA(file$vcf)
+#' simdata <- readRA(RAfile)
 #' @export
 #### Function for reading in RA data and converting to genon and depth matrices.
-readRA <- function(genofile, gform, sampthres = 0.01, excsamp = NULL){
+readRA <- function(genofile, sampthres = 0.01, excsamp = NULL, ...){
 
   if(!is.character(genofile) || !is.vector(genofile) || length(genofile) != 1)
     stop("File name of RA data set is not a string of length one")
   if(!is.character(gform) || length(gform) != 1 || !(gform %in% c("reference","uneak")))
     stop("gform argument must be either 'reference' or 'uneak'")
+  if(missing(gform))
+    gform = "reference"
 
   ## separate character between reference and alternate allele count
   gsep <- switch(gform, uneak = "|", reference = ",")
