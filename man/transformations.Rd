@@ -6,7 +6,7 @@
 \alias{inv.logit}
 \alias{logit2}
 \alias{inv.logit2}
-\title{Transformation functions.}
+\title{Transformation functions}
 \usage{
 logit(p)
 

@@ -4,8 +4,8 @@
 \alias{makeUR}
 \title{Make an unrelated (UR) population}
 \usage{
-makeUR(RAobj, filter = list(MAF = 0.05, MISS = 0.5), ploid = 1,
-  mafEst = TRUE)
+makeUR(RAobj, filter = list(MAF = 0.05, MISS = 0.5), ploid = 2,
+  mafEst = TRUE, nClust = 3)
 }
 \arguments{
 \item{RAobj}{Object of class RA created via the \code{\link{readRA}} function.}
@@ -17,6 +17,9 @@ See below for details.}
 
 \item{mafEst}{Logical value indicating whether the allele frequences and sequencing
 error parameters are to estimated for each SNP.}
+
+\item{nClust}{Integer vector specifying the number of clusters to use in the foreach loop. Only used in the estimation of
+allele frequencies when \code{mafEst=TRUE}.}
 }
 \value{
 An R6 object of class UR.
@@ -36,8 +39,8 @@ the sequencing error rate is assumed to zero.
 
 The filtering criteria currently implemented are
 \itemize{
-\item{Minor allele frequency (MAF)}{SNPs are removed if their MAF is less than the threshold (default is 0.05)}
-\item{Proportion of missing data (MISS)}{SNPs are discarded if the proportion of individuals with no reads (e.g. missing genotype) is greater than the threshold value (default is 0.5)}
+\item{Minor allele frequency (MAF): }{SNPs are discarded if their MAF is less than the threshold (default is 0.05)}
+\item{Proportion of missing data (MISS): }{SNPs are discarded if the proportion of individuals with no reads (e.g. missing genotype) is greater than the threshold value (default is 0.5)}
 }
 }
 

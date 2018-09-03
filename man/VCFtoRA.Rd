@@ -54,8 +54,8 @@ given must be the same for all the progeny.
 }
 }
 \examples{
-MKfile <- GUSMap::Manuka11()
-RAfile <- VCFtoRA(MKfile$vcf)
+file <- simDS()
+RAfile <- VCFtoRA(file$vcf)
 }
 \seealso{
 \code{\link{readRA}}

@@ -4,12 +4,9 @@
 \alias{readRA}
 \title{Read an Reference/Alternate (RA) file.}
 \usage{
-readRA(genofile, gform, sampthres = 0.01, excsamp = NULL)
+readRA(genofile, sampthres = 0.01, excsamp = NULL, ...)
 }
 \arguments{
-\item{gform}{Character string specifying whether the SNPs in the RA data have been called using Uneak (\code{gform="uneak"})
-or using an reference based assembly (\code{gform="reference"}).}
-
 \item{sampthres}{A numeric value giving the filtering threshold for which individual samples are removed. Default is 0.01
 which means that samples with an average number of reads per SNP that is less than 0.01 are removed.}
 
@@ -23,7 +20,7 @@ returned from the VCFtoRA function when the VCF file is converted to RA format.}
 An R6 object of class RA.
 }
 \description{
-Function which processes an RA file into RA object.
+Function which processes an RA file into an RA object.
 }
 \details{
 RA format is a tab-delimited with columns, CHROM, POS, SAMPLES
@@ -37,9 +34,9 @@ CHROM \tab  POS  \tab   999220:C4TWKACXX:7:56 \tab  999204:C4TWKACXX:7:56 \cr
 }
 }
 \examples{
-MKfile <- Manuka11()
-RAfile <- VCFtoRA(MKfile$vcf)
-MKdata <- readRA(RAfile)
+file <- simDS()
+RAfile <- VCFtoRA(file$vcf)
+simdata <- readRA(RAfile)
 }
 \author{
 Timothy P. Bilton

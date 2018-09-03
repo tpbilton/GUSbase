@@ -50,8 +50,8 @@ readRA <- function(genofile, sampthres = 0.01, excsamp = NULL, ...){
 
   if(!is.character(genofile) || !is.vector(genofile) || length(genofile) != 1)
     stop("File name of RA data set is not a string of length one")
-  if(!is.character(gform) || length(gform) != 1 || !(gform %in% c("reference","uneak")))
-    stop("gform argument must be either 'reference' or 'uneak'")
+  #if(!is.character(gform) || length(gform) != 1 || !(gform %in% c("reference","uneak")))
+  #  stop("gform argument must be either 'reference' or 'uneak'")
   if(missing(gform))
     gform = "reference"
 
