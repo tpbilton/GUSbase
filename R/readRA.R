@@ -46,24 +46,24 @@
 #' simdata <- readRA(RAfile)
 #' @export
 #### Function for reading in RA data and converting to genon and depth matrices.
-readRA <- function(genofile, sampthres = 0.01, excsamp = NULL, ...){
+readRA <- function(rafile, sampthres = 0.01, excsamp = NULL, ...){
 
-  if(!is.character(genofile) || !is.vector(genofile) || length(genofile) != 1)
+  if(!is.character(rafile) || !is.vector(rafile) || length(rafile) != 1)
     stop("File name of RA data set is not a string of length one")
-  #if(!is.character(gform) || length(gform) != 1 || !(gform %in% c("reference","uneak")))
-  #  stop("gform argument must be either 'reference' or 'uneak'")
-  if(missing(gform))
+  if(!exists("gform"))
     gform = "reference"
+  if(!is.character(gform) || length(gform) != 1 || !(gform %in% c("reference","uneak")))
+    stop("gform argument must be either 'reference' or 'uneak'")
 
   ## separate character between reference and alternate allele count
   gsep <- switch(gform, uneak = "|", reference = ",")
   ## Process the individuals info
-  ghead <- scan(genofile, what = "", nlines = 1, sep = "\t")
+  ghead <- scan(rafile, what = "", nlines = 1, sep = "\t")
 
   ## Read in the data
   # If reference based
   if (gform == "reference"){
-    genosin <- scan(genofile, skip = 1, sep = "\t", what = c(list(chrom = "", coord = 0), rep(list(""), length(ghead) - 2)))
+    genosin <- scan(rafile, skip = 1, sep = "\t", what = c(list(chrom = "", coord = 0), rep(list(""), length(ghead) - 2)))
     chrom <- genosin[[1]]
     pos <- genosin[[2]]
     SNP_Names <- paste(genosin[[1]],genosin[[2]],sep="_")
@@ -71,7 +71,7 @@ readRA <- function(genofile, sampthres = 0.01, excsamp = NULL, ...){
     AFrq <- NULL
   }
   else if (gform == "uneak"){
-    genosin <- scan(genofile, skip = 1, sep = "\t", what = c(list(chrom = ""), rep(list(""), length(ghead) - 6), list(hetc1 = 0, hetc2 = 0, acount1 = 0, acount2 = 0, p = 0)))
+    genosin <- scan(rafile, skip = 1, sep = "\t", what = c(list(chrom = ""), rep(list(""), length(ghead) - 6), list(hetc1 = 0, hetc2 = 0, acount1 = 0, acount2 = 0, p = 0)))
     SNP_Names <- genosin[[1]]
     indID <- ghead[2:(length(ghead)-5)]
     AFrq <- genosin[[length(genosin)]]
@@ -117,7 +117,7 @@ readRA <- function(genofile, sampthres = 0.01, excsamp = NULL, ...){
   obj <- RA$new(
     list(genon = genon, ref = ref, alt = alt, chrom = chrom, pos = pos,
          SNP_Names = SNP_Names, indID = indID, nSnps = as.integer(nSnps), nInd = as.integer(nInd),
-         gform = gform, AFrq = AFrq, infilename = genofile)
+         gform = gform, AFrq = AFrq, infilename = rafile)
   )
 
   return(obj)

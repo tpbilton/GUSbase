@@ -99,7 +99,7 @@ VCFtoRA <- function(infilename, direct="./", makePed=F){
   headerlist = c(headerlist, line[10:length(line)])
   ## Write the header to the RA file
   newLines <- list(paste(headerlist, collapse="\t"))
-  cat("Found",length(headerlist),"samples\n")
+  cat("Found",length(headerlist)-2,"samples\n")
 
   ## Now write the SNPs
   for(i in (start+1):length(Lines)){
@@ -164,8 +164,8 @@ VCFtoRA <- function(infilename, direct="./", makePed=F){
   close(con)
   ## output the information
   cat(length(Lines)-start,"SNPs written\n\n")
-  cat("Name of RA file:    ",outfilename,"\n")
-  cat("Location of RA file: ",outpath,"/\n\n",sep="")
+  cat("Name of RA file:     \t\t",outfilename,"\n")
+  cat("Location of RA file: \t\t",outpath,"/\n\n",sep="")
   ## Initialize the pedigree file
   if(makePed){
     pedfile <- paste0(strsplit(paste0(tail(strsplit(infilename,split=.Platform$file.sep)[[1]],1)),split="\\.")[[1]][1],"_ped.csv")
