@@ -23,17 +23,19 @@
 #' ## Create RA object
 #' RAobj <- readRA(genofile, gform, sampthres = 0.01, excsamp = NULL)
 #'
-# #' ## RA Functions (Methods)
+#' ## RA Functions (Methods)
 # #' RAobj$cometPlot()
+#' RAobj$extractVar(nameList)
 #'
 #' @section Details:
 #' An RA object is returned from the \code{\link{readRA}} function and contains the RA data, various
 #' statistics of the dataset that have been computed, and functions (or methods) for analyzing the data.
 #'
-# #' @section Functions(Methods):
-# #' \describe{
+#' @section Functions(Methods):
+#' \describe{
 # #'   \item{\code{\link{$cometPlot}}}{Function for create a comet plot}
-# #' }
+#'     \item{\code{\link{$extractVar}}}{Extract variables stored in an RA object}
+#' }
 #' @format NULL
 #' @author Timothy P. Bilton
 #' @seealso \code{\link{readRA}}
@@ -68,6 +70,15 @@ RA <- R6Class("RA",
                   cat("  Individuals:\t",private$nInd,"\n")
                   cat("  SNPs:\t\t",private$nSnps,"\n")
                   cat("  Reads:\t",sum(temp),"\n")
+                },
+                extractVar = function(nameList){
+                  if(!is.character(nameList) || !is.vector(nameList) || any(is.na(nameList)))
+                    res <- NULL
+                  for(name in nameList){
+                    res <- c(res,list(private[[name]]))
+                  }
+                  names(res) <- nameList
+                  return(res)
                 }
                 #### Diagonostic functions ####
                 ## Ratio of alleles for heterozygous genotype calls (observed vs expected)
