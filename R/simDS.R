@@ -17,9 +17,9 @@
 #########################################################################
 #' Simulated dataset and pedigree file
 #'
-#' Function for extracting the path to the (VCF) file of a simulated dataset and pedigree file.
+#' Function for extracting the path to the Variant Call Format (VCF) file of a simulated dataset and associated pedigree file.
 #'
-#' The data consists of a simulated F1 family of 100 progeny, 1000 SNPs and three chromosomes. The data is in VCF format (see this \href{https://samtools.github.io/hts-specs/VCFv4.2.pdf}{page}
+#' The data set consists of a simulated F1 family of 100 progeny, 1000 SNPs and three chromosomes. The data is in VCF format (see this \href{https://samtools.github.io/hts-specs/VCFv4.2.pdf}{page}
 #' for specification of VCF format). The pedigree file contains five columns, namely
 #' \itemize{
 #' \item SampleID: A unique character string of the sample ID. These correspond to those found in the VCF file

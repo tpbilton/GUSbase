@@ -16,7 +16,7 @@ VCFtoRA(infilename, direct = "./", makePed = F)
 \value{
 A string of the complete file path and name of the RA file created from the function.
 In addition to creating a RA file, a pedigree file is also initialized in the same folder as the RA file if
-specified and the named pedigree does not already exist.
+specified and the pedigree does not already exist.
 }
 \description{
 Function for converting a VCF file into RA format.

@@ -25,31 +25,38 @@
 #' where \eqn{P(G)} are genotype probabilities under Hardy Weinberg Equilibrium (HWE) and \eqn{P(Y=a|G)} are the probilities given in Equation (5) of
 #' \insertCite{bilton2018genetics2;textual}{GUSbase}. Otherwise, the allele
 #' frequencies are taken as the mean of the allele ratio (defined as the number of reference reads divided by the total number of reads) and
-#' the sequencing error rate is assumed to zero.
+#' the sequencing error rate is assumed to be zero.
 #'
-#' @section Filtering:
 #' The filtering criteria currently implemented are
 #' \itemize{
 #' \item{Minor allele frequency (MAF): }{SNPs are discarded if their MAF is less than the threshold (default is 0.05)}
 #' \item{Proportion of missing data (MISS): }{SNPs are discarded if the proportion of individuals with no reads (e.g. missing genotype) is greater than the threshold value (default is 0.5)}
 #' }
 #'
+#' Estimation of the allele frequencies when \code{mafEst=TRUE} is parallelized using the \code{\link[foreach]{foreach}} function, where the
+#' number of cores to use in the parallelization is specified by the argument \code{nClust}. Note: Do not
+#' set the number of cores to be more than what is available on your computer (or bad things will happen!).
+#'
 #' @param RAobj Object of class RA created via the \code{\link{readRA}} function.
 #' @param filter Named list of of thresholds for various criteria of fitering SNPs.
 #' See below for details.
-#' @param ploid An integer number specifying two times the ploidy level of the population.
+#' @param ploid An integer number specifying the ploidy level of the population.
 #' @param mafEst Logical value indicating whether the allele frequences and sequencing
-#' error parameters are to estimated for each SNP.
+#' error parameters are to estimated for each SNP (see details).
 #' @param nClust Integer vector specifying the number of clusters to use in the foreach loop. Only used in the estimation of
 #' allele frequencies when \code{mafEst=TRUE}.
 #' @return An R6 object of class UR.
 #' @author Timothy P. Bilton
 #' @references
 #' \insertRef{bilton2018genetics2}{GUSbase}
-#' @export
-
-
-
+#' @export makeUR
+#' @examples
+#' file <- simDS()
+#' RAfile <- VCFtoRA(file$vcf)
+#' simdata <- readRA(RAfile)
+#'
+#' ## make unrelated population
+#' urpop <- makeUR(simdata)
 
 #### Make an unrelated population
 makeUR <- function(RAobj, filter=list(MAF=0.05, MISS=0.5), ploid=2, mafEst=TRUE, nClust=3){

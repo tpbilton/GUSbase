@@ -4,7 +4,7 @@
 \alias{readRA}
 \title{Read an Reference/Alternate (RA) file.}
 \usage{
-readRA(genofile, sampthres = 0.01, excsamp = NULL, ...)
+readRA(rafile, sampthres = 0.01, excsamp = NULL, ...)
 }
 \arguments{
 \item{sampthres}{A numeric value giving the filtering threshold for which individual samples are removed. Default is 0.01

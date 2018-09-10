@@ -56,7 +56,7 @@
 #' @param makePed A logical value. If TRUE, a pedigree file is initialized.
 #' @return A string of the complete file path and name of the RA file created from the function.
 #' In addition to creating a RA file, a pedigree file is also initialized in the same folder as the RA file if
-#' specified and the named pedigree does not already exist.
+#' specified and the pedigree does not already exist.
 #' @author Timothy P. Bilton. Adapted from a Python script written by Rudiger Brauning and Rachael Ashby.
 #' @seealso \code{\link{readRA}}
 #' @examples

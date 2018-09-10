@@ -17,11 +17,12 @@
 #########################################################################
 #' RA Object
 #'
-#' Class for storing reference/alternative (RA) data and methods for performing exporartory data analysis.
+#' Class for storing reference/alternative (RA) data and methods for performing exporartory data analysis
+#' on sequencing data.
 #'
 #' @usage
 #' ## Create RA object
-#' RAobj <- readRA(genofile, gform, sampthres = 0.01, excsamp = NULL)
+#' RAobj <- readRA(rafile, sampthres = 0.01, excsamp = NULL)
 #'
 #' ## RA Functions (Methods)
 # #' RAobj$cometPlot()
@@ -31,7 +32,9 @@
 #' An RA object is returned from the \code{\link{readRA}} function and contains the RA data, various
 #' statistics of the dataset that have been computed, and functions (or methods) for analyzing the data.
 #'
-#' @section Functions(Methods):
+#' @section Methods (Functions):
+#'
+#' A list of the methods that are available to an RA object:
 #' \describe{
 # #'   \item{\code{\link{$cometPlot}}}{Function for create a comet plot}
 #'     \item{\code{\link{$extractVar}}}{Extract variables stored in an RA object}
