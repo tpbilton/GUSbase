@@ -5,7 +5,7 @@ Version: 0.1.0
 Authors@R: person("Timothy P.", "Bilton", email = "tbilton@maths.otago.ac.nz", role = c("aut", "cre"))
 Description: Package for analyzing high-throughput sequencing via reference and alternate count information.
 Depends: R (>= 3.1.0), foreach, doSNOW, data.table
-Imports: R6, Rdpack (>= 0.8-0)
+Imports: R6, Rdpack
 RdMacros: Rdpack
 License: GPL-3
 Encoding: UTF-8
