@@ -59,7 +59,7 @@
 #' urpop <- makeUR(simdata)
 
 #### Make an unrelated population
-makeUR <- function(RAobj, filter=list(MAF=0.05, MISS=0.5), ploid=2, mafEst=TRUE, nClust=3){
+makeUR <- function(RAobj, filter=list(MAF=0.05, MISS=0.5), ploid=2, mafEst=TRUE, nClust=3, err=TRUE){
 
   ## Do some checks
   if(!all(class(RAobj) %in% c("RA","R6")))
@@ -95,10 +95,13 @@ makeUR <- function(RAobj, filter=list(MAF=0.05, MISS=0.5), ploid=2, mafEst=TRUE,
   genon <- URobj$.__enclos_env__$private$genon
   ## Calculate the MAF
   if(mafEst){
-    temp <- URobj$.__enclos_env__$private$p_est(nClust=nClust)
+    temp <- URobj$.__enclos_env__$private$p_est(nClust=nClust, err=err, para=list(ep=0))
     pfreq <- unname(temp[1,])
     ep <- unname(temp[2,])
     ll_HWE <- unname(temp[3,])
+    temp <- URobj$.__enclos_env__$private$g_est(nClust=nClust, err=err, para=list(ep=0))
+    ll_gest <- temp[ploid+2,]
+    hwe_pvalue <- 1-pchisq(-2*(ll_HWE - ll_gest), df=ploid-1)
   }
   else{
     ratio <- URobj$.__enclos_env__$private$ref/(URobj$.__enclos_env__$private$ref+URobj$.__enclos_env__$private$alt)

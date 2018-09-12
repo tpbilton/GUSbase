@@ -105,26 +105,33 @@ UR <- R6Class("UR",
                     stop("Argument for the number of cores for the parallelization is invalid")
                   ## inital value
                   if(!is.null(para)){
-                    if(!is.list(para) || length(para) != 2)
+                    if(!is.list(para))
                       stop("Starting values for the parameters are invalid")
                     if(is.null(para$p)) {
                         pinit <- colMeans(ratio, na.rm=T)
                         pinit[which(pinit > 0.99)] <- 0.99
                         pinit[which(pinit < 0.01)] <- 0.01
                     }
-                    else if(!vector(para$p) || !is.numeric(para$p) || length(para$p) != length(snpsubset) || any(para$p < 0.01) || any(para$p > 0.99) )
+                    else if(!is.vector(para$p) || !is.numeric(para$p) || length(para$p) != length(snpsubset) || any(para$p < 0.01) || any(para$p > 0.99) )
                       stop("Starting values for the allele frequency parameters are invalid")
                     else pinit <- para$p
+                    ## check error parameters
                     if(is.null(para$ep)) epinit <- rep(0.01, nSnps)
-                    else if(!vector(para$ep) || !is.numeric(para$ep) || length(para$ep) != length(snpsubset) || any(para$ep <= 0) || any(para$ep >= 0.5) )
+                    else if(!is.vector(para$ep) || !is.numeric(para$ep) || any(para$ep < 0) || any(para$ep >= 0.5) )
                       stop("Starting value for the error parameter parameter is invalid")
-                    else epinit <- para$ep
+                    else{
+                      if(length(para$ep) == 1)
+                        epinit <- rep(para$ep, length(snpsubset))
+                      else if(length(para$ep) != length(snpsubset))
+                        stop("The number of error parameters does not equal the number of SNPs")
+                      else epinit <- para$ep
+                    }
                   }
                   else{
                     pinit <- colMeans(ratio, na.rm=T)
                     pinit[which(pinit > 0.99)] <- 0.99
                     pinit[which(pinit < 0.01)] <- 0.01
-                    epinit <- rep(0.01, nSnps)
+                    epinit <- rep(ifelse(err,0.01,0), nSnps)
                   }
                   ## perform the estimation
 
@@ -180,18 +187,24 @@ UR <- R6Class("UR",
                     if(is.null(para$g)) {
                       ginit <- rep(1/(ploid+1),ploid)
                     }
-                    else if(!vector(para$g) || !is.numeric(para$g) || length(para$g) != length(snpsubset) ||
+                    else if(!is.vector(para$g) || !is.numeric(para$g) || length(para$g) != length(snpsubset) ||
                             any(para$g < 0.01) || any(para$g > 0.99) || sum(para$g) >= 1)
                       stop("Starting values for the genotype frequency parameters are invalid")
                     else ginit <- para$g
                     if(is.null(para$ep)) epinit <- rep(0.01, nSnps)
-                    else if(!vector(para$ep) || !is.numeric(para$ep) || length(para$ep) != length(snpsubset) || any(para$ep <= 0) || any(para$ep >= 0.5) )
+                    else if(!is.vector(para$ep) || !is.numeric(para$ep) ||any(para$ep < 0) || any(para$ep >= 0.5) )
                       stop("Starting value for the error parameter parameter is invalid")
-                    else epinit <- para$ep
+                    else{
+                      if(length(para$ep) == 1)
+                        epinit <- rep(para$ep, length(snpsubset))
+                      else if(length(para$ep) != length(snpsubset))
+                        stop("The number of error parameters does not equal the number of SNPs")
+                      else epinit <- para$ep
+                    }
                   }
                   else{
                     ginit <- rep(1/(ploid+1),ploid)
-                    epinit <- rep(0.01, nSnps)
+                    epinit <- rep(ifelse(err,0.01,0), nSnps)
                   }
                   ## perform the estimation
 
@@ -201,14 +214,14 @@ UR <- R6Class("UR",
                   if(multerr){
                     if(err){
                       res <- foreach(snp = iter(snpsubset), .combine="cbind") %dopar% {
-                        MLE <- optim(par = c(mlogit(ginit), logit2(epinit[snp])), fn=ll_gest, gr=score_pest, method="BFGS",
+                        MLE <- optim(par = c(mlogit(ginit), logit2(epinit[snp])), fn=ll_gest, method="BFGS",
                                      v=ploid, ref=ref[,snp], alt=alt[,snp], nInd=nInd, nSnps=as.integer(1))
                         return(c(inv.mlogit(MLE$par[1:ploid], 2), inv.logit2(MLE$par[ploid]), -MLE$value))
                       }
                     }
                     else{
                       res <- foreach(snp = iter(snpsubset), .combine="cbind") %dopar% {
-                        MLE <- optim(par = c(mlogit(ginit)), fn=ll_gest, gr=score_pest, method="BFGS",
+                        MLE <- optim(par = c(mlogit(ginit)), fn=ll_gest, method="BFGS",
                                      v=ploid, ref=ref[,snp], alt=alt[,snp], nInd=nInd, nSnps=as.integer(1),
                                      seqErr=F, extra=epinit[snp])
                         return(c(inv.mlogit(MLE$par[1:ploid], 2), epinit[snp], -MLE$value))
