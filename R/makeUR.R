@@ -38,9 +38,10 @@
 #' set the number of cores to be more than what is available on your computer (or bad things will happen!).
 #'
 #' @param RAobj Object of class RA created via the \code{\link{readRA}} function.
-#' @param filter Named list of of thresholds for various criteria of fitering SNPs.
+#' @param filter Named list of thresholds for various criteria used to fiter SNPs.
 #' See below for details.
-#' @param ploid An integer number specifying the ploidy level of the population.
+#' @param ploid An integer number specifying the ploidy level of the population. Currently, only
+#' even ploidy levels are valid.
 #' @param mafEst Logical value indicating whether the allele frequences and sequencing
 #' error parameters are to estimated for each SNP (see details).
 #' @param nClust Integer vector specifying the number of clusters to use in the foreach loop. Only used in the estimation of
@@ -59,7 +60,7 @@
 #' urpop <- makeUR(simdata)
 
 #### Make an unrelated population
-makeUR <- function(RAobj, filter=list(MAF=0.05, MISS=0.5), ploid=2, mafEst=TRUE, nClust=3, err=TRUE){
+makeUR <- function(RAobj, filter=list(MAF=0.05, MISS=0.5), ploid=2, mafEst=TRUE, nClust=3){
 
   ## Do some checks
   if(!all(class(RAobj) %in% c("RA","R6")))
@@ -95,13 +96,13 @@ makeUR <- function(RAobj, filter=list(MAF=0.05, MISS=0.5), ploid=2, mafEst=TRUE,
   genon <- URobj$.__enclos_env__$private$genon
   ## Calculate the MAF
   if(mafEst){
-    temp <- URobj$.__enclos_env__$private$p_est(nClust=nClust, err=err, para=list(ep=0))
+    temp <- URobj$.__enclos_env__$private$p_est(nClust=nClust)
     pfreq <- unname(temp[1,])
     ep <- unname(temp[2,])
-    ll_HWE <- unname(temp[3,])
-    temp <- URobj$.__enclos_env__$private$g_est(nClust=nClust, err=err, para=list(ep=0))
-    ll_gest <- temp[ploid+2,]
-    hwe_pvalue <- 1-pchisq(-2*(ll_HWE - ll_gest), df=ploid-1)
+    #ll_HWE <- unname(temp[3,])
+    #temp <- URobj$.__enclos_env__$private$g_est(nClust=nClust, err=err, para=list(ep=0))
+    #ll_gest <- temp[ploid+2,]
+    #hwe_pvalue <- 1-pchisq(-2*(ll_HWE - ll_gest), df=ploid-1)
   }
   else{
     ratio <- URobj$.__enclos_env__$private$ref/(URobj$.__enclos_env__$private$ref+URobj$.__enclos_env__$private$alt)

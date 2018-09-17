@@ -25,7 +25,7 @@
 
 static const R_CallMethodDef callMethods[] = {
   {"pest_c",                   (DL_FUNC) &pest_c,                   7},
-  {"gest_c",                   (DL_FUNC) &gest_c,                   7},
+//  {"gest_c",                   (DL_FUNC) &gest_c,                   7},
   {NULL,		                   NULL,	                              0}
 };
 
@@ -36,5 +36,5 @@ void R_init_GUSMap(DllInfo *info){
   R_useDynamicSymbols(info, TRUE);
 
   R_RegisterCCallable("GUSbase","pest_c",                     (DL_FUNC) &pest_c);
-  R_RegisterCCallable("GUSbase","gest_c",                     (DL_FUNC) &gest_c);
+//  R_RegisterCCallable("GUSbase","gest_c",                     (DL_FUNC) &gest_c);
 }

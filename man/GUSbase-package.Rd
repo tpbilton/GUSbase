@@ -6,16 +6,16 @@
 \alias{GUSbase}
 \title{Genotyping Uncertainty with Sequencing data - Base package}
 \description{
-GUSbase is a package for analyzing high-throughput sequencing via reference and alternate count information.
-It forms the base to a number of other packages that analyze high-throughput sequencing:
+GUSbase is a package for analyzing high-throughput sequencing data via reference and alternate count information.
+It forms the base to a number of other packages with specialised methods for analyzing high-throughput sequencing data:
 \itemize{
-\item{GUSMap}
-\item{GUSLD}
+\item{GUSMap: Genotyping Uncertainty with Sequencing data and linkage MAPping}
+\item{GUSLD: Genotyping Uncertainty with Sequencing data - Linkage Disequilibrium}
 }
 }
 \details{
 \tabular{ll}{ Package: \tab GUSbase\cr Type: \tab Package\cr Version: \tab
-0.1.0\cr Date: \tab 2018-09-10\cr License: \tab GPL 3\cr }
+0.1.0\cr Date: \tab 2018-09-17\cr License: \tab GPL 3\cr }
 }
 \author{
 Timothy P. Bilton, Maintainer: Timothy P. Bilton

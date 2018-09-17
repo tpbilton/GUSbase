@@ -18,7 +18,7 @@
 
 #' UR object
 #'
-#' Class for storing RA data and associated functions for analyzing of unrelated populations.
+#' Class for storing RA data and associated functions for analysis of unrelated populations.
 #'
 #' An UR object is created from the \code{\link{makeUR}} function and contains RA data,
 #' various statistics of the dataset that have been computed, and functions (or methods)
@@ -146,7 +146,12 @@ UR <- R6Class("UR",
                         #parscale[which(abs(inv.logit(para[-(nSnps+1)]) - 0.5) < 0.0001)] <- 0.0001
                         MLE <- optim(par = c(logit(pinit[snp]), logit2(epinit[snp])), fn=ll_pest, gr=score_pest, method="BFGS",
                                      v=ploid, ref=ref[,snp], alt=alt[,snp], nInd=nInd, nSnps=as.integer(1))
-                        return(c(inv.logit(MLE$par[1]), inv.logit2(MLE$par[2]), -MLE$value))
+                        MLE2 <- optim(par = c(logit(pinit[snp]), logit2(0.2)), fn=ll_pest, gr=score_pest, method="BFGS",
+                                      v=ploid, ref=ref[,snp], alt=alt[,snp], nInd=nInd, nSnps=as.integer(1))
+                        if(MLE$value < MLE2$value)
+                          return(c(inv.logit(MLE$par[1]), inv.logit2(MLE$par[2]), -MLE$value))
+                        else
+                          return(c(inv.logit(MLE2$par[1]), inv.logit2(MLE2$par[2]), -MLE2$value))
                       }
                     }
                     else{
@@ -163,77 +168,7 @@ UR <- R6Class("UR",
                     stop("Yet to be implemented")
                   }
                   return(res)
-                },
-                g_est = function(snpsubset=NULL,indsubset=NULL, nClust=3, para=NULL, multerr=TRUE, err=T){
-                  ploid = private$ploid
-                  ## Do some checks
-                  if(is.null(snpsubset)) snpsubset <- 1:private$nSnps
-                  else if(!is.vector(snpsubset) || !is.numeric(snpsubset) || min(snpsubset) < 0 || max(snpsubset) > private$nSnps)
-                    stop("Index for SNPs is invalid")
-                  if(is.null(indsubset)) indsubset <- 1:private$nInd
-                  else if(!is.vector(indsubset) || !is.numeric(indsubset) || min(indsubset) < 0 || max(indsubset) > private$nInd)
-                    stop("Index for individuals is invalid")
-                  ref <- private$ref[indsubset,snpsubset]
-                  alt <- private$alt[indsubset,snpsubset]
-                  ratio <- ref/(ref+alt)
-                  nSnps <- length(snpsubset)
-                  nInd <- length(indsubset)
-                  if(!is.numeric(nClust) || length(nClust) != 1 || nClust < 0 || round(nClust) != nClust)
-                    stop("Argument for the number of cores for the parallelization is invalid")
-                  ## inital value
-                  if(!is.null(para)){
-                    if(!is.list(para))
-                      stop("Starting values for the parameters are invalid")
-                    if(is.null(para$g)) {
-                      ginit <- rep(1/(ploid+1),ploid)
-                    }
-                    else if(!is.vector(para$g) || !is.numeric(para$g) || length(para$g) != length(snpsubset) ||
-                            any(para$g < 0.01) || any(para$g > 0.99) || sum(para$g) >= 1)
-                      stop("Starting values for the genotype frequency parameters are invalid")
-                    else ginit <- para$g
-                    if(is.null(para$ep)) epinit <- rep(0.01, nSnps)
-                    else if(!is.vector(para$ep) || !is.numeric(para$ep) ||any(para$ep < 0) || any(para$ep >= 0.5) )
-                      stop("Starting value for the error parameter parameter is invalid")
-                    else{
-                      if(length(para$ep) == 1)
-                        epinit <- rep(para$ep, length(snpsubset))
-                      else if(length(para$ep) != length(snpsubset))
-                        stop("The number of error parameters does not equal the number of SNPs")
-                      else epinit <- para$ep
-                    }
-                  }
-                  else{
-                    ginit <- rep(1/(ploid+1),ploid)
-                    epinit <- rep(ifelse(err,0.01,0), nSnps)
-                  }
-                  ## perform the estimation
-
-                  cl <- makeCluster(nClust)
-                  registerDoSNOW(cl)
-                  # Set up the Clusters
-                  if(multerr){
-                    if(err){
-                      res <- foreach(snp = iter(snpsubset), .combine="cbind") %dopar% {
-                        MLE <- optim(par = c(mlogit(ginit), logit2(epinit[snp])), fn=ll_gest, method="BFGS",
-                                     v=ploid, ref=ref[,snp], alt=alt[,snp], nInd=nInd, nSnps=as.integer(1))
-                        return(c(inv.mlogit(MLE$par[1:ploid], 2), inv.logit2(MLE$par[ploid]), -MLE$value))
-                      }
-                    }
-                    else{
-                      res <- foreach(snp = iter(snpsubset), .combine="cbind") %dopar% {
-                        MLE <- optim(par = c(mlogit(ginit)), fn=ll_gest, method="BFGS",
-                                     v=ploid, ref=ref[,snp], alt=alt[,snp], nInd=nInd, nSnps=as.integer(1),
-                                     seqErr=F, extra=epinit[snp])
-                        return(c(inv.mlogit(MLE$par[1:ploid], 2), epinit[snp], -MLE$value))
-                      }
-                    }
-                    stopCluster(cl)
-                  }
-                  else{
-                    stop("Yet to be implemented")
-                  }
-                  return(res)
                 }
-              )
+               )
 )
 

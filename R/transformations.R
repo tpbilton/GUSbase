@@ -20,7 +20,7 @@
 #'
 #' Functions used in the GUS universe to transform parameters estimation onto an unbounded
 #' interval. These functions are used in likelihood computations optimised using direct
-#' maximumization routines.
+#' maximization routines.
 #'
 #' Parameter transformations used in the GUS universe:
 #'

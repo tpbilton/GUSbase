@@ -8,7 +8,7 @@
 URobj <- makeUR()
 }
 \description{
-Class for storing RA data and associated functions for analyzing of unrelated populations.
+Class for storing RA data and associated functions for analysis of unrelated populations.
 }
 \details{
 An UR object is created from the \code{\link{makeUR}} function and contains RA data,

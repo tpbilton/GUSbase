@@ -29,6 +29,7 @@
 #' 1     \tab  443  \tab   1,0                   \tab  4,4                   \cr
 #' 1     \tab  448  \tab   0,0                   \tab  0,2
 #' }
+#' Note: Indels are removed, multiple alternative alleles are removed and ./. is translated into 0,0.
 #'
 #' @param RAfile Character string giving the path to the RA file to be read into R. Typically the required string is
 #' returned from the VCFtoRA function when the VCF file is converted to RA format.

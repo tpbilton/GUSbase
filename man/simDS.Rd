@@ -19,11 +19,9 @@ for specification of VCF format). The pedigree file contains five columns, namel
 \itemize{
 \item SampleID: A unique character string of the sample ID. These correspond to those found in the VCF file
 \item IndividualID: A character giving the ID number of the individual for which the sample corresponds to.
-Note that some samples can be from the same individual.
-\item Mother: The ID of the mother as given in the IndividualID. Note, if the mother is unknown then this should be left blank.
-\item Father: The ID of the father as given in the IndividualID. Note, if the father is unknown then this should be left blank.
-\item Family: The name of the Family for a group of progeny with the same parents. Note that this is not necessary but if
-given must be the same for all the progeny.
+\item Mother: The ID of the mother as given in the IndividualID. Blank fields means the mother is unknown.
+\item Father: The ID of the father as given in the IndividualID. Blank fields means the father is unknown.
+\item Family: The name of the Family for a group of progeny with the same parents.
 }
 }
 \examples{

@@ -32,6 +32,7 @@ CHROM \tab  POS  \tab   999220:C4TWKACXX:7:56 \tab  999204:C4TWKACXX:7:56 \cr
 1     \tab  443  \tab   1,0                   \tab  4,4                   \cr
 1     \tab  448  \tab   0,0                   \tab  0,2
 }
+Note: Indels are removed, multiple alternative alleles are removed and ./. is translated into 0,0.
 }
 \examples{
 file <- simDS()

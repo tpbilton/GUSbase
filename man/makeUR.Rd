@@ -5,15 +5,16 @@
 \title{Make an unrelated (UR) population}
 \usage{
 makeUR(RAobj, filter = list(MAF = 0.05, MISS = 0.5), ploid = 2,
-  mafEst = TRUE, nClust = 3)
+  mafEst = TRUE, nClust = 3, err = TRUE)
 }
 \arguments{
 \item{RAobj}{Object of class RA created via the \code{\link{readRA}} function.}
 
-\item{filter}{Named list of of thresholds for various criteria of fitering SNPs.
+\item{filter}{Named list of thresholds for various criteria used to fiter SNPs.
 See below for details.}
 
-\item{ploid}{An integer number specifying the ploidy level of the population.}
+\item{ploid}{An integer number specifying the ploidy level of the population. Currently, only
+even ploidy levels are valid.}
 
 \item{mafEst}{Logical value indicating whether the allele frequences and sequencing
 error parameters are to estimated for each SNP (see details).}

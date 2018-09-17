@@ -112,7 +112,7 @@ SEXP pest_c(SEXP p, SEXP ep, SEXP v, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnps){
 }
 
 
-
+/*
 // estimate the genotype frequencies
 SEXP gest_c(SEXP geno, SEXP ep, SEXP v, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnps){
 
@@ -191,4 +191,4 @@ SEXP gest_c(SEXP geno, SEXP ep, SEXP v, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnp
   UNPROTECT(3);
   return out;
 }
-
+*/

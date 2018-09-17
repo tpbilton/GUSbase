@@ -10,7 +10,7 @@ RAobj$extractVar(nameList)
 \item{nameList}{A list of the variable names to be extracted from the RA object.}
 }
 \description{
-Method for extracting the private variables of an RA object:
+Method for extracting the private variables of an RA object.
 }
 \examples{
 vcffile <- simDS()

@@ -17,7 +17,7 @@
 #########################################################################
 #' RA Method: Extract variables from an RA Object
 #'
-#' Method for extracting the private variables of an RA object:
+#' Method for extracting the private variables of an RA object.
 #'
 #' @usage
 #' RAobj$extractVar(nameList)
