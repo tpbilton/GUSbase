@@ -5,7 +5,7 @@
 \title{Make an unrelated (UR) population}
 \usage{
 makeUR(RAobj, filter = list(MAF = 0.05, MISS = 0.5), ploid = 2,
-  mafEst = TRUE, nClust = 3, err = TRUE)
+  mafEst = TRUE, nClust = 3)
 }
 \arguments{
 \item{RAobj}{Object of class RA created via the \code{\link{readRA}} function.}
@@ -26,7 +26,8 @@ allele frequencies when \code{mafEst=TRUE}.}
 An R6 object of class UR.
 }
 \description{
-Create an UR object from an RA object and performs standard filtering and computes statistics specific to unrelated populations.
+Create an UR object from an RA object and perform standard filtering and compute statistics
+specific to unrelated populations.
 }
 \details{
 If \code{mafEst=TRUE}, then the major allele frequency and sequencing error rate for each SNP is estimated based on optimizing the likelihood
@@ -52,7 +53,7 @@ RAfile <- VCFtoRA(file$vcf)
 simdata <- readRA(RAfile)
 
 ## make unrelated population
-urpop <- makeUR(simdata)
+urpop <- makeUR(simdata, mafEst=FALSE, nClust=1)
 }
 \references{
 \insertRef{bilton2018genetics2}{GUSbase}

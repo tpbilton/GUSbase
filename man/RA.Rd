@@ -26,7 +26,7 @@ statistics of the dataset that have been computed, and functions (or methods) fo
 
 A list of the methods that are available to an RA object:
 \describe{
-    \item{\code{\link{$extractVar}}}{Extract parivate variables stored in an RA object}
+    \item{\code{\link{$extractVar}}}{Extract private variables stored in an RA object}
 }
 }
 

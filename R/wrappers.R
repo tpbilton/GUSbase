@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
-#' @useDynLib GUSbase
+#' @useDynLib GUSbase, .registration = TRUE
 
 
 ## likelihood and score function for the allele and error estimation assuming HWE
@@ -25,7 +25,7 @@ ll_pest <- function(para, v=v, ref=ref, alt=alt, nInd=nInd, nSnps=nSnps, seqErr=
     ep = inv.logit2(para[nSnps+1])
   else
     ep = extra
-  out <- .Call("pest_c", p=p, ep=ep, v=v, ref=ref, alt=alt, nInd=nInd, nSnps=nSnps)
+  out <- .Call("pest_c", p=p, ep=ep, v=v, ref=ref, alt=alt, nInd=nInd, nSnps=nSnps, PACKAGE="GUSbase")
   if(seqErr)
     assign(".score", -out[[2]], envir = parent.frame(3))
   else

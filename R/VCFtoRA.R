@@ -76,7 +76,7 @@ VCFtoRA <- function(infilename, direct="./", makePed=F){
 
   cat("Processing VCF file: Converting to RA format.\n\n")
 
-  outfilename <- paste0(tail(strsplit(infilename,split=.Platform$file.sep)[[1]],1),".ra.tab")
+  outfilename <- paste0(utils::tail(strsplit(infilename,split=.Platform$file.sep)[[1]],1),".ra.tab")
   outpath <- dts(normalizePath(direct, winslash=.Platform$file.sep, mustWork=T))
 
   headerlist = c('CHROM', 'POS')
@@ -168,14 +168,14 @@ VCFtoRA <- function(infilename, direct="./", makePed=F){
   cat("Location of RA file: \t\t",outpath,"/\n\n",sep="")
   ## Initialize the pedigree file
   if(makePed){
-    pedfile <- paste0(strsplit(paste0(tail(strsplit(infilename,split=.Platform$file.sep)[[1]],1)),split="\\.")[[1]][1],"_ped.csv")
+    pedfile <- paste0(strsplit(paste0(utils::tail(strsplit(infilename,split=.Platform$file.sep)[[1]],1)),split="\\.")[[1]][1],"_ped.csv")
     pedpath <- file.path(outpath,pedfile)
     if(!file.exists(pedpath)){
       cat("A pedigree file has been initialized.\n")
       cat("Name of pedigree file:     ",pedfile,"\n")
       cat("Location of pedigree file: ",outpath,"/\n\n",sep="")
       nSamp <- length(headerlist) - 2
-      write.csv(cbind("SampleID"=c(headerlist[-c(1,2)]),"IndividualID"=rep("",nSamp),"Mother"=rep("",nSamp),
+      utils::write.csv(cbind("SampleID"=c(headerlist[-c(1,2)]),"IndividualID"=rep("",nSamp),"Mother"=rep("",nSamp),
                   "Father"=rep("",nSamp), "Family"=rep("",nSamp)), file = pedpath, row.names=F)
     }
   }

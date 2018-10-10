@@ -31,14 +31,13 @@
 #' }
 #' Note: Indels are removed, multiple alternative alleles are removed and ./. is translated into 0,0.
 #'
-#' @param RAfile Character string giving the path to the RA file to be read into R. Typically the required string is
+#' @param rafile Character string giving the path to the RA file to be read into R. Typically the required string is
 #' returned from the VCFtoRA function when the VCF file is converted to RA format.
-# #' @param gform Character string specifying whether the SNPs in the RA data have been called using Uneak (\code{gform="uneak"})
-# #' or using an reference based assembly (\code{gform="reference"}).
 #' @param sampthres A numeric value giving the filtering threshold for which individual samples are removed. Default is 0.01
 #' which means that samples with an average number of reads per SNP that is less than 0.01 are removed.
 #' @param excsamp A character vector of the sample IDs that are to be excluded (or discarded). Note that the sample IDs must correspond
 #' to those given in the RA file that is to be processed.
+#' @param ... Additional arguments (not used).
 #' @return An R6 object of class RA.
 #' @author Timothy P. Bilton
 #' @examples

@@ -7,14 +7,16 @@
 readRA(rafile, sampthres = 0.01, excsamp = NULL, ...)
 }
 \arguments{
+\item{rafile}{Character string giving the path to the RA file to be read into R. Typically the required string is
+returned from the VCFtoRA function when the VCF file is converted to RA format.}
+
 \item{sampthres}{A numeric value giving the filtering threshold for which individual samples are removed. Default is 0.01
 which means that samples with an average number of reads per SNP that is less than 0.01 are removed.}
 
 \item{excsamp}{A character vector of the sample IDs that are to be excluded (or discarded). Note that the sample IDs must correspond
 to those given in the RA file that is to be processed.}
 
-\item{RAfile}{Character string giving the path to the RA file to be read into R. Typically the required string is
-returned from the VCFtoRA function when the VCF file is converted to RA format.}
+\item{...}{Additional arguments (not used).}
 }
 \value{
 An R6 object of class RA.

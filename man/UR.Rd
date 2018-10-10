@@ -5,7 +5,8 @@
 \alias{UR}
 \title{UR object}
 \usage{
-URobj <- makeUR()
+URobj <- makeUR (RAobj, filter=list(MAF=0.05, MISS=0.5),
+                 ploid=2, mafEst=TRUE, nClust=3)
 }
 \description{
 Class for storing RA data and associated functions for analysis of unrelated populations.
@@ -13,7 +14,7 @@ Class for storing RA data and associated functions for analysis of unrelated pop
 \details{
 An UR object is created from the \code{\link{makeUR}} function and contains RA data,
 various statistics of the dataset that have been computed, and functions (or methods)
-for analyzing the data. Information in an UR are specific to unrelated populations (or
+for analyzing the data. Information in an UR object are specific to unrelated populations (or
 populations with no known relationships).
 }
 \seealso{

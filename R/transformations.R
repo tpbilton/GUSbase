@@ -40,9 +40,9 @@
 ## Functions required for transforming the recombination fraction parameters on the interval [0,1]
 ## to the interval [-inf,inf]
 #' @rdname transformations
-logit <- function(p) qlogis(p)
+logit <- function(p) stats::qlogis(p)
 #' @rdname transformations
-inv.logit <- function(logit_p) plogis(logit_p)
+inv.logit <- function(logit_p) stats::plogis(logit_p)
 
 ## Functions requred for transforming the recombination fraction parameters on the interval [0,0.5]
 ## to the interval [-inf,inf]

@@ -14,7 +14,7 @@ Method for extracting the private variables of an RA object.
 }
 \examples{
 vcffile <- simDS()
-rafile <- VCFtoRA(vcffile)
+rafile <- VCFtoRA(vcffile$vcf)
 RAdata <- readRA(rafile)
 
 ## extract the depth matrix

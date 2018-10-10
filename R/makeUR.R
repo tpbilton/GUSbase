@@ -18,7 +18,8 @@
 
 #' Make an unrelated (UR) population
 #'
-#' Create an UR object from an RA object and performs standard filtering and computes statistics specific to unrelated populations.
+#' Create an UR object from an RA object and perform standard filtering and compute statistics
+#' specific to unrelated populations.
 #'
 #' If \code{mafEst=TRUE}, then the major allele frequency and sequencing error rate for each SNP is estimated based on optimizing the likelihood
 #' \deqn{P(Y=a) = \sum_{G} P(Y=a|G)P(G)}
@@ -57,7 +58,7 @@
 #' simdata <- readRA(RAfile)
 #'
 #' ## make unrelated population
-#' urpop <- makeUR(simdata)
+#' urpop <- makeUR(simdata, mafEst=FALSE, nClust=1)
 
 #### Make an unrelated population
 makeUR <- function(RAobj, filter=list(MAF=0.05, MISS=0.5), ploid=2, mafEst=TRUE, nClust=3){
