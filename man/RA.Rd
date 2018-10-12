@@ -5,16 +5,23 @@
 \alias{RA}
 \title{RA Object}
 \usage{
+RA
+}
+\description{
+Class for storing reference/alternative (RA) data and methods for performing exporartory data analysis
+on sequencing data.
+}
+\section{Usage}{
+
+\preformatted{
 ## Create RA object
 RAobj <- readRA(rafile, sampthres = 0.01, excsamp = NULL)
 
 ## RA Functions (Methods)
 RAobj$extractVar(nameList)
 }
-\description{
-Class for storing reference/alternative (RA) data and methods for performing exporartory data analysis
-on sequencing data.
 }
+
 \section{Details}{
 
 An RA object is returned from the \code{\link{readRA}} function and contains the RA data, various

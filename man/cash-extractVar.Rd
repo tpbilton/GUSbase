@@ -3,15 +3,23 @@
 \name{$extractVar}
 \alias{$extractVar}
 \title{RA Method: Extract variables from an RA Object}
-\usage{
-RAobj$extractVar(nameList)
-}
-\arguments{
-\item{nameList}{A list of the variable names to be extracted from the RA object.}
-}
 \description{
 Method for extracting the private variables of an RA object.
 }
+\section{Usage}{
+
+\preformatted{
+RAobj$extractVar(nameList)
+}
+}
+
+\section{Arguments}{
+
+\describe{
+\item{nameList}{A list of the variable names to be extracted from the RA object.}
+}
+}
+
 \examples{
 vcffile <- simDS()
 rafile <- VCFtoRA(vcffile$vcf)

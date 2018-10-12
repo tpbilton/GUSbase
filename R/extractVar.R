@@ -19,11 +19,15 @@
 #'
 #' Method for extracting the private variables of an RA object.
 #'
-#' @usage
+#' @section Usage:
+#' \preformatted{
 #' RAobj$extractVar(nameList)
+#' }
 #'
-#' @param nameList A list of the variable names to be extracted from the RA object.
-#'
+#' @section Arguments:
+#' \describe{
+#' \item{nameList}{A list of the variable names to be extracted from the RA object.}
+#' }
 #' @name $extractVar
 #' @author Timothy P. Bilton
 #' @seealso \code{\link{RA}}

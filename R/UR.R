@@ -24,9 +24,12 @@
 #' various statistics of the dataset that have been computed, and functions (or methods)
 #' for analyzing the data. Information in an UR object are specific to unrelated populations (or
 #' populations with no known relationships).
-#' @usage
-#' URobj <- makeUR (RAobj, filter=list(MAF=0.05, MISS=0.5),
+#' @section Usage:
+#' \preformatted{
+#' URobj <- makeUR(RAobj, filter=list(MAF=0.05, MISS=0.5),
 #'                  ploid=2, mafEst=TRUE, nClust=3)
+#' }
+#'
 #' @format NULL
 #' @author Timothy P. Bilton
 #' @seealso \code{\link{makeUR}}
