@@ -4,8 +4,8 @@ Date: 2018-10-10
 Version: 0.1.0
 Authors@R: person("Timothy P.", "Bilton", email = "tbilton@maths.otago.ac.nz", role = c("aut", "cre", "cph"))
 Description: Package for analyzing high-throughput sequencing via reference and alternate count information. This package forms the base to a number of other packages that are specifically designed for analyzing high-throughput sequencing data. 
-Depends: R (>= 3.1.0), foreach, doSNOW, data.table
-Imports: R6, Rdpack, stats, utils
+Depends: R (>= 3.1.0)
+Imports: R6, Rdpack, stats, utils, parallel, doParallel, foreach, data.table
 RdMacros: Rdpack
 URL: https://github.com/tpbilton/GUSbase 
 License: GPL-3 | file LICENSE 

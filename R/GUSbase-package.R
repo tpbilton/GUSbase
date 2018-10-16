@@ -38,7 +38,6 @@
 #' @keywords package
 #' @importFrom Rdpack reprompt
 #' @importFrom R6 R6Class
-#' @import foreach doSNOW data.table
 
 NULL
 

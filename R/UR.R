@@ -142,10 +142,10 @@ UR <- R6Class("UR",
                   ploid = private$ploid
                   # Set up the Clusters
                   if(multerr){
-                    cl <- makeCluster(nClust)
-                    registerDoSNOW(cl)
+                    cl <- parallel::makeCluster(nClust)
+                    doParallel::registerDoSNOW(cl)
                     if(err){
-                      res <- foreach(snp = iter(snpsubset), .combine="cbind") %dopar% {
+                      res <- foreach::foreach(snp = iter(snpsubset), .combine="cbind") %dopar% {
                         #parscale <- c(logit(p),logit2(ep))/10
                         #parscale[which(abs(inv.logit(para[-(nSnps+1)]) - 0.5) < 0.0001)] <- 0.0001
                         MLE <- optim(par = c(logit(pinit[snp]), logit2(epinit[snp])), fn=ll_pest, gr=score_pest, method="BFGS",
@@ -159,14 +159,14 @@ UR <- R6Class("UR",
                       }
                     }
                     else{
-                      res <- foreach(snp = iter(snpsubset), .combine="cbind") %dopar% {
+                      res <- foreach::foreach(snp = iter(snpsubset), .combine="cbind") %dopar% {
                         MLE <- optim(par = c(logit(pinit[snp])), fn=ll_pest, gr=score_pest, method="BFGS",
                                      v=ploid, ref=ref[,snp], alt=alt[,snp], nInd=nInd, nSnps=as.integer(1),
                                      seqErr=F, extra=epinit[snp])
                         return(c(inv.logit(MLE$par[1]), epinit[snp], -MLE$value))
                       }
                     }
-                    stopCluster(cl)
+                    parallel::stopCluster(cl)
                   }
                   else{
                     stop("Yet to be implemented")
