@@ -24,6 +24,7 @@
 #' various statistics of the dataset that have been computed, and functions (or methods)
 #' for analyzing the data. Information in an UR object are specific to unrelated populations (or
 #' populations with no known relationships).
+#' @usage NULL
 #' @section Usage:
 #' \preformatted{
 #' URobj <- makeUR(RAobj, filter=list(MAF=0.05, MISS=0.5),
@@ -166,7 +167,7 @@ UR <- R6Class("UR",
                         return(c(inv.logit(MLE$par[1]), epinit[snp], -MLE$value))
                       }
                     }
-                    parallel::stopCluster(cl)
+                    parallel::instopCluster(cl)
                   }
                   else{
                     stop("Yet to be implemented")

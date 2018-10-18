@@ -20,6 +20,7 @@
 #' Class for storing reference/alternative (RA) data and methods for performing exporartory data analysis
 #' on sequencing data.
 #'
+#' @usage NULL
 #' @section Usage:
 #' \preformatted{
 #' ## Create RA object

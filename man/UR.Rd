@@ -4,9 +4,6 @@
 \name{UR}
 \alias{UR}
 \title{UR object}
-\usage{
-UR
-}
 \description{
 Class for storing RA data and associated functions for analysis of unrelated populations.
 }

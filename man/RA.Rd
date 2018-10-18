@@ -4,9 +4,6 @@
 \name{RA}
 \alias{RA}
 \title{RA Object}
-\usage{
-RA
-}
 \description{
 Class for storing reference/alternative (RA) data and methods for performing exporartory data analysis
 on sequencing data.

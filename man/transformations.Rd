@@ -30,7 +30,7 @@ maximization routines.
 Parameter transformations used in the GUS universe:
 
 1. The logit transformation:
-\deqn{logit(p) = log(\frac{p}{1-p})}
+\deqn{logit(p) = log(\frac{p}{1-p})}{logit(p) = log(p/(1-p))}
 2. A modified logit transformation (called logit2):
-\deqn{logit2(p) = log(\frac{2p}{1-2p}).}
+\deqn{logit2(p) = log(\frac{2p}{1-2p})}{logit2(p) = log(2p/(1-2p))}
 }
