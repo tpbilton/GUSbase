@@ -16,6 +16,7 @@ RAobj <- readRA(rafile, sampthres = 0.01, excsamp = NULL)
 
 ## RA Functions (Methods)
 RAobj$extractVar(nameList)
+RAobj$writeVCF(snpsubset=NULL, indsubset=NULL, file="GUSbase", IDuse=NULL)
 }
 }
 
@@ -31,6 +32,7 @@ statistics of the dataset that have been computed, and functions (or methods) fo
 A list of the methods that are available to an RA object:
 \describe{
     \item{\code{\link{$extractVar}}}{Extract private variables stored in an RA object}
+    \item{\code{\link{$writeVCF}}}{Convert the data in the RA object back to VCF format}
 }
 }
 

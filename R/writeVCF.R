@@ -15,32 +15,32 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
-#' RA Method: Extract variables from an RA Object
+#' RA Method: Write genotype data to VCF format
 #'
-#' Method for extracting the private variables of an RA object.
+#' Method for converting allele count data in an RA object back to VCF format.
 #'
 #' @section Usage:
 #' \preformatted{
-#' RAobj$extractVar(nameList)
+#' RAobj$writeVCF(snpsubset=NULL, indsubset=NULL, file="GUSbase", IDuse=NULL)
 #' }
 #'
 #' @section Arguments:
 #' \describe{
-#' \item{nameList}{A list of the variable names to be extracted from the RA object.}
+#' \item{snpsubset}{Integer vector giving the indices of the SNPs to retain in the VCF file}
+#' \item{indsubset}{Integer vector giving the indices of the samples to retain in the VCF file}
+#' \item{file}{Character giving the name of the VCF file to be written}
+#' \item{IDuse}{Character vector specifying alternative samples names. Useful for anonymizing sample IDs.}
 #' }
-#' @name $extractVar
+#'
+#' @name $writeVCF
 #' @author Timothy P. Bilton
 #' @seealso \code{\link{RA}}
 #' @examples
-#' vcffile <- simDS()
-#' rafile <- VCFtoRA(vcffile$vcf)
-#' RAdata <- readRA(rafile)
+#' file <- simDS()
+#' RAfile <- VCFtoRA(file$vcf)
+#' subset <- readRA(RAfile, snpsubset = 10:30)
 #'
-#' ## extract the depth matrix
-#' depthMat <- RAdata$extractVar(c("ref","alt"))
-#' str(depthMat)
+#' ## write the subset of the data back to VCF format
+#' subset$writeVCF(file = "subset")
 #'
-#' ## extract the chromosome and positions
-#' assemblyInfo <- RAdata$extractVar(c("chrom","pos"))
-#' str(assemblyInfo)
 NULL

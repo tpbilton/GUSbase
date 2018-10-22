@@ -26,11 +26,11 @@ rafile <- VCFtoRA(vcffile$vcf)
 RAdata <- readRA(rafile)
 
 ## extract the depth matrix
-depthMat <- RAdata$extractVar(list("ref","alt"))
+depthMat <- RAdata$extractVar(c("ref","alt"))
 str(depthMat)
 
 ## extract the chromosome and positions
-assemblyInfo <- RAdata$extractVar(list("chrom","pos"))
+assemblyInfo <- RAdata$extractVar(c("chrom","pos"))
 str(assemblyInfo)
 }
 \seealso{

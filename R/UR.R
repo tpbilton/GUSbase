@@ -20,16 +20,18 @@
 #'
 #' Class for storing RA data and associated functions for analysis of unrelated populations.
 #'
-#' An UR object is created from the \code{\link{makeUR}} function and contains RA data,
-#' various statistics of the dataset that have been computed, and functions (or methods)
-#' for analyzing the data. Information in an UR object are specific to unrelated populations (or
-#' populations with no known relationships).
 #' @usage NULL
 #' @section Usage:
 #' \preformatted{
 #' URobj <- makeUR(RAobj, filter=list(MAF=0.05, MISS=0.5),
 #'                  ploid=2, mafEst=TRUE, nClust=3)
 #' }
+#'
+#' @section Details:
+#' An UR object is created from the \code{\link{makeUR}} function and contains RA data,
+#' various statistics of the dataset that have been computed, and functions (or methods)
+#' for analyzing the data. Information in an UR object are specific to unrelated populations (or
+#' populations with no known relationships).
 #'
 #' @format NULL
 #' @author Timothy P. Bilton
@@ -93,13 +95,13 @@ UR <- R6Class("UR",
                   if(!is.null(List$ep))
                     private$ep        = List$ep
                 },
-                p_est = function(snpsubset=NULL,indsubset=NULL, nClust=3, para=NULL, multerr=TRUE, err=TRUE){
+                p_est = function(snpsubset=NULL,indsubset=NULL, nClust=2, para=NULL){
                   ## Do some checks
                   if(is.null(snpsubset)) snpsubset <- 1:private$nSnps
-                  else if(!is.vector(snpsubset) || !is.numeric(snpsubset) || min(snpsubset) < 0 || max(snpsubset) > private$nSnps)
+                  else if(checkVector(snpsubset, type="pos_integer", minv=1, maxv = private$nSnps))
                     stop("Index for SNPs is invalid")
                   if(is.null(indsubset)) indsubset <- 1:private$nInd
-                  else if(!is.vector(indsubset) || !is.numeric(indsubset) || min(indsubset) < 0 || max(indsubset) > private$nInd)
+                  else if(checkVector(indsubset, type="pos_integer", minv=1, maxv = private$nInd))
                     stop("Index for individuals is invalid")
                   ref <- private$ref[indsubset,snpsubset]
                   alt <- private$alt[indsubset,snpsubset]
@@ -117,17 +119,17 @@ UR <- R6Class("UR",
                         pinit[which(pinit > 0.99)] <- 0.99
                         pinit[which(pinit < 0.01)] <- 0.01
                     }
-                    else if(!is.vector(para$p) || !is.numeric(para$p) || length(para$p) != length(snpsubset) || any(para$p < 0.01) || any(para$p > 0.99) )
+                    else if(checkVector(para$p, type="pos_numeric", minv=0.01, maxv=0.99, equal=FALSE) || length(para$p) != nSnps)
                       stop("Starting values for the allele frequency parameters are invalid")
                     else pinit <- para$p
                     ## check error parameters
                     if(is.null(para$ep)) epinit <- rep(0.01, nSnps)
-                    else if(!is.vector(para$ep) || !is.numeric(para$ep) || any(para$ep < 0) || any(para$ep >= 0.5) )
+                    else if(checkVector(para$ep, type="pos_numeric", minv=0, maxv=0.5, equal=FALSE))
                       stop("Starting value for the error parameter parameter is invalid")
                     else{
                       if(length(para$ep) == 1)
-                        epinit <- rep(para$ep, length(snpsubset))
-                      else if(length(para$ep) != length(snpsubset))
+                        epinit <- rep(para$ep, nSnps)
+                      else if(length(para$ep) != nSnps)
                         stop("The number of error parameters does not equal the number of SNPs")
                       else epinit <- para$ep
                     }
@@ -136,42 +138,29 @@ UR <- R6Class("UR",
                     pinit <- colMeans(ratio, na.rm=T)
                     pinit[which(pinit > 0.99)] <- 0.99
                     pinit[which(pinit < 0.01)] <- 0.01
-                    epinit <- rep(ifelse(err,0.01,0), nSnps)
+                    epinit <- rep(0.01, nSnps)
                   }
                   ## perform the estimation
 
-                  ploid = private$ploid
-                  # Set up the Clusters
-                  if(multerr){
-                    cl <- parallel::makeCluster(nClust)
-                    doParallel::registerDoSNOW(cl)
-                    if(err){
-                      res <- foreach::foreach(snp = iter(snpsubset), .combine="cbind") %dopar% {
-                        #parscale <- c(logit(p),logit2(ep))/10
-                        #parscale[which(abs(inv.logit(para[-(nSnps+1)]) - 0.5) < 0.0001)] <- 0.0001
-                        MLE <- optim(par = c(logit(pinit[snp]), logit2(epinit[snp])), fn=ll_pest, gr=score_pest, method="BFGS",
-                                     v=ploid, ref=ref[,snp], alt=alt[,snp], nInd=nInd, nSnps=as.integer(1))
-                        MLE2 <- optim(par = c(logit(pinit[snp]), logit2(0.2)), fn=ll_pest, gr=score_pest, method="BFGS",
-                                      v=ploid, ref=ref[,snp], alt=alt[,snp], nInd=nInd, nSnps=as.integer(1))
-                        if(MLE$value < MLE2$value)
-                          return(c(inv.logit(MLE$par[1]), inv.logit2(MLE$par[2]), -MLE$value))
-                        else
-                          return(c(inv.logit(MLE2$par[1]), inv.logit2(MLE2$par[2]), -MLE2$value))
+                  ploid <- private$ploid
+                  cl <- parallel::makeCluster(nClust)
+                  doParallel::registerDoParallel(cl)
+                  res <- foreach::foreach(snp = 1:nSnps, .combine="cbind") %dopar% {
+                    MLE <- stats::optim(par = c(logit(pinit[snp]), logit2(epinit[snp])), fn=ll_pest, gr=score_pest, method="BFGS",
+                                        v=ploid, ref=ref[,snp], alt=alt[,snp], nInd=nInd, nSnps=as.integer(1), control=control)
+                    ## Check for badly behaved estimates
+                    if(MLE$par[2] > logit2(0.48)){
+                      MLE.list <- vector(mode="list", length=length(newStarts))
+                      for(i in 1:length(newStarts)){
+                        MLE.list[[i]] <- stats::optim(par = c(logit(pinit[snp]), logit2(newStarts[i])), fn=ll_pest, gr=score_pest, method="BFGS",
+                                                      v=ploid, ref=ref[,snp], alt=alt[,snp], nInd=nInd, nSnps=as.integer(1), control=control)
                       }
+                      MLE <- MLE.list[[which.min(lapply(MLE.list, function(x) x$value))]]
                     }
-                    else{
-                      res <- foreach::foreach(snp = iter(snpsubset), .combine="cbind") %dopar% {
-                        MLE <- optim(par = c(logit(pinit[snp])), fn=ll_pest, gr=score_pest, method="BFGS",
-                                     v=ploid, ref=ref[,snp], alt=alt[,snp], nInd=nInd, nSnps=as.integer(1),
-                                     seqErr=F, extra=epinit[snp])
-                        return(c(inv.logit(MLE$par[1]), epinit[snp], -MLE$value))
-                      }
-                    }
-                    parallel::instopCluster(cl)
+                    ## Return the MLEs
+                    return(c(inv.logit(MLE$par[1]), inv.logit2(MLE$par[2]), -MLE$value))
                   }
-                  else{
-                    stop("Yet to be implemented")
-                  }
+                  parallel::stopCluster(cl)
                   return(res)
                 }
                )

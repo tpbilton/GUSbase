@@ -1,4 +1,14 @@
 
+# GUSbase 0.1.1
+
+* Added writeVCF function to RA object. Converts the allele count data in the RA object bacg to a VCF file.
+* `readRA` function now has argument `snpsubset` which allows only a subset of the SNPs in the RA file to be read in.
+* `makeUR` function now has argument `indsubset` which allows only a subset of the individuals to be retained in the creation of the UR population
+* The `$p_est` function in the makeUR was fixed up and is now working properly. Still need to test whether bad values of ep are still appearing.
+
+* A few bugs were also fixed.
+
+
 # GUSbase 0.1.0
 
 This is the first release of GUSbase. This package forms a base for reading in data into the GUSverse.

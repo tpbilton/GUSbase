@@ -4,17 +4,20 @@
 \alias{makeUR}
 \title{Make an unrelated (UR) population}
 \usage{
-makeUR(RAobj, filter = list(MAF = 0.05, MISS = 0.5), ploid = 2,
-  mafEst = TRUE, nClust = 3)
+makeUR(RAobj, indsubset = NULL, ploid = 2, filter = list(MAF = 0.01,
+  MISS = 0.5, MAXDEPTH = 500), mafEst = TRUE, nClust = 2)
 }
 \arguments{
 \item{RAobj}{Object of class RA created via the \code{\link{readRA}} function.}
 
-\item{filter}{Named list of thresholds for various criteria used to fiter SNPs.
-See below for details.}
+\item{indsubset}{Integer vector specifying which samples of the RA dataset to retain in the UR
+population.}
 
 \item{ploid}{An integer number specifying the ploidy level of the population. Currently, only
 even ploidy levels are valid.}
+
+\item{filter}{Named list of thresholds for various criteria used to fiter SNPs.
+See below for details.}
 
 \item{mafEst}{Logical value indicating whether the allele frequences and sequencing
 error parameters are to estimated for each SNP (see details).}
@@ -39,8 +42,11 @@ the sequencing error rate is assumed to be zero.
 
 The filtering criteria currently implemented are
 \itemize{
-\item{Minor allele frequency (MAF): }{SNPs are discarded if their MAF is less than the threshold (default is 0.05)}
-\item{Proportion of missing data (MISS): }{SNPs are discarded if the proportion of individuals with no reads (e.g. missing genotype) is greater than the threshold value (default is 0.5)}
+\item{Minor allele frequency (MAF): }{SNPs are discarded if their MAF is less than the threshold (default is 0.01)}
+\item{Proportion of missing data (MISS): }{SNPs are discarded if the proportion of individuals with no reads
+(e.g. missing genotype) is greater than the threshold value (default is 0.5)}
+\item{Maximum average SNP read depth (MAXDEPTH): }{SNPs are discarded if the average read depth for the SNP
+is larger than the threshold (default is 500)}
 }
 
 Estimation of the allele frequencies when \code{mafEst=TRUE} is parallelized using the \code{\link[foreach]{foreach}} function, where the
@@ -53,7 +59,7 @@ RAfile <- VCFtoRA(file$vcf)
 simdata <- readRA(RAfile)
 
 ## make unrelated population
-urpop <- makeUR(simdata, mafEst=FALSE, nClust=1)
+urpop <- makeUR(simdata, mafEst=FALSE)
 }
 \references{
 \insertRef{bilton2018genetics2}{GUSbase}
