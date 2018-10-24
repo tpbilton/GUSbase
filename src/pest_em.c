@@ -69,7 +69,7 @@ SEXP pest_em_c(SEXP pinit, SEXP epinit, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnp
   for(snp = 0; snp < nSnps_c; snp++){
     // define variables
     double llval, prellval, sum, sum2, sum_temp;
-    double pfreq, pfreq_new, ep, ep_new, sumA, sumB;
+    double pfreq, pfreq_new, ep, sumA, sumB;
     int iter = 0, x, a, b;
     double pep[ploid_c + 1], pepNeg[ploid_c + 1], zi[ploid_c + 1], px[ploid_c + 1];
     // initialize some variables

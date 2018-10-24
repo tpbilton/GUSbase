@@ -155,7 +155,7 @@ UR <- R6Class("UR",
                     ploid <- private$ploid
                     cl <- parallel::makeCluster(nClust)
                     doParallel::registerDoParallel(cl)
-                    res <- foreach::foreach(snp = 1:nSnps, .combine="cbind") %dopar% {
+                    res_temp <- foreach::foreach(snp = 1:nSnps, .combine="cbind") %dopar% {
                       MLE <- stats::optim(par = c(logit(pinit[snp]), logit2(epinit[snp])), fn=ll_pest, gr=score_pest, method="BFGS",
                                           v=ploid, ref=ref[,snp], alt=alt[,snp], nInd=nInd, nSnps=as.integer(1), control=control)
                       ## Check for badly behaved estimates
@@ -171,6 +171,8 @@ UR <- R6Class("UR",
                       return(c(inv.logit(MLE$par[1]), inv.logit2(MLE$par[2]), -MLE$value))
                     }
                     parallel::stopCluster(cl)
+
+                    res <- list(unname(res_temp[3,]), unname(res_temp[1,]), unname(res_temp[2,]))
                   } else{
                     if(is.null(control))
                       control <- list(maxit = 200, reltol=1e-10)
