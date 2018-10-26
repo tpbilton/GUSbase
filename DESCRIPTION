@@ -8,7 +8,6 @@ Depends: R (>= 3.1.0)
 Imports: R6, Rdpack (>= 0.8-0), stats, utils, parallel, doParallel, foreach, data.table
 RdMacros: Rdpack
 URL: https://github.com/tpbilton/GUSbase 
-License: GPL-3 | file LICENSE 
-Encoding: UTF-8
+License: GPL-3 | file LICENSE
 LazyData: true
 RoxygenNote: 6.1.0

@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-AC_INIT(GUSbase, 0.1.1)
+AC_INIT(GUSbase, 0.1)
 AC_CONFIG_SRCDIR([src/pest_em.c])
 
 # find R home and set CC/CFLAGS
