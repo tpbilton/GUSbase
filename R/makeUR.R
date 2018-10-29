@@ -37,20 +37,19 @@
 #' is larger than the threshold (default is 500)}
 #' }
 #'
-#' Estimation of the allele frequencies when \code{mafEst=TRUE} is parallelized using the \code{\link[foreach]{foreach}} function, where the
-#' number of cores to use in the parallelization is specified by the argument \code{nClust}. Note: Do not
-#' set the number of cores to be more than what is available on your computer (or bad things will happen!).
+#' Estimation of the allele frequencies when \code{mafEst=TRUE} is parallelized using openMP in compiled C code, where the
+#' number of threads used in the parallelization is specified by the argument \code{nThreads}.
 #'
 #' @param RAobj Object of class RA created via the \code{\link{readRA}} function.
 #' @param indsubset Integer vector specifying which samples of the RA dataset to retain in the UR
 #' population.
-#' @param ploid An integer number specifying the ploidy level of the population. Currently, only
-#' even ploidy levels are valid.
+# #' @param ploid An integer number specifying the ploidy level of the population. Currently, only
+# #' even ploidy levels are valid.
 #' @param filter Named list of thresholds for various criteria used to fiter SNPs.
 #' See below for details.
 #' @param mafEst Logical value indicating whether the allele frequences and sequencing
 #' error parameters are to estimated for each SNP (see details).
-#' @param nClust Integer vector specifying the number of clusters to use in the foreach loop. Only used in the estimation of
+#' @param nThreads Integer vector specifying the number of clusters to use in the foreach loop. Only used in the estimation of
 #' allele frequencies when \code{mafEst=TRUE}.
 #' @return An R6 object of class UR.
 #' @author Timothy P. Bilton
@@ -63,10 +62,12 @@
 #' simdata <- readRA(RAfile)
 #'
 #' ## make unrelated population
-#' urpop <- makeUR(simdata, mafEst=FALSE)
+#' urpop <- makeUR(simdata)
 
 #### Make an unrelated population
-makeUR <- function(RAobj, indsubset=NULL, ploid=2, filter=list(MAF=0.01, MISS=0.5, MAXDEPTH=500), mafEst=TRUE, nClust=2){
+makeUR <- function(RAobj, indsubset=NULL, filter=list(MAF=0.01, MISS=0.5, MAXDEPTH=500), mafEst=TRUE, nThreads=2){
+
+  ploid = 2
 
   ## Do some checks
   if(!all(class(RAobj) %in% c("RA","R6")))
@@ -85,7 +86,7 @@ makeUR <- function(RAobj, indsubset=NULL, ploid=2, filter=list(MAF=0.01, MISS=0.
    #stop("P-value for Hardy-Weinberg equilibrium filter is invalid.")
   if(!is.vector(ploid) || !is.numeric(ploid) || length(ploid) != 1 || round(ploid/2) != ploid/2)
     stop("Argument for ploid level is invalid.")
-  if(!is.numeric(nClust) || length(nClust) != 1 || nClust < 0 || round(nClust) != nClust)
+  if(!is.numeric(nThreads) || length(nThreads) != 1 || nThreads < 0 || round(nThreads) != nThreads)
     stop("Argument for the number of cores for the parallelization is invalid")
   if(is.null(indsubset)) indsubset <- 1:RAobj$.__enclos_env__$private$nInd
   else if(!is.vector(indsubset) || !is.character(indsubset) || any(is.na(indsubset)) ||
@@ -103,9 +104,10 @@ makeUR <- function(RAobj, indsubset=NULL, ploid=2, filter=list(MAF=0.01, MISS=0.
   cat("-------------\n")
   cat("Processing Data.\n\n")
 
-  cat("Filtering criteria for removing SNPs :\n")
-  cat("Minor allele frequency (MAF) < ", filter$MAF,"\n")
+  cat("Filtering criteria for removing SNPs:\n")
+  cat("Minor allele frequency (MAF) < ", filter$MAF,"\n",sep="")
   cat("Percentage of missing genotypes > ", filter$MISS*100,"%\n",sep="")
+  cat("Maximum average SNP read depth > ", filter$MAXDEPTH, "\n", sep="")
   #cat("Hardy-Weinberg equilibrium: < ", filter$HWdis[1]," and > ",filter$HWdis[2],"\n\n",sep="")
 
   ## Extract the private variables we want
@@ -122,9 +124,9 @@ makeUR <- function(RAobj, indsubset=NULL, ploid=2, filter=list(MAF=0.01, MISS=0.
 
   ## estimate allele frequencies and sequencing error parameters
   if(mafEst){
-    temp <- URobj$.__enclos_env__$private$p_est(snpsubset=snpsubset, indsubset=indsubset, nClust=nClust)
-    pfreq <- unname(temp[1,])
-    ep <- unname(temp[2,])
+    temp <- URobj$.__enclos_env__$private$p_est(snpsubset=snpsubset, indsubset=indsubset, nThreads=nThreads)
+    pfreq <- temp$p
+    ep <- temp$ep
   }
   else{
     ratio <- URobj$.__enclos_env__$private$ref[indsubset,snpsubset]/(URobj$.__enclos_env__$private$ref[indsubset,snpsubset]+URobj$.__enclos_env__$private$alt[indsubset,snpsubset])

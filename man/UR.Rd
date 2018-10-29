@@ -10,8 +10,8 @@ Class for storing RA data and associated functions for analysis of unrelated pop
 \section{Usage}{
 
 \preformatted{
-URobj <- makeUR(RAobj, filter=list(MAF=0.05, MISS=0.5),
-                 ploid=2, mafEst=TRUE, nClust=3)
+URobj <- makeUR(RAobj, indsubset=NULL,, filter=list(MAF=0.05, MISS=0.5, MAXDEPTH=500),
+                mafEst=TRUE, nThreads=2)
 }
 }
 

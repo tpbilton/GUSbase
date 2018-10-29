@@ -23,8 +23,8 @@
 #' @usage NULL
 #' @section Usage:
 #' \preformatted{
-#' URobj <- makeUR(RAobj, filter=list(MAF=0.05, MISS=0.5),
-#'                  ploid=2, mafEst=TRUE, nClust=3)
+#' URobj <- makeUR(RAobj, indsubset=NULL,, filter=list(MAF=0.05, MISS=0.5, MAXDEPTH=500),
+#'                 mafEst=TRUE, nThreads=2)
 #' }
 #'
 #' @section Details:
@@ -95,8 +95,9 @@ UR <- R6Class("UR",
                   if(!is.null(List$ep))
                     private$ep        = List$ep
                 },
-                p_est = function(snpsubset=NULL,indsubset=NULL, nClust=2, para=NULL, method="optim",
-                                 control=NULL, newStarts=c(0.001,0.01,0.1,0.2)){
+                p_est = function(snpsubset=NULL,indsubset=NULL, nThreads=2, para=NULL, control=NULL
+                                 #, method="EM", newStarts=c(0.001,0.01,0.1,0.2)
+                                 ){
                   ## Do some checks
                   if(is.null(snpsubset)) snpsubset <- 1:private$nSnps
                   else if(checkVector(snpsubset, type="pos_integer", minv=1, maxv = private$nSnps))
@@ -109,7 +110,7 @@ UR <- R6Class("UR",
                   ratio <- ref/(ref+alt)
                   nSnps <- length(snpsubset)
                   nInd <- length(indsubset)
-                  if(!is.numeric(nClust) || length(nClust) != 1 || nClust < 0 || round(nClust) != nClust)
+                  if(!is.numeric(nThreads) || length(nThreads) != 1 || nThreads < 0 || round(nThreads) != nThreads)
                     stop("Argument for the number of cores for the parallelization is invalid")
                   ## inital value
                   if(!is.null(para)){
@@ -143,37 +144,37 @@ UR <- R6Class("UR",
                   }
                   ## perform the estimation
 
-                  if(method == "optim"){
-                    if(is.null(control))
-                      control <- list(maxit = 200, reltol=1e-10)
-                    else if(!is.list(control))
-                      stop("Argument `control` must be a list object")
-                    else {
-                      if(is.null(control$maxit)) control$maxit = 200
-                      if(is.null(control$reltol)) control$reltol = 1e-10
-                    }
-                    ploid <- private$ploid
-                    cl <- parallel::makeCluster(nClust)
-                    doParallel::registerDoParallel(cl)
-                    res_temp <- foreach::foreach(snp = 1:nSnps, .combine="cbind") %dopar% {
-                      MLE <- stats::optim(par = c(logit(pinit[snp]), logit2(epinit[snp])), fn=ll_pest, gr=score_pest, method="BFGS",
-                                          v=ploid, ref=ref[,snp], alt=alt[,snp], nInd=nInd, nSnps=as.integer(1), control=control)
-                      ## Check for badly behaved estimates
-                      if(MLE$par[2] > logit2(0.48)){
-                        MLE.list <- vector(mode="list", length=length(newStarts))
-                        for(i in 1:length(newStarts)){
-                          MLE.list[[i]] <- stats::optim(par = c(logit(pinit[snp]), logit2(newStarts[i])), fn=ll_pest, gr=score_pest, method="BFGS",
-                                                        v=ploid, ref=ref[,snp], alt=alt[,snp], nInd=nInd, nSnps=as.integer(1), control=control)
-                        }
-                        MLE <- MLE.list[[which.min(lapply(MLE.list, function(x) x$value))]]
-                      }
-                      ## Return the MLEs
-                      return(c(inv.logit(MLE$par[1]), inv.logit2(MLE$par[2]), -MLE$value))
-                    }
-                    parallel::stopCluster(cl)
-
-                    res <- list(unname(res_temp[3,]), unname(res_temp[1,]), unname(res_temp[2,]))
-                  } else{
+                  # if(method == "optim"){
+                  #   if(is.null(control))
+                  #     control <- list(maxit = 200, reltol=1e-10)
+                  #   else if(!is.list(control))
+                  #     stop("Argument `control` must be a list object")
+                  #   else {
+                  #     if(is.null(control$maxit)) control$maxit = 200
+                  #     if(is.null(control$reltol)) control$reltol = 1e-10
+                  #   }
+                  #   ploid <- private$ploid
+                  #   cl <- parallel::makeCluster(nClust)
+                  #   doParallel::registerDoParallel(cl)
+                  #   res_temp <- foreach::foreach(snp = 1:nSnps, .combine="cbind") %dopar% {
+                  #     MLE <- stats::optim(par = c(logit(pinit[snp]), logit2(epinit[snp])), fn=ll_pest, gr=score_pest, method="BFGS",
+                  #                         v=ploid, ref=ref[,snp], alt=alt[,snp], nInd=nInd, nSnps=as.integer(1), control=control)
+                  #     ## Check for badly behaved estimates
+                  #     if(MLE$par[2] > logit2(0.48)){
+                  #       MLE.list <- vector(mode="list", length=length(newStarts))
+                  #       for(i in 1:length(newStarts)){
+                  #         MLE.list[[i]] <- stats::optim(par = c(logit(pinit[snp]), logit2(newStarts[i])), fn=ll_pest, gr=score_pest, method="BFGS",
+                  #                                       v=ploid, ref=ref[,snp], alt=alt[,snp], nInd=nInd, nSnps=as.integer(1), control=control)
+                  #       }
+                  #       MLE <- MLE.list[[which.min(lapply(MLE.list, function(x) x$value))]]
+                  #     }
+                  #     ## Return the MLEs
+                  #     return(c(inv.logit(MLE$par[1]), inv.logit2(MLE$par[2]), -MLE$value))
+                  #   }
+                  #   parallel::stopCluster(cl)
+                  #
+                  #   res <- list(unname(res_temp[3,]), unname(res_temp[1,]), unname(res_temp[2,]))
+                  # } else{
                     if(is.null(control))
                       control <- list(maxit = 200, reltol=1e-10)
                     else if(!is.list(control))
@@ -183,8 +184,8 @@ UR <- R6Class("UR",
                       if(is.null(control$reltol)) control$reltol = 1e-10
                     }
                     res <- .Call("pest_em_c", pinit=pinit, epinit=epinit, ref=ref, alt=alt, nInd=nInd,
-                                nSnps=nSnps, nThreads=nClust, EMpara=c(as.numeric(control$maxit), as.numeric(control$reltol)))
-                  }
+                                nSnps=nSnps, nThreads=nThreads, EMpara=c(as.numeric(control$maxit), as.numeric(control$reltol)))
+                  # }
                   names(res) <- c("loglik", "p", "ep")
                   return(res)
                 }

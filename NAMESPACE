@@ -3,6 +3,7 @@
 export(RA)
 export(UR)
 export(VCFtoRA)
+export(dts)
 export(inv.logit)
 export(inv.logit2)
 export(logit)
