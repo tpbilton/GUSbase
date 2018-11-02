@@ -23,8 +23,9 @@
 #' @usage NULL
 #' @section Usage:
 #' \preformatted{
-#' URobj <- makeUR(RAobj, indsubset=NULL,, filter=list(MAF=0.05, MISS=0.5, MAXDEPTH=500),
-#'                 mafEst=TRUE, nThreads=2)
+#' URobj <- makeUR(RAobj, ploid = 2,indsubset = NULL, filter = list(MAF = 0.01,
+#'   MISS = 0.5, HW = c(-0.05, Inf), MAXDEPTH = 500), mafEst = TRUE,
+#'   nThreads = 2)
 #' }
 #'
 #' @section Details:

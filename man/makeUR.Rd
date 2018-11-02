@@ -4,11 +4,15 @@
 \alias{makeUR}
 \title{Make an unrelated (UR) population}
 \usage{
-makeUR(RAobj, indsubset = NULL, filter = list(MAF = 0.01, MISS = 0.5,
-  MAXDEPTH = 500), mafEst = TRUE, nThreads = 2)
+makeUR(RAobj, ploid = 2, indsubset = NULL, filter = list(MAF = 0.01,
+  MISS = 0.5, HW = c(-0.05, Inf), MAXDEPTH = 500), mafEst = TRUE,
+  nThreads = 2)
 }
 \arguments{
 \item{RAobj}{Object of class RA created via the \code{\link{readRA}} function.}
+
+\item{ploid}{An integer number specifying the ploidy level of the population. Currently, only
+a ploidy level of two (diploid) is implemented.}
 
 \item{indsubset}{Integer vector specifying which samples of the RA dataset to retain in the UR
 population.}
@@ -42,6 +46,8 @@ The filtering criteria currently implemented are
 \item{Minor allele frequency (MAF): }{SNPs are discarded if their MAF is less than the threshold (default is 0.01)}
 \item{Proportion of missing data (MISS): }{SNPs are discarded if the proportion of individuals with no reads
 (e.g. missing genotype) is greater than the threshold value (default is 0.5)}
+\item{Hardy Weinberg Distance (HW): }{SNPs are discarded if their Hardy Weinberg distance is less than the first threshold
+value (default=-0.05) or if their Hardy Weinberg distance is greater than the second threshold value (default=Inf)}
 \item{Maximum average SNP read depth (MAXDEPTH): }{SNPs are discarded if the average read depth for the SNP
 is larger than the threshold (default is 500)}
 }
@@ -61,5 +67,5 @@ urpop <- makeUR(simdata)
 \insertRef{bilton2018genetics2}{GUSbase}
 }
 \author{
-Timothy P. Bilton
+Timothy P. Bilton and Ken G. Dodds
 }

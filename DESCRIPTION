@@ -2,7 +2,9 @@ Package: GUSbase
 Title: Genotyping Uncertainty with Sequencing Data: Base Package
 Date: 2018-10-29
 Version: 0.1.1
-Authors@R: person("Timothy P.", "Bilton", email = "tbilton@maths.otago.ac.nz", role = c("aut", "cre", "cph"))
+Authors@R: c(
+    person("Timothy P.", "Bilton", email = "tbilton@maths.otago.ac.nz", role = c("aut", "cre", "cph")),
+    person("Ken G.", "Dodds", role = c("ctb")))
 Description: Package for analyzing high-throughput sequencing via reference and alternate count information. This package forms the base to a number of other packages that are specifically designed for analyzing high-throughput sequencing data. 
 Depends: R (>= 3.1.0)
 Imports: R6, Rdpack (>= 0.8-0), stats, utils, parallel, doParallel, foreach, data.table

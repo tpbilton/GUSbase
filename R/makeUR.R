@@ -33,6 +33,9 @@
 #' \item{Minor allele frequency (MAF): }{SNPs are discarded if their MAF is less than the threshold (default is 0.01)}
 #' \item{Proportion of missing data (MISS): }{SNPs are discarded if the proportion of individuals with no reads
 #' (e.g. missing genotype) is greater than the threshold value (default is 0.5)}
+#' \item{Hardy Weinberg Distance (HW): }{SNPs are discarded if their Hardy Weinberg distance is less than the first threshold
+#' value (default=\code{-0.05}) or if their Hardy Weinberg distance is greater than the second threshold value (default=\code{Inf}).
+#' This filtering criteria has been taken from the KGD software (\url{https://github.com/AgResearch/KGD}).}
 #' \item{Maximum average SNP read depth (MAXDEPTH): }{SNPs are discarded if the average read depth for the SNP
 #' is larger than the threshold (default is 500)}
 #' }
@@ -43,8 +46,8 @@
 #' @param RAobj Object of class RA created via the \code{\link{readRA}} function.
 #' @param indsubset Integer vector specifying which samples of the RA dataset to retain in the UR
 #' population.
-# #' @param ploid An integer number specifying the ploidy level of the population. Currently, only
-# #' even ploidy levels are valid.
+#' @param ploid An integer number specifying the ploidy level of the population. Currently, only
+#' a ploidy level of two (diploid) is implemented.
 #' @param filter Named list of thresholds for various criteria used to fiter SNPs.
 #' See below for details.
 #' @param mafEst Logical value indicating whether the allele frequences and sequencing
@@ -52,7 +55,7 @@
 #' @param nThreads Integer vector specifying the number of clusters to use in the foreach loop. Only used in the estimation of
 #' allele frequencies when \code{mafEst=TRUE}.
 #' @return An R6 object of class UR.
-#' @author Timothy P. Bilton
+#' @author Timothy P. Bilton and Ken G. Dodds
 #' @references
 #' \insertRef{bilton2018genetics2}{GUSbase}
 #' @export makeUR
@@ -65,9 +68,8 @@
 #' urpop <- makeUR(simdata)
 
 #### Make an unrelated population
-makeUR <- function(RAobj, indsubset=NULL, filter=list(MAF=0.01, MISS=0.5, MAXDEPTH=500), mafEst=TRUE, nThreads=2){
-
-  ploid = 2
+makeUR <- function(RAobj, ploid = 2, indsubset=NULL, filter=list(MAF=0.01, MISS=0.5, HW=c(-0.05,Inf), MAXDEPTH=500),
+                   mafEst=TRUE, nThreads=2){
 
   ## Do some checks
   if(!all(class(RAobj) %in% c("RA","R6")))
@@ -75,16 +77,19 @@ makeUR <- function(RAobj, indsubset=NULL, filter=list(MAF=0.01, MISS=0.5, MAXDEP
   if(is.null(filter$MAF)) filter$MAF <- 0.01
   else if( length(filter$MAF) != 1 || !is.numeric(filter$MAF) || filter$MAF<0 || filter$MAF>1)
     stop("Minor allele frequency filter is invalid")
-  if(is.null(filter$MISS)) filter$MISS <- 0.2
+  if(is.null(filter$MISS)) filter$MISS <- 0.5
   else if( length(filter$MISS) != 1 || !is.numeric(filter$MISS) || filter$MISS<0 || filter$MISS>1 )
     stop("Proportion of missing data filter is invalid")
   if(is.null(filter$MAXDEPTH)) filter$MAXDEPTH <- 500
   else if(checkVector(filter$MAXDEPTH, type="pos_numeric", minv=0, equal=FALSE) || length(filter$MAXDEPTH) != 1)
     stop("Maximum mean SNP depth filter is invalid.")
+  if(is.null(filter$HW)) filter$HW=c(-0.05,Inf)
+  else if(!is.vector(filter$HW) || any(!is.numeric(filter$HW)) || length(filter$HW) != 2 || any(is.na(filter$HW)) || filter$HW[1] >= filter$HW[2])
+    stop("Hardy Weinberg (HW) filter is invalid.")
   #if(is.null(filter$PVALUE)) filter$PVALUE <- 1e-6
   #else if( length(filter$PVALUE) != 1 || !is.numeric(filter$PVALUE) || filter$PVALUE<0 || filter$PVALUE>1 )
    #stop("P-value for Hardy-Weinberg equilibrium filter is invalid.")
-  if(!is.vector(ploid) || !is.numeric(ploid) || length(ploid) != 1 || round(ploid/2) != ploid/2)
+  if(!is.vector(ploid) || !is.numeric(ploid) || length(ploid) != 1 || ploid != 2) #  round(ploid/2) != ploid/2)
     stop("Argument for ploid level is invalid.")
   if(!is.numeric(nThreads) || length(nThreads) != 1 || nThreads < 0 || round(nThreads) != nThreads)
     stop("Argument for the number of cores for the parallelization is invalid")
@@ -119,8 +124,18 @@ makeUR <- function(RAobj, indsubset=NULL, filter=list(MAF=0.01, MISS=0.5, MAXDEP
   ## Calculate the proportion of missing data and mean depths
   miss <- apply(genon,2, function(x) sum(is.na(x))/length(x))
   mdepth <- colMeans(URobj$.__enclos_env__$private$ref[indsubset,] + URobj$.__enclos_env__$private$alt[indsubset,])
+  ## Calculate HWE
+  naa <- colSums(genon == 2, na.rm = TRUE)
+  nab <- colSums(genon == 1, na.rm = TRUE)
+  nbb <- colSums(genon == 0, na.rm = TRUE)
+  n1 <- 2 * naa + nab
+  n2 <- nab + 2 * nbb
+  n <- n1 + n2  #n alleles
+  p1 <- n1/n
+  p2 <- 1 - p1
+  HWdis <- naa/(naa + nab + nbb) - p1 * p1
   ## do prelimiary filtering
-  snpsubset <- which(miss < filter$MISS & mdepth < filter$MAXDEPTH)
+  snpsubset <- which(miss < filter$MISS & mdepth < filter$MAXDEPTH & HWdis > filter$HW[1] & HWdis < filter$HW[2])
 
   ## estimate allele frequencies and sequencing error parameters
   if(mafEst){
@@ -138,6 +153,10 @@ makeUR <- function(RAobj, indsubset=NULL, filter=list(MAF=0.01, MISS=0.5, MAXDEP
   ## subset SNPs
   maf_indx <- which(maf > filter$MAF)
   indx <- snpsubset[maf_indx]
+
+  ## check that there are still some SNPs left
+  if(length(indx) == 0)
+    stop("No SNPs remaining after filtering. Consider using a different set of filtering criteria.")
 
   ## Update the data in the R6 object
   genon <- genon[,indx]

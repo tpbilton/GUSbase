@@ -28,7 +28,7 @@
 #'
 #' ## RA Functions (Methods)
 #' RAobj$extractVar(nameList)
-#' RAobj$writeVCF(snpsubset=NULL, indsubset=NULL, file="GUSbase")
+#' RAobj$writRA(snpsubset=NULL, indsubset=NULL, file="GUSbase")
 #' RAobj$writeVCF(snpsubset=NULL, indsubset=NULL, file="GUSbase", IDuse=NULL)
 #' }
 #'
