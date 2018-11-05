@@ -47,7 +47,8 @@ The filtering criteria currently implemented are
 \item{Proportion of missing data (MISS): }{SNPs are discarded if the proportion of individuals with no reads
 (e.g. missing genotype) is greater than the threshold value (default is 0.5)}
 \item{Hardy Weinberg Distance (HW): }{SNPs are discarded if their Hardy Weinberg distance is less than the first threshold
-value (default=-0.05) or if their Hardy Weinberg distance is greater than the second threshold value (default=Inf)}
+value (default=\code{-0.05}) or if their Hardy Weinberg distance is greater than the second threshold value (default=\code{Inf}).
+This filtering criteria has been taken from the KGD software (\url{https://github.com/AgResearch/KGD}).}
 \item{Maximum average SNP read depth (MAXDEPTH): }{SNPs are discarded if the average read depth for the SNP
 is larger than the threshold (default is 500)}
 }
