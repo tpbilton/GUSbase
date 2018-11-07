@@ -36,20 +36,3 @@ ll_pest <- function(para, v=v, ref=ref, alt=alt, nInd=nInd, nSnps=nSnps, seqErr=
 score_pest <- function(para, ...){
   return(get(".score", envir = parent.frame(3)))
 }
-
-## likelihood and score function for the allele and error estimation assuming HWE
-# ll_gest <- function(para, v=v, ref=ref, alt=alt, nInd=nInd, nSnps=nSnps, seqErr=T, extra=0){
-#   g = matrix(inv.mlogit(para[1:(nSnps*v)], n=v), ncol=nSnps, nrow=v)
-#   g = rbind(g,1-colSums(g))
-#   if(seqErr)
-#     ep = inv.logit2(para[nSnps*v+1])
-#   else
-#     ep = extra
-#   out <- .Call("gest_c", geno=g, ep=ep, v=v, ref=ref, alt=alt, nInd=nInd, nSnps=nSnps)
-#   if(seqErr)
-#     assign(".score", -out[[2]], envir = parent.frame(3))
-#   else
-#     assign(".score", -out[[2]][-(nSnps*v+1)], envir = parent.frame(3))
-#   return(-out[[1]])
-# }
-

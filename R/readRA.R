@@ -33,6 +33,8 @@
 #'
 #' @param rafile Character string giving the path to the RA file to be read into R. Typically the required string is
 #' returned from the VCFtoRA function when the VCF file is converted to RA format.
+#' @param snpsubset Integer vector giving the indices of the SNPs from the RA file to be read in. This indices correspond
+#' to the rows of the RA file (excluding the header row).
 #' @param sampthres A numeric value giving the filtering threshold for which individual samples are removed. Default is 0.01
 #' which means that samples with an average number of reads per SNP that is less than 0.01 are removed.
 #' @param excsamp A character vector of the sample IDs that are to be excluded (or discarded). Note that the sample IDs must correspond
@@ -44,9 +46,18 @@
 #' file <- simDS()
 #' RAfile <- VCFtoRA(file$vcf)
 #' simdata <- readRA(RAfile)
+#'
+#' ## Reading in a subset of the data
+#' # Takes SNPs 10 to 30
+#' subset <- readRA(RAfile, snpsubset = 10:30)
+#'
+#' # Read in a random set of SNPs
+#' set.seed(675)
+#' subset <- readRA(RAfile, snpsubset = sample(1:1000, size=10))
+#'
 #' @export
 #### Function for reading in RA data and converting to genon and depth matrices.
-readRA <- function(rafile, sampthres = 0.01, excsamp = NULL, ...){
+readRA <- function(rafile, snpsubset=NULL, sampthres = 0.01, excsamp = NULL, ...){
 
   if(!is.character(rafile) || !is.vector(rafile) || length(rafile) != 1)
     stop("File name of RA data set is not a string of length one")
@@ -54,41 +65,69 @@ readRA <- function(rafile, sampthres = 0.01, excsamp = NULL, ...){
     gform = "reference"
   if(!is.character(gform) || length(gform) != 1 || !(gform %in% c("reference","uneak")))
     stop("gform argument must be either 'reference' or 'uneak'")
+  if(!is.null(snpsubset)){
+    if(checkVector(snpsubset, type="pos_integer", minv=1))
+      stop("SNP subset is incorrectly specified")
+    else{
+      ## Determine the start and stop positions
+      snpsubset <- sort(unique(snpsubset))
+      start = snpsubset[c(1,which(diff(snpsubset)!=1)+1)]
+      stop  = c(snpsubset[which(diff(snpsubset)!=1)],snpsubset[length(snpsubset)]) + 1
+    }
+  }
 
   ## separate character between reference and alternate allele count
   gsep <- switch(gform, uneak = "|", reference = ",")
   ## Process the individuals info
   ghead <- scan(rafile, what = "", nlines = 1, sep = "\t")
 
-  ## Read in the data
-  # If reference based
-  if (gform == "reference"){
-    genosin <- scan(rafile, skip = 1, sep = "\t", what = c(list(chrom = "", coord = 0), rep(list(""), length(ghead) - 2)))
-    chrom <- genosin[[1]]
-    pos <- genosin[[2]]
-    SNP_Names <- paste(genosin[[1]],genosin[[2]],sep="_")
+  ## if only taking a subset if the SNPs
+  if(!is.null(snpsubset)){
+    genosin <- NULL
+    for(i in 1:length(start))
+      genosin <- rbind(genosin, data.table::fread(rafile, sep = "\t",
+                                                  skip=start[i], nrows=stop[i]-start[i]))
+    genosin <- as.matrix(genosin)
+    chrom <- genosin[,1]
+    pos <- as.numeric(genosin[,2])
+    genosin <- genosin[,-c(1:2)]
+    SNP_Names <- make.unique(paste(chrom, pos, sep="_"))
     indID <- ghead[3:length(ghead)]
     AFrq <- NULL
-  }
-  else if (gform == "uneak"){
-    genosin <- scan(rafile, skip = 1, sep = "\t", what = c(list(chrom = ""), rep(list(""), length(ghead) - 6), list(hetc1 = 0, hetc2 = 0, acount1 = 0, acount2 = 0, p = 0)))
-    SNP_Names <- genosin[[1]]
-    indID <- ghead[2:(length(ghead)-5)]
-    AFrq <- genosin[[length(genosin)]]
-    chrom <- pos <- NULL
-  }
-
-  ## compute dimensions
-  nSnps <- length(SNP_Names)
-  nInd <- length(ghead) - switch(gform, reference=2, uneak=6)
-
-  ## generate the genon and depth matrices
-  ref <- alt <- matrix(as.integer(0), nrow = nInd, ncol = nSnps)
-  start.ind <- switch(gform, uneak=1, reference=2)
-  for (i in 1:nInd){
-    depths <- strsplit(genosin[[start.ind+i]], split = gsep, fixed = TRUE)
-    ref[i, ] <- as.integer(unlist(lapply(depths,function(z) z[1])))
-    alt[i, ] <- as.integer(unlist(lapply(depths,function(z) z[2])))
+    ## compute dimensions
+    nSnps <- length(SNP_Names)
+    nInd <- length(ghead) - switch(gform, reference=2, uneak=6)
+    ## generate the reference and alternate matrix
+    temp <- strsplit(as.matrix(genosin), split=",")
+    ref <- matrix(as.integer(unlist(lapply(temp, function(x) x[1]))), nrow=nInd, ncol = nSnps, byrow=TRUE)
+    alt <- matrix(as.integer(unlist(lapply(temp, function(x) x[2]))), nrow=nInd, ncol = nSnps, byrow=TRUE)
+    rm(temp)
+  } else{
+    if (gform == "reference"){
+      genosin <- scan(rafile, skip = 1, sep = "\t", what = c(list(chrom = "", coord = 0), rep(list(""), length(ghead) - 2)))
+      chrom <- genosin[[1]]
+      pos <- genosin[[2]]
+      SNP_Names <- paste(genosin[[1]],genosin[[2]],sep="_")
+      indID <- ghead[3:length(ghead)]
+      AFrq <- NULL
+    } else if (gform == "uneak"){
+      genosin <- scan(rafile, skip = 1, sep = "\t", what = c(list(chrom = ""), rep(list(""), length(ghead) - 6), list(hetc1 = 0, hetc2 = 0, acount1 = 0, acount2 = 0, p = 0)))
+      SNP_Names <- genosin[[1]]
+      indID <- ghead[2:(length(ghead)-5)]
+      AFrq <- genosin[[length(genosin)]]
+      chrom <- pos <- NULL
+    }
+    ## compute dimensions
+    nSnps <- length(SNP_Names)
+    nInd <- length(ghead) - switch(gform, reference=2, uneak=6)
+    ## generate the genon and depth matrices
+    ref <- alt <- matrix(as.integer(0), nrow = nInd, ncol = nSnps)
+    start.ind <- switch(gform, uneak=1, reference=2)
+    for (i in 1:nInd){
+      depths <- strsplit(genosin[[start.ind+i]], split = gsep, fixed = TRUE)
+      ref[i, ] <- as.integer(unlist(lapply(depths,function(z) z[1])))
+      alt[i, ] <- as.integer(unlist(lapply(depths,function(z) z[2])))
+    }
   }
   genon <- (ref > 0) + (alt == 0)
   genon[which(ref == 0 & alt == 0)] <- NA

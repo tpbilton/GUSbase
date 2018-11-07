@@ -26,7 +26,7 @@
 #' }
 #'
 #' \tabular{ll}{ Package: \tab GUSbase\cr Type: \tab Package\cr Version: \tab
-#' 0.1.0\cr Date: \tab 2018-10-19\cr License: \tab GPL 3\cr }
+#' 0.1.1\cr Date: \tab 2018-10-29\cr License: \tab GPL 3\cr }
 #'
 #' @name GUSbase-package
 #' @aliases GUSbase
@@ -38,7 +38,7 @@
 #' @keywords package
 #' @importFrom Rdpack reprompt
 #' @importFrom R6 R6Class
-
+#' @importFrom foreach %dopar%
 NULL
 
 

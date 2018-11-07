@@ -6,9 +6,11 @@
 
 /* .Call calls */
 extern SEXP pest_c(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP pest_em_c(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"pest_c", (DL_FUNC) &pest_c, 7},
+    {"pest_em_c", (DL_FUNC) &pest_em_c, 8},
     {NULL, NULL, 0}
 };
 

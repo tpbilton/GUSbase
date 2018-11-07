@@ -35,7 +35,6 @@
 #' @examples
 #' ## extract the name of the vcf file and the pedigree file
 #' simDS()
-#'
 #' @export
 ## Wrapper function for reading in the F1 simulate data set
 simDS <- function(){

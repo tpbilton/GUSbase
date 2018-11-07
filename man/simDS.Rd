@@ -27,7 +27,6 @@ for specification of VCF format). The pedigree file contains five columns, namel
 \examples{
 ## extract the name of the vcf file and the pedigree file
 simDS()
-
 }
 \author{
 Timothy P. Bilton

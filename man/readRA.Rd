@@ -4,11 +4,15 @@
 \alias{readRA}
 \title{Read an Reference/Alternate (RA) file.}
 \usage{
-readRA(rafile, sampthres = 0.01, excsamp = NULL, ...)
+readRA(rafile, snpsubset = NULL, sampthres = 0.01, excsamp = NULL,
+  ...)
 }
 \arguments{
 \item{rafile}{Character string giving the path to the RA file to be read into R. Typically the required string is
 returned from the VCFtoRA function when the VCF file is converted to RA format.}
+
+\item{snpsubset}{Integer vector giving the indices of the SNPs from the RA file to be read in. This indices correspond
+to the rows of the RA file (excluding the header row).}
 
 \item{sampthres}{A numeric value giving the filtering threshold for which individual samples are removed. Default is 0.01
 which means that samples with an average number of reads per SNP that is less than 0.01 are removed.}
@@ -40,6 +44,15 @@ Note: Indels are removed, multiple alternative alleles are removed and ./. is tr
 file <- simDS()
 RAfile <- VCFtoRA(file$vcf)
 simdata <- readRA(RAfile)
+
+## Reading in a subset of the data
+# Takes SNPs 10 to 30
+subset <- readRA(RAfile, snpsubset = 10:30)
+
+# Read in a random set of SNPs
+set.seed(675)
+subset <- readRA(RAfile, snpsubset = sample(1:1000, size=10))
+
 }
 \author{
 Timothy P. Bilton

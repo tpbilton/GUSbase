@@ -4,22 +4,26 @@
 \alias{makeUR}
 \title{Make an unrelated (UR) population}
 \usage{
-makeUR(RAobj, filter = list(MAF = 0.05, MISS = 0.5), ploid = 2,
-  mafEst = TRUE, nClust = 3)
+makeUR(RAobj, ploid = 2, indsubset = NULL, filter = list(MAF = 0.01,
+  MISS = 0.5, HW = c(-0.05, Inf), MAXDEPTH = 500), mafEst = TRUE,
+  nThreads = 2)
 }
 \arguments{
 \item{RAobj}{Object of class RA created via the \code{\link{readRA}} function.}
 
+\item{ploid}{An integer number specifying the ploidy level of the population. Currently, only
+a ploidy level of two (diploid) is implemented.}
+
+\item{indsubset}{Integer vector specifying which samples of the RA dataset to retain in the UR
+population.}
+
 \item{filter}{Named list of thresholds for various criteria used to fiter SNPs.
 See below for details.}
-
-\item{ploid}{An integer number specifying the ploidy level of the population. Currently, only
-even ploidy levels are valid.}
 
 \item{mafEst}{Logical value indicating whether the allele frequences and sequencing
 error parameters are to estimated for each SNP (see details).}
 
-\item{nClust}{Integer vector specifying the number of clusters to use in the foreach loop. Only used in the estimation of
+\item{nThreads}{Integer vector specifying the number of clusters to use in the foreach loop. Only used in the estimation of
 allele frequencies when \code{mafEst=TRUE}.}
 }
 \value{
@@ -39,13 +43,18 @@ the sequencing error rate is assumed to be zero.
 
 The filtering criteria currently implemented are
 \itemize{
-\item{Minor allele frequency (MAF): }{SNPs are discarded if their MAF is less than the threshold (default is 0.05)}
-\item{Proportion of missing data (MISS): }{SNPs are discarded if the proportion of individuals with no reads (e.g. missing genotype) is greater than the threshold value (default is 0.5)}
+\item{Minor allele frequency (MAF): }{SNPs are discarded if their MAF is less than the threshold (default is 0.01)}
+\item{Proportion of missing data (MISS): }{SNPs are discarded if the proportion of individuals with no reads
+(e.g. missing genotype) is greater than the threshold value (default is 0.5)}
+\item{Hardy Weinberg Distance (HW): }{SNPs are discarded if their Hardy Weinberg distance is less than the first threshold
+value (default=\code{-0.05}) or if their Hardy Weinberg distance is greater than the second threshold value (default=\code{Inf}).
+This filtering criteria has been taken from the KGD software (\url{https://github.com/AgResearch/KGD}).}
+\item{Maximum average SNP read depth (MAXDEPTH): }{SNPs are discarded if the average read depth for the SNP
+is larger than the threshold (default is 500)}
 }
 
-Estimation of the allele frequencies when \code{mafEst=TRUE} is parallelized using the \code{\link[foreach]{foreach}} function, where the
-number of cores to use in the parallelization is specified by the argument \code{nClust}. Note: Do not
-set the number of cores to be more than what is available on your computer (or bad things will happen!).
+Estimation of the allele frequencies when \code{mafEst=TRUE} is parallelized using openMP in compiled C code, where the
+number of threads used in the parallelization is specified by the argument \code{nThreads}.
 }
 \examples{
 file <- simDS()
@@ -53,11 +62,11 @@ RAfile <- VCFtoRA(file$vcf)
 simdata <- readRA(RAfile)
 
 ## make unrelated population
-urpop <- makeUR(simdata, mafEst=FALSE, nClust=1)
+urpop <- makeUR(simdata)
 }
 \references{
 \insertRef{bilton2018genetics2}{GUSbase}
 }
 \author{
-Timothy P. Bilton
+Timothy P. Bilton and Ken G. Dodds
 }
