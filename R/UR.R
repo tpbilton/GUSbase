@@ -184,7 +184,7 @@ UR <- R6Class("UR",
                       if(is.null(control$maxit)) control$maxit = 200
                       if(is.null(control$reltol)) control$reltol = 1e-10
                     }
-                    res <- .Call("pest_em_c", pinit=pinit, epinit=epinit, ref=ref, alt=alt, nInd=nInd,
+                    res <- .Call("pest_em_ep_c", pinit=pinit, epinit=epinit, ref=ref, alt=alt, nInd=nInd,
                                 nSnps=nSnps, nThreads=nThreads, EMpara=c(as.numeric(control$maxit), as.numeric(control$reltol)))
                   # }
                   names(res) <- c("loglik", "p", "ep")

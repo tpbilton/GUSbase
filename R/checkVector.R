@@ -1,4 +1,6 @@
 
+#' @keywords internal
+#' @export checkVector
 
 checkVector <- function(x, type="pos_integer", minv=0, maxv=NULL, equal=TRUE){
   if(type=="pos_integer" & !is.null(maxv))
