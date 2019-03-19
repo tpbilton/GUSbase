@@ -112,10 +112,12 @@ makeUR <- function(RAobj, ploid = 2, indsubset=NULL, filter=list(MAF=0.01, MISS=
   cat("-------------\n")
   cat("Processing Data.\n\n")
 
-  cat("Filtering criteria for removing SNPs:\n")
-  cat("Minor allele frequency (MAF) < ", filter$MAF,"\n",sep="")
-  cat("Percentage of missing genotypes > ", filter$MISS*100,"%\n",sep="")
-  cat("Maximum average SNP read depth > ", filter$MAXDEPTH, "\n", sep="")
+  if(!is.null(filter)){
+    cat("Filtering criteria for removing SNPs:\n")
+    cat("Minor allele frequency (MAF) < ", filter$MAF,"\n",sep="")
+    cat("Percentage of missing genotypes > ", filter$MISS*100,"%\n",sep="")
+    cat("Maximum average SNP read depth > ", filter$MAXDEPTH, "\n", sep="")
+  } else cat("No Filtering performed\n")
   #cat("Hardy-Weinberg equilibrium: < ", filter$HWdis[1]," and > ",filter$HWdis[2],"\n\n",sep="")
 
   ## Extract the private variables we want
