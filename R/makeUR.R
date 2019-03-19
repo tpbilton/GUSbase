@@ -39,6 +39,7 @@
 #' \item{Maximum average SNP read depth (MAXDEPTH): }{SNPs are discarded if the average read depth for the SNP
 #' is larger than the threshold (default is 500)}
 #' }
+#' If \code{filter = NULL}, then no filtering is performed.
 #'
 #' Estimation of the allele frequencies when \code{mafEst=TRUE} is parallelized using openMP in compiled C code, where the
 #' number of threads used in the parallelization is specified by the argument \code{nThreads}.
@@ -74,18 +75,20 @@ makeUR <- function(RAobj, ploid = 2, indsubset=NULL, filter=list(MAF=0.01, MISS=
   ## Do some checks
   if(!all(class(RAobj) %in% c("RA","R6")))
     stop("The `RAobj` argument supplied is not of class 'R6' and 'RA'")
-  if(is.null(filter$MAF)) filter$MAF <- 0.01
-  else if( length(filter$MAF) != 1 || !is.numeric(filter$MAF) || filter$MAF<0 || filter$MAF>1)
-    stop("Minor allele frequency filter is invalid")
-  if(is.null(filter$MISS)) filter$MISS <- 0.5
-  else if( length(filter$MISS) != 1 || !is.numeric(filter$MISS) || filter$MISS<0 || filter$MISS>1 )
-    stop("Proportion of missing data filter is invalid")
-  if(is.null(filter$MAXDEPTH)) filter$MAXDEPTH <- 500
-  else if(checkVector(filter$MAXDEPTH, type="pos_numeric", minv=0, equal=FALSE) || length(filter$MAXDEPTH) != 1)
-    stop("Maximum mean SNP depth filter is invalid.")
-  if(is.null(filter$HW)) filter$HW=c(-0.05,Inf)
-  else if(!is.vector(filter$HW) || any(!is.numeric(filter$HW)) || length(filter$HW) != 2 || any(is.na(filter$HW)) || filter$HW[1] >= filter$HW[2])
-    stop("Hardy Weinberg (HW) filter is invalid.")
+  if(!is.null(filter)){
+    if(is.null(filter$MAF)) filter$MAF <- 0.01
+    else if( length(filter$MAF) != 1 || !is.numeric(filter$MAF) || filter$MAF<0 || filter$MAF>1)
+      stop("Minor allele frequency filter is invalid")
+    if(is.null(filter$MISS)) filter$MISS <- 0.5
+    else if( length(filter$MISS) != 1 || !is.numeric(filter$MISS) || filter$MISS<0 || filter$MISS>1 )
+      stop("Proportion of missing data filter is invalid")
+    if(is.null(filter$MAXDEPTH)) filter$MAXDEPTH <- 500
+    else if(checkVector(filter$MAXDEPTH, type="pos_numeric", minv=0, equal=FALSE) || length(filter$MAXDEPTH) != 1)
+      stop("Maximum mean SNP depth filter is invalid.")
+    if(is.null(filter$HW)) filter$HW=c(-0.05,Inf)
+    else if(!is.vector(filter$HW) || any(!is.numeric(filter$HW)) || length(filter$HW) != 2 || any(is.na(filter$HW)) || filter$HW[1] >= filter$HW[2])
+      stop("Hardy Weinberg (HW) filter is invalid.")
+  }
   #if(is.null(filter$PVALUE)) filter$PVALUE <- 1e-6
   #else if( length(filter$PVALUE) != 1 || !is.numeric(filter$PVALUE) || filter$PVALUE<0 || filter$PVALUE>1 )
    #stop("P-value for Hardy-Weinberg equilibrium filter is invalid.")
@@ -122,20 +125,22 @@ makeUR <- function(RAobj, ploid = 2, indsubset=NULL, filter=list(MAF=0.01, MISS=
   genon <- URobj$.__enclos_env__$private$genon[indsubset,]
 
   ## Calculate the proportion of missing data and mean depths
-  miss <- apply(genon,2, function(x) sum(is.na(x))/length(x))
-  mdepth <- colMeans(URobj$.__enclos_env__$private$ref[indsubset,] + URobj$.__enclos_env__$private$alt[indsubset,])
-  ## Calculate HWE
-  naa <- colSums(genon == 2, na.rm = TRUE)
-  nab <- colSums(genon == 1, na.rm = TRUE)
-  nbb <- colSums(genon == 0, na.rm = TRUE)
-  n1 <- 2 * naa + nab
-  n2 <- nab + 2 * nbb
-  n <- n1 + n2  #n alleles
-  p1 <- n1/n
-  p2 <- 1 - p1
-  HWdis <- naa/(naa + nab + nbb) - p1 * p1
-  ## do prelimiary filtering
-  snpsubset <- which(miss < filter$MISS & mdepth < filter$MAXDEPTH & HWdis > filter$HW[1] & HWdis < filter$HW[2])
+  if(!is.null(filter)){
+    miss <- apply(genon,2, function(x) sum(is.na(x))/length(x))
+    mdepth <- colMeans(URobj$.__enclos_env__$private$ref[indsubset,] + URobj$.__enclos_env__$private$alt[indsubset,])
+    ## Calculate HWE
+    naa <- colSums(genon == 2, na.rm = TRUE)
+    nab <- colSums(genon == 1, na.rm = TRUE)
+    nbb <- colSums(genon == 0, na.rm = TRUE)
+    n1 <- 2 * naa + nab
+    n2 <- nab + 2 * nbb
+    n <- n1 + n2  #n alleles
+    p1 <- n1/n
+    p2 <- 1 - p1
+    HWdis <- naa/(naa + nab + nbb) - p1 * p1
+    ## do prelimiary filtering
+    snpsubset <- which(miss < filter$MISS & mdepth < filter$MAXDEPTH & HWdis > filter$HW[1] & HWdis < filter$HW[2])
+  } else snpsubset <- 1:nSnps
 
   ## estimate allele frequencies and sequencing error parameters
   if(mafEst){
@@ -148,11 +153,13 @@ makeUR <- function(RAobj, ploid = 2, indsubset=NULL, filter=list(MAF=0.01, MISS=
     pfreq <- colMeans(ratio, na.rm=T)
     ep <- rep(0, length(snpsubset))
   }
-  ## Compute MAF
-  maf <- pmin(pfreq,1-pfreq)
-  ## subset SNPs
-  maf_indx <- which(maf > filter$MAF)
-  indx <- snpsubset[maf_indx]
+  if(!is.null(filter)){
+    ## Compute MAF
+    maf <- pmin(pfreq,1-pfreq)
+    ## subset SNPs
+    maf_indx <- which(maf > filter$MAF)
+    indx <- snpsubset[maf_indx]
+  } else indx <- maf_indx <- 1:nSnps
 
   ## check that there are still some SNPs left
   if(length(indx) == 0)
