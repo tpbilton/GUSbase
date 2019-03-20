@@ -83,11 +83,14 @@ readRA <- function(rafile, snpsubset=NULL, sampthres = 0.01, excsamp = NULL, ...
 
   ## if only taking a subset if the SNPs
   if(!is.null(snpsubset)){
-    genosin <- NULL
-    for(i in 1:length(start))
-      genosin <- rbind(genosin, data.table::fread(rafile, sep = "\t",
-                                                  skip=start[i], nrows=stop[i]-start[i]))
-    genosin <- as.matrix(genosin)
+    genosin <- as.matrix(data.table::fread(rafile, sep = "\t",
+                                 skip=start[1], nrows=stop[1]-start[1]))
+    if(length(start) > 1){
+      for(i in 2:length(start))
+        genosin <- rbind(genosin, as.matrix(data.table::fread(rafile, sep = "\t",
+                                                    skip=start[i], nrows=stop[i]-start[i])))
+    }
+    #genosin <- as.matrix(genosin)
     chrom <- genosin[,1]
     pos <- as.numeric(genosin[,2])
     genosin <- genosin[,-c(1:2)]

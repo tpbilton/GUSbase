@@ -162,8 +162,8 @@ RA <- R6Class("RA",
                   outpath <- dts(normalizePath("./", winslash=.Platform$file.sep, mustWork=T))
 
                   ## Subset the data
-                  ref <- private$ref[indsubset,snpsubset]
-                  alt <- private$alt[indsubset,snpsubset]
+                  ref <- t(private$ref[indsubset,snpsubset])
+                  alt <- t(private$alt[indsubset,snpsubset])
 
                   out <- matrix(nrow=length(snpsubset),ncol=2+length(indsubset))
                   out[,1] <- private$chrom[snpsubset]
