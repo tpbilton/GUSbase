@@ -133,7 +133,7 @@ readRA <- function(rafile, snpsubset=NULL, sampthres = 0.01, excsamp = NULL, ...
     }
   }
   genon <- (ref > 0) + (alt == 0)
-  genon[which(ref == 0 & alt == 0)] <- NA
+  genon[ref == 0 & alt == 0] <- NA
 
   ## Check that the samples meet the minimum sample treshold
   sampDepth <- rowMeans(ref + alt)
