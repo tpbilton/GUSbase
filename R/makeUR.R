@@ -33,6 +33,8 @@
 #' \item{Minor allele frequency (MAF): }{SNPs are discarded if their MAF is less than the threshold (default is 0.01)}
 #' \item{Proportion of missing data (MISS): }{SNPs are discarded if the proportion of individuals with no reads
 #' (e.g. missing genotype) is greater than the threshold value (default is 0.5)}
+#' \item{Bin size for SNP selection (\code{BIN}):}{SNPs are binned together if the distance (in base pairs) between them is less than the threshold value (default is 100).
+#' One SNP is then randomly selected from each bin and retained for final analysis. This filtering is to ensure that there is only one SNP on each sequence read.}
 #' \item{Hardy Weinberg Distance (HW): }{SNPs are discarded if their Hardy Weinberg distance is less than the first threshold
 #' value (default=\code{-0.05}) or if their Hardy Weinberg distance is greater than the second threshold value (default=\code{Inf}).
 #' This filtering criteria has been taken from the KGD software (\url{https://github.com/AgResearch/KGD}).}
@@ -69,7 +71,7 @@
 #' urpop <- makeUR(simdata)
 
 #### Make an unrelated population
-makeUR <- function(RAobj, ploid = 2, indsubset=NULL, filter=list(MAF=0.01, MISS=0.5, HW=c(-0.05,Inf), MAXDEPTH=500),
+makeUR <- function(RAobj, ploid = 2, indsubset=NULL, filter=list(MAF=0.01, MISS=0.5, BIN=100, HW=c(-0.05,Inf), MAXDEPTH=500),
                    mafEst=TRUE, nThreads=2){
 
   ## Do some checks
@@ -82,6 +84,10 @@ makeUR <- function(RAobj, ploid = 2, indsubset=NULL, filter=list(MAF=0.01, MISS=
     if(is.null(filter$MISS)) filter$MISS <- 0.5
     else if( length(filter$MISS) != 1 || !is.numeric(filter$MISS) || filter$MISS<0 || filter$MISS>1 )
       stop("Proportion of missing data filter is invalid")
+    if(is.null(filter$BIN) || filter$BIN < 0 || !is.finite(filter$BIN) || !is.numeric(filter$BIN)){
+      warning("Minimum distance between adjacent SNPs is not specified or is invalid. Setting to 100:")
+      filter$BIN <- 100
+    }
     if(is.null(filter$MAXDEPTH)) filter$MAXDEPTH <- 500
     else if(checkVector(filter$MAXDEPTH, type="pos_numeric", minv=0, equal=FALSE) || length(filter$MAXDEPTH) != 1)
       stop("Maximum mean SNP depth filter is invalid.")
@@ -140,8 +146,31 @@ makeUR <- function(RAobj, ploid = 2, indsubset=NULL, filter=list(MAF=0.01, MISS=
     p1 <- n1/n
     p2 <- 1 - p1
     HWdis <- naa/(naa + nab + nbb) - p1 * p1
-    ## do prelimiary filtering
-    snpsubset <- which(miss < filter$MISS & mdepth < filter$MAXDEPTH & HWdis > filter$HW[1] & HWdis < filter$HW[2])
+    ## trim SNPs
+    if(filter$BIN > 0){
+      snpsubset <- which(miss < filter$MISS & mdepth < filter$MAXDEPTH & HWdis > filter$HW[1] & HWdis < filter$HW[2])
+      chrom <- URobj$.__enclos_env__$private$chrom[snpsubset]
+      pos <- URobj$.__enclos_env__$private$pos[snpsubset]
+      set.seed(36475)
+      oneSNP <- rep(FALSE,length(snpsubset))
+      oneSNP[unlist(sapply(unique(chrom), function(x){
+        ind <- which(chrom == x)
+        g1_diff <- diff(pos[ind])
+        SNP_bin <- c(0,cumsum(g1_diff > filter$BIN)) + 1
+        set.seed(58473+as.numeric(which(x==chrom))[1])
+        keepPos <- sapply(unique(SNP_bin), function(y) {
+          ind2 <- which(SNP_bin == y)
+          if(length(ind2) > 1)
+            return(sample(ind2,size=1))
+          else if(length(ind2) == 1)
+            return(ind2)
+        })
+        return(ind[keepPos])
+      },USE.NAMES = F ))] <- TRUE
+      snpsubset <- snpsubset[which(oneSNP)]
+    }
+    else
+      snpsubset <- which(miss < filter$MISS & mdepth < filter$MAXDEPTH & HWdis > filter$HW[1] & HWdis < filter$HW[2])
   } else snpsubset <- 1:nSnps
 
   ## estimate allele frequencies and sequencing error parameters
@@ -187,7 +216,7 @@ makeUR <- function(RAobj, ploid = 2, indsubset=NULL, filter=list(MAF=0.01, MISS=
 
   ## Update the R6 objective
   URobj$.__enclos_env__$private$updatePrivate(list(
-    genon = genon, ref = ref, alt = alt, chrom = chrom, pos = pos, nInd = length(indID),
+    genon = genon, ref = ref, alt = alt, chrom = chrom, pos = pos, nInd = length(indID), indID = indID,
     SNP_Names = SNP_Names, nSnps = nSnps, AFrq = AFrq, pfreq = pfreq, ep = ep)
   )
 
