@@ -23,8 +23,9 @@ cometPlot <- function(ref, alt, ploid=2, freq=NULL, filename=NULL, cex=1, maxdep
 
   ## Do some checks
   if(!is.null(freq)){
-    if(!is.matrix(freq) || !is.numeric(freq) || any(is.na(freq)) || any(freq) < 0 || any(freq) > 1 ||
-       nrow(freq) != nrow(ref) || ncol(freq) != ncol(freq) || any(sapply(colSums(freq), function(x) identical(x,1))))
+    if(!is.matrix(freq) || !is.numeric(freq) || any(is.na(freq)) || any(freq < 0) || any(freq > 1) ||
+       nrow(freq) != (ploid+1) || ncol(freq) != ncol(freq) ||
+       any(sapply(colSums(freq), function(x) isTRUE(!all.equal(x,1,tolerance=1e-4)))))
       stop("Vector of allele frequencies (argument freq) is invalid.")
     else
       p <- freq

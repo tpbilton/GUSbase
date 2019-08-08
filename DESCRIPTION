@@ -12,4 +12,4 @@ RdMacros: Rdpack
 URL: https://github.com/tpbilton/GUSbase 
 License: GPL-3 | file LICENSE
 LazyData: true
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1

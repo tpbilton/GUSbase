@@ -22,8 +22,9 @@ RRDPlot <- function(ref, alt, ploid=2, freq=NULL, filename=NULL, maxdepth=500, m
 
   ## Do some checks
   if(!is.null(freq)){
-    if(!is.matrix(freq) || !is.numeric(freq) || any(is.na(freq)) || any(freq) < 0 || any(freq) > 1 ||
-       nrow(freq) != nrow(ref) || ncol(freq) != ncol(freq) || any(sapply(colSums(freq), function(x) identical(x,1))))
+    if(!is.matrix(freq) || !is.numeric(freq) || any(is.na(freq)) || any(freq < 0) || any(freq > 1) ||
+       nrow(freq) != (ploid+1) || ncol(freq) != ncol(freq) ||
+       any(sapply(colSums(freq), function(x) isTRUE(!all.equal(x,1,tolerance=1e-4)))))
       stop("Vector of allele frequencies (argument freq) is invalid.")
     else
       p <- freq
@@ -92,7 +93,7 @@ RRDPlot <- function(ref, alt, ploid=2, freq=NULL, filename=NULL, maxdepth=500, m
         out <- sapply(1:ncol(pvec), function(z){
           temp <-  countp[z]*sapply(0:x, function(y) sum(stats::dbinom(y, x, prob=0:ploid/ploid)*pvec[,z]/100))
         })
-        return(rowSums(out))
+        return(rev(rowSums(out)))
       }
     })
   }
@@ -113,7 +114,7 @@ RRDPlot <- function(ref, alt, ploid=2, freq=NULL, filename=NULL, maxdepth=500, m
   p <- ggplot2::ggplot(temp_df, ggplot2::aes(x=ratio, fill=method)) +
     ggplot2::geom_density(ggplot2::aes(weight=counts), alpha=0.2) + ggplot2::theme_bw() +
     ggplot2::xlab("Dosage of reference allele") + ggplot2::theme(legend.title = ggplot2::element_blank(),legend.position="top")
-  if(!is.null(filename)) ggsave(paste0(filename,"_RRDplot.png"), ...)
+  if(!is.null(filename)) ggsave(paste0(filename,".png"), ...)
   else print(p)
 
   return(invisible(p))
