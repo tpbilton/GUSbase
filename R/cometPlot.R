@@ -145,4 +145,3 @@ cometPlot <- function(ref, alt, ploid=2, freq=NULL, filename=NULL, cex=1, maxdep
 
   return(invisible())
 }
-

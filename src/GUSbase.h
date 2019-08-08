@@ -27,7 +27,9 @@
 
 
 SEXP pest_c(SEXP p, SEXP ep, SEXP v, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnps);
-SEXP pest_em_c(SEXP pinit, SEXP epinit, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnps, SEXP nThreads, SEXP EMpara);
+SEXP pest_em_c(SEXP pinit, SEXP ep, SEXP ploid, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnps, SEXP nThreads, SEXP EMpara);
+SEXP gest_em_c(SEXP pinit, SEXP ep, SEXP ploid, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnps, SEXP nThreads, SEXP EMpara);
+SEXP pest_em_ep_c(SEXP pinit, SEXP epinit, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnps, SEXP nThreads, SEXP EMpara);
 // SEXP gest_c(SEXP p, SEXP ep, SEXP v, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnps);
 
 #endif

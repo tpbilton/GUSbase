@@ -182,10 +182,4 @@ VCFtoRA <- function(infilename, direct="./", makePed=F){
   return(invisible(outfile))
 }
 
-#### Some functions from the kutils package for removing trailing spaces for filenames.
-dts <- function (name)
-  gsub("/$", "", dms(name))
-
-dms <- function(name)
-  gsub("(/)\\1+", "/", name)
 

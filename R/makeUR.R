@@ -33,27 +33,32 @@
 #' \item{Minor allele frequency (MAF): }{SNPs are discarded if their MAF is less than the threshold (default is 0.01)}
 #' \item{Proportion of missing data (MISS): }{SNPs are discarded if the proportion of individuals with no reads
 #' (e.g. missing genotype) is greater than the threshold value (default is 0.5)}
+#' \item{Bin size for SNP selection (\code{BIN}):}{SNPs are binned together if the distance (in base pairs) between them is less than the threshold value (default is 100).
+#' One SNP is then randomly selected from each bin and retained for final analysis. This filtering is to ensure that there is only one SNP on each sequence read.}
+#' \item{Hardy Weinberg Distance (HW): }{SNPs are discarded if their Hardy Weinberg distance is less than the first threshold
+#' value (default=\code{-0.05}) or if their Hardy Weinberg distance is greater than the second threshold value (default=\code{Inf}).
+#' This filtering criteria has been taken from the KGD software (\url{https://github.com/AgResearch/KGD}).}
 #' \item{Maximum average SNP read depth (MAXDEPTH): }{SNPs are discarded if the average read depth for the SNP
 #' is larger than the threshold (default is 500)}
 #' }
+#' If \code{filter = NULL}, then no filtering is performed.
 #'
-#' Estimation of the allele frequencies when \code{mafEst=TRUE} is parallelized using the \code{\link[foreach]{foreach}} function, where the
-#' number of cores to use in the parallelization is specified by the argument \code{nClust}. Note: Do not
-#' set the number of cores to be more than what is available on your computer (or bad things will happen!).
+#' Estimation of the allele frequencies when \code{mafEst=TRUE} is parallelized using openMP in compiled C code, where the
+#' number of threads used in the parallelization is specified by the argument \code{nThreads}.
 #'
 #' @param RAobj Object of class RA created via the \code{\link{readRA}} function.
 #' @param indsubset Integer vector specifying which samples of the RA dataset to retain in the UR
 #' population.
 #' @param ploid An integer number specifying the ploidy level of the population. Currently, only
-#' even ploidy levels are valid.
+#' a ploidy level of two (diploid) is implemented.
 #' @param filter Named list of thresholds for various criteria used to fiter SNPs.
 #' See below for details.
 #' @param mafEst Logical value indicating whether the allele frequences and sequencing
 #' error parameters are to estimated for each SNP (see details).
-#' @param nClust Integer vector specifying the number of clusters to use in the foreach loop. Only used in the estimation of
+#' @param nThreads Integer vector specifying the number of clusters to use in the foreach loop. Only used in the estimation of
 #' allele frequencies when \code{mafEst=TRUE}.
 #' @return An R6 object of class UR.
-#' @author Timothy P. Bilton
+#' @author Timothy P. Bilton and Ken G. Dodds
 #' @references
 #' \insertRef{bilton2018genetics2}{GUSbase}
 #' @export makeUR
@@ -63,29 +68,39 @@
 #' simdata <- readRA(RAfile)
 #'
 #' ## make unrelated population
-#' urpop <- makeUR(simdata, mafEst=FALSE)
+#' urpop <- makeUR(simdata)
 
 #### Make an unrelated population
-makeUR <- function(RAobj, indsubset=NULL, ploid=2, filter=list(MAF=0.01, MISS=0.5, MAXDEPTH=500), mafEst=TRUE, nClust=2){
+makeUR <- function(RAobj, ploid = 2, indsubset=NULL, filter=list(MAF=0.01, MISS=0.5, BIN=100, HW=c(-0.05,Inf), MAXDEPTH=500),
+                   mafEst=TRUE, nThreads=2){
 
   ## Do some checks
   if(!all(class(RAobj) %in% c("RA","R6")))
     stop("The `RAobj` argument supplied is not of class 'R6' and 'RA'")
-  if(is.null(filter$MAF)) filter$MAF <- 0.01
-  else if( length(filter$MAF) != 1 || !is.numeric(filter$MAF) || filter$MAF<0 || filter$MAF>1)
-    stop("Minor allele frequency filter is invalid")
-  if(is.null(filter$MISS)) filter$MISS <- 0.2
-  else if( length(filter$MISS) != 1 || !is.numeric(filter$MISS) || filter$MISS<0 || filter$MISS>1 )
-    stop("Proportion of missing data filter is invalid")
-  if(is.null(filter$MAXDEPTH)) filter$MAXDEPTH <- 500
-  else if(checkVector(filter$MAXDEPTH, type="pos_numeric", minv=0, equal=FALSE) || length(filter$MAXDEPTH) != 1)
-    stop("Maximum mean SNP depth filter is invalid.")
+  if(!is.null(filter)){
+    if(is.null(filter$MAF)) filter$MAF <- 0.01
+    else if( length(filter$MAF) != 1 || !is.numeric(filter$MAF) || filter$MAF<0 || filter$MAF>1)
+      stop("Minor allele frequency filter is invalid")
+    if(is.null(filter$MISS)) filter$MISS <- 0.5
+    else if( length(filter$MISS) != 1 || !is.numeric(filter$MISS) || filter$MISS<0 || filter$MISS>1 )
+      stop("Proportion of missing data filter is invalid")
+    if(is.null(filter$BIN) || filter$BIN < 0 || !is.finite(filter$BIN) || !is.numeric(filter$BIN)){
+      warning("Minimum distance between adjacent SNPs is not specified or is invalid. Setting to 100:")
+      filter$BIN <- 100
+    }
+    if(is.null(filter$MAXDEPTH)) filter$MAXDEPTH <- 500
+    else if(checkVector(filter$MAXDEPTH, type="pos_numeric", minv=0, equal=FALSE) || length(filter$MAXDEPTH) != 1)
+      stop("Maximum mean SNP depth filter is invalid.")
+    if(is.null(filter$HW)) filter$HW=c(-0.05,Inf)
+    else if(!is.vector(filter$HW) || any(!is.numeric(filter$HW)) || length(filter$HW) != 2 || any(is.na(filter$HW)) || filter$HW[1] >= filter$HW[2])
+      stop("Hardy Weinberg (HW) filter is invalid.")
+  }
   #if(is.null(filter$PVALUE)) filter$PVALUE <- 1e-6
   #else if( length(filter$PVALUE) != 1 || !is.numeric(filter$PVALUE) || filter$PVALUE<0 || filter$PVALUE>1 )
    #stop("P-value for Hardy-Weinberg equilibrium filter is invalid.")
-  if(!is.vector(ploid) || !is.numeric(ploid) || length(ploid) != 1 || round(ploid/2) != ploid/2)
+  if(!is.vector(ploid) || !is.numeric(ploid) || length(ploid) != 1 || ploid != 2) #  round(ploid/2) != ploid/2)
     stop("Argument for ploid level is invalid.")
-  if(!is.numeric(nClust) || length(nClust) != 1 || nClust < 0 || round(nClust) != nClust)
+  if(!is.numeric(nThreads) || length(nThreads) != 1 || nThreads < 0 || round(nThreads) != nThreads)
     stop("Argument for the number of cores for the parallelization is invalid")
   if(is.null(indsubset)) indsubset <- 1:RAobj$.__enclos_env__$private$nInd
   else if(!is.vector(indsubset) || !is.character(indsubset) || any(is.na(indsubset)) ||
@@ -103,9 +118,12 @@ makeUR <- function(RAobj, indsubset=NULL, ploid=2, filter=list(MAF=0.01, MISS=0.
   cat("-------------\n")
   cat("Processing Data.\n\n")
 
-  cat("Filtering criteria for removing SNPs :\n")
-  cat("Minor allele frequency (MAF) < ", filter$MAF,"\n")
-  cat("Percentage of missing genotypes > ", filter$MISS*100,"%\n",sep="")
+  if(!is.null(filter)){
+    cat("Filtering criteria for removing SNPs:\n")
+    cat("Minor allele frequency (MAF) < ", filter$MAF,"\n",sep="")
+    cat("Percentage of missing genotypes > ", filter$MISS*100,"%\n",sep="")
+    cat("Maximum average SNP read depth > ", filter$MAXDEPTH, "\n", sep="")
+  } else cat("No Filtering performed\n")
   #cat("Hardy-Weinberg equilibrium: < ", filter$HWdis[1]," and > ",filter$HWdis[2],"\n\n",sep="")
 
   ## Extract the private variables we want
@@ -115,27 +133,68 @@ makeUR <- function(RAobj, indsubset=NULL, ploid=2, filter=list(MAF=0.01, MISS=0.
   genon <- URobj$.__enclos_env__$private$genon[indsubset,]
 
   ## Calculate the proportion of missing data and mean depths
-  miss <- apply(genon,2, function(x) sum(is.na(x))/length(x))
-  mdepth <- colMeans(URobj$.__enclos_env__$private$ref[indsubset,] + URobj$.__enclos_env__$private$alt[indsubset,])
-  ## do prelimiary filtering
-  snpsubset <- which(miss < filter$MISS & mdepth < filter$MAXDEPTH)
+  if(!is.null(filter)){
+    miss <- apply(genon,2, function(x) sum(is.na(x))/length(x))
+    mdepth <- colMeans(URobj$.__enclos_env__$private$ref[indsubset,] + URobj$.__enclos_env__$private$alt[indsubset,])
+    ## Calculate HWE
+    naa <- colSums(genon == 2, na.rm = TRUE)
+    nab <- colSums(genon == 1, na.rm = TRUE)
+    nbb <- colSums(genon == 0, na.rm = TRUE)
+    n1 <- 2 * naa + nab
+    n2 <- nab + 2 * nbb
+    n <- n1 + n2  #n alleles
+    p1 <- n1/n
+    p2 <- 1 - p1
+    HWdis <- naa/(naa + nab + nbb) - p1 * p1
+    ## trim SNPs
+    if(filter$BIN > 0){
+      snpsubset <- which(miss < filter$MISS & mdepth < filter$MAXDEPTH & HWdis > filter$HW[1] & HWdis < filter$HW[2])
+      chrom <- URobj$.__enclos_env__$private$chrom[snpsubset]
+      pos <- URobj$.__enclos_env__$private$pos[snpsubset]
+      set.seed(36475)
+      oneSNP <- rep(FALSE,length(snpsubset))
+      oneSNP[unlist(sapply(unique(chrom), function(x){
+        ind <- which(chrom == x)
+        g1_diff <- diff(pos[ind])
+        SNP_bin <- c(0,cumsum(g1_diff > filter$BIN)) + 1
+        set.seed(58473+as.numeric(which(x==chrom))[1])
+        keepPos <- sapply(unique(SNP_bin), function(y) {
+          ind2 <- which(SNP_bin == y)
+          if(length(ind2) > 1)
+            return(sample(ind2,size=1))
+          else if(length(ind2) == 1)
+            return(ind2)
+        })
+        return(ind[keepPos])
+      },USE.NAMES = F ))] <- TRUE
+      snpsubset <- snpsubset[which(oneSNP)]
+    }
+    else
+      snpsubset <- which(miss < filter$MISS & mdepth < filter$MAXDEPTH & HWdis > filter$HW[1] & HWdis < filter$HW[2])
+  } else snpsubset <- 1:nSnps
 
   ## estimate allele frequencies and sequencing error parameters
   if(mafEst){
-    temp <- URobj$.__enclos_env__$private$p_est(snpsubset=snpsubset, indsubset=indsubset, nClust=nClust)
-    pfreq <- unname(temp[1,])
-    ep <- unname(temp[2,])
+    temp <- URobj$.__enclos_env__$private$p_est(snpsubset=snpsubset, indsubset=indsubset, nThreads=nThreads)
+    pfreq <- temp$p
+    ep <- temp$ep
   }
   else{
     ratio <- URobj$.__enclos_env__$private$ref[indsubset,snpsubset]/(URobj$.__enclos_env__$private$ref[indsubset,snpsubset]+URobj$.__enclos_env__$private$alt[indsubset,snpsubset])
     pfreq <- colMeans(ratio, na.rm=T)
     ep <- rep(0, length(snpsubset))
   }
-  ## Compute MAF
-  maf <- pmin(pfreq,1-pfreq)
-  ## subset SNPs
-  maf_indx <- which(maf > filter$MAF)
-  indx <- snpsubset[maf_indx]
+  if(!is.null(filter)){
+    ## Compute MAF
+    maf <- pmin(pfreq,1-pfreq)
+    ## subset SNPs
+    maf_indx <- which(maf > filter$MAF)
+    indx <- snpsubset[maf_indx]
+  } else indx <- maf_indx <- 1:nSnps
+
+  ## check that there are still some SNPs left
+  if(length(indx) == 0)
+    stop("No SNPs remaining after filtering. Consider using a different set of filtering criteria.")
 
   ## Update the data in the R6 object
   genon <- genon[,indx]
@@ -157,7 +216,7 @@ makeUR <- function(RAobj, indsubset=NULL, ploid=2, filter=list(MAF=0.01, MISS=0.
 
   ## Update the R6 objective
   URobj$.__enclos_env__$private$updatePrivate(list(
-    genon = genon, ref = ref, alt = alt, chrom = chrom, pos = pos, nInd = length(indID),
+    genon = genon, ref = ref, alt = alt, chrom = chrom, pos = pos, nInd = length(indID), indID = indID,
     SNP_Names = SNP_Names, nSnps = nSnps, AFrq = AFrq, pfreq = pfreq, ep = ep)
   )
 

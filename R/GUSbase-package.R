@@ -1,6 +1,6 @@
 ##########################################################################
 # Genotyping Uncertainty with Sequencing data - Base package (GUSbase)
-# Copyright 2017-2018 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
+# Copyright 2017-2019 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 #' }
 #'
 #' \tabular{ll}{ Package: \tab GUSbase\cr Type: \tab Package\cr Version: \tab
-#' 0.1.1\cr Date: \tab 2018-10-19\cr License: \tab GPL 3\cr }
+#' 0.1.2\cr Date: \tab 2019-03-20\cr License: \tab GPL 3\cr }
 #'
 #' @name GUSbase-package
 #' @aliases GUSbase
