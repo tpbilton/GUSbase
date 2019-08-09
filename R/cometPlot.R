@@ -172,5 +172,3 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth=
 
   return(invisible())
 }
-
-

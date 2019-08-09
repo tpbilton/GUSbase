@@ -5,8 +5,8 @@
 \title{Make an unrelated (UR) population}
 \usage{
 makeUR(RAobj, ploid = 2, indsubset = NULL, filter = list(MAF = 0.01,
-  MISS = 0.5, HW = c(-0.05, Inf), MAXDEPTH = 500), mafEst = TRUE,
-  nThreads = 2)
+  MISS = 0.5, BIN = 100, HW = c(-0.05, Inf), MAXDEPTH = 500),
+  mafEst = TRUE, nThreads = 2)
 }
 \arguments{
 \item{RAobj}{Object of class RA created via the \code{\link{readRA}} function.}
@@ -46,12 +46,15 @@ The filtering criteria currently implemented are
 \item{Minor allele frequency (MAF): }{SNPs are discarded if their MAF is less than the threshold (default is 0.01)}
 \item{Proportion of missing data (MISS): }{SNPs are discarded if the proportion of individuals with no reads
 (e.g. missing genotype) is greater than the threshold value (default is 0.5)}
+\item{Bin size for SNP selection (\code{BIN}):}{SNPs are binned together if the distance (in base pairs) between them is less than the threshold value (default is 100).
+One SNP is then randomly selected from each bin and retained for final analysis. This filtering is to ensure that there is only one SNP on each sequence read.}
 \item{Hardy Weinberg Distance (HW): }{SNPs are discarded if their Hardy Weinberg distance is less than the first threshold
 value (default=\code{-0.05}) or if their Hardy Weinberg distance is greater than the second threshold value (default=\code{Inf}).
 This filtering criteria has been taken from the KGD software (\url{https://github.com/AgResearch/KGD}).}
 \item{Maximum average SNP read depth (MAXDEPTH): }{SNPs are discarded if the average read depth for the SNP
 is larger than the threshold (default is 500)}
 }
+If \code{filter = NULL}, then no filtering is performed.
 
 Estimation of the allele frequencies when \code{mafEst=TRUE} is parallelized using openMP in compiled C code, where the
 number of threads used in the parallelization is specified by the argument \code{nThreads}.
