@@ -79,7 +79,7 @@ RRDPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, maxdepth=500, maxS
 
   ## compute the observed depths
   heteCall <- which(ref > 0 | alt > 0)
-  maxCount <- min(max(50,max(depth)), max(ref,alt)+2)
+  maxCount <- max(50,max(depth))
   ref_sub <- factor(ref[heteCall],levels=0:maxCount,labels=0:maxCount)
   alt_sub <- factor(alt[heteCall],levels=0:maxCount,labels=0:maxCount)
   obsTab <- table(ref_sub,alt_sub)

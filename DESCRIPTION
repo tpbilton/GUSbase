@@ -7,7 +7,7 @@ Authors@R: c(
     person("Ken G.", "Dodds", role = c("ctb")))
 Description: Package for analyzing high-throughput sequencing data via reference and alternate count information. This package forms the base to a number of other packages that are specifically designed for analyzing high-throughput sequencing data. 
 Depends: R (>= 3.1.0)
-Imports: R6, Rdpack (>= 0.8-0), stats, utils, graphics, grDevices, parallel, doParallel, foreach, data.table
+Imports: R6, Rdpack (>= 0.8-0), stats, utils, graphics, grDevices, ggplot2, parallel, doParallel, foreach, data.table
 RdMacros: Rdpack
 URL: https://github.com/tpbilton/GUSbase 
 License: GPL-3 | file LICENSE
