@@ -48,20 +48,13 @@ RRDPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, maxdepth=500, maxS
     if(!is.vector(file) || !is.character(file) || length(file) != 1)
       stop("Filename input is invalid")
     filename <- paste0(tail(strsplit(file,split=.Platform$file.sep)[[1]],1),"_RRD.png")
-    outfile = file.path(outpath,filename)
-    if(!file.create(outfile,showWarnings = F))
+    if(!file.create(filename,showWarnings = F))
       stop("Unable to create output file.")
   }
   if(GUSbase::checkVector(maxdepth, minv = 2))
     stop("Argument `maxdepth` is invalid")
   if(GUSbase::checkVector(maxSNPs, minv = 2))
     stop("Argument `maxSNPs` is invalid")
-  if(GUSbase::checkVector(res, type="pos_numeric", minv = 2))
-    stop("Argument `res` is invalid")
-  if(GUSbase::checkVector(width, type="pos_numeric"))
-    stop("Argument `width` is invalid")
-  if(GUSbase::checkVector(height, type="pos_numeric"))
-    stop("Argument `height` is invalid")
 
   ### check if there are too many SNPs
   if(ncol(ref) > maxSNPs){
@@ -151,6 +144,6 @@ RRDPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, maxdepth=500, maxS
     ggplot2::geom_density(ggplot2::aes(weight=counts), alpha=0.2) + ggplot2::theme_bw() +
     ggplot2::xlab("Dosage of reference allele") + ggplot2::theme(legend.title = ggplot2::element_blank(), legend.position="top")
   if(is.null(file)) print(pp)
-  else  ggplot2::ggsave(filename=paste0(file,"_RRD.png"), plot=pp,...)
+  else  ggplot2::ggsave(filename=filename, plot=pp,...)
   return(invisible(NULL))
 }

@@ -90,12 +90,12 @@ RA <- R6Class("RA",
                 },
                 #### Diagonostic functions ####
                 # Ratio of alleles for heterozygous genotype calls (observed vs expected)
-                cometPlot = function(ploid=2, filename=NULL, cex=1, maxdepth=500, maxSNPs=1e5, ...){
-                  cometPlot(private$ref, private$alt, ploid=ploid, filename=filename, cex=cex, maxdepth=maxdepth, maxSNPs=maxSNPs, ...)
+                cometPlot = function(ploid=2, filename=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, ...){
+                  cometPlot(private$ref, private$alt, ploid=ploid, file=filename, cex=cex, maxdepth=maxdepth, maxSNPs=maxSNPs, res=res, ...)
                 },
                 # Ratio of alleles for heterozygous genotype calls (observed vs expected)
                 RRDPlot = function(ploid=2, filename=NULL, maxdepth=500, maxSNPs=1e5, ...){
-                  RRDPlot(private$ref, private$alt, ploid=ploid, filename=filename, maxdepth=maxdepth, maxSNPs=maxSNPs, ...)
+                  RRDPlot(private$ref, private$alt, ploid=ploid, file=filename, maxdepth=maxdepth, maxSNPs=maxSNPs, ...)
                 },
                 ###############################
                 writeVCF = function(snpsubset=NULL, indsubset=NULL, file="GUSbase", IDuse=NULL){

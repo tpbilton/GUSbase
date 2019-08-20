@@ -47,9 +47,8 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth=
   if(!is.null(file)){
     if(!is.vector(file) || !is.character(file) || length(file) != 1)
       stop("Filename input is invalid")
-    filename <- paste0(tail(strsplit(file,split=.Platform$file.sep)[[1]],1),"_RRD.png")
-    outfile = file.path(outpath,filename)
-    if(!file.create(outfile,showWarnings = F))
+    filename <- paste0(tail(strsplit(file,split=.Platform$file.sep)[[1]],1),"_comet.png")
+    if(!file.create(filename,showWarnings = F))
       stop("Unable to create output file.")
   }
   if(GUSbase::checkVector(maxdepth, minv = 2))
@@ -158,15 +157,15 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth=
   if(ploid > 2){
     rat1 = 1:(ceiling(ploid/2)-1)
     rat2 = (ploid-1):(floor(ploid/2)+1)
-    junk <- sapply(1:length(rat1), function(x) abline(0,rat1[x]/rat2[x], lty=3))
-    junk <- sapply(1:length(rat1), function(x) abline(0,rat2[x]/rat1[x], lty=3))
+    junk <- sapply(1:length(rat1), function(x) abline(-rat1[x]/rat2[x],rat1[x]/rat2[x], lty=3))
+    junk <- sapply(1:length(rat1), function(x) abline(1,rat2[x]/rat1[x], lty=3))
   }
   mtext("Observed",side=3,cex=cex, font=2, line=1*sqrt(cex))
   mtext("Expected (Binomial Model)", side=4,cex=cex, font=2,line=1*sqrt(cex))
   legend_image <- as.raster(matrix(rev(newCol), ncol = 1))
-  adj = maxCount*0.05
-  rasterImage(legend_image,xleft = maxCount-adj*2, ybottom = adj, ytop = 5*adj, xright = maxCount-adj )
-  text(x = maxCount-adj*2, y = adj + seq(0,4*adj,length.out=6), labels = format(exp(seq(0,max(countMat,na.rm=T),length.out=6)),digits=1),cex=cex, pos=2)
+  adj = min(max(ref,alt),maxCount)*0.05
+  rasterImage(legend_image,xleft = min(max(ref,alt),maxCount)-adj*2, ybottom = adj, ytop = 5*adj, xright = min(max(ref,alt),maxCount)-adj )
+  text(x = min(max(ref,alt),maxCount)-adj*2, y = adj + seq(0,4*adj,length.out=6), labels = format(exp(seq(0,max(countMat,na.rm=T),length.out=6)),digits=1, scientific=F),cex=cex, pos=2)
   if(!is.null(file))
     dev.off()
 
