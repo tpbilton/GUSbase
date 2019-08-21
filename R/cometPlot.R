@@ -149,10 +149,30 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth=
   ### Produce the plot
   if(!is.null(file))
     png(filename, width=max(maxCount*3,640)*4+sqrt(cex)*maxCount,height=max(maxCount*3,640)*4+sqrt(cex)*maxCount, res=res)
-  par(mar = c(5.1,5.1,4.1,3.1)*sqrt(cex), ...)
+  par(mar = c(5.1,5.1,5.1,5.1)*sqrt(cex), ...)
   newCol <- colorRampPalette(c("red","orange","yellow","green","cyan","blue"))(200)
-  image(0:nrow(countMat),0:ncol(countMat),countMat, xlab="No. Reads (Allele 1)",ylab="No. Reads (Allele 2)",col=newCol,zlim=c(0,max(countMat,na.rm=T)),
-        cex.lab=cex,cex.axis=cex, xlim=c(0,min(max(ref,alt),maxCount) + 2), ylim=c(0,min(max(ref,alt),maxCount) + 2), mgp=c(3*sqrt(cex),sqrt(cex),0))
+  maxplot <- min(max(ref,alt),maxCount)
+  if(maxplot < 50) ticks <- seq(0,maxplot,round(maxplot/5))
+  else ticks <- seq(0,maxplot,round(maxplot/5,-1))
+
+  grid_add <- function(){
+    xaxp <- par("xaxp")
+    ticks <- seq(par()$xaxp[1],par()$xaxp[2],par()$xaxp[2]/par()$xaxp[3])
+    for(i in ticks){
+      lines(x=rep(i,2),y=c(-2,i), lty=3, col="grey")
+      lines(x=c(i-2,maxplot),y=rep(i,2)-2, lty=3, col="grey")
+      lines(y=rep(i,2),x=c(-2,i), lty=3, col="grey")
+      lines(y=c(i-2,maxplot),x=rep(i,2)-2, lty=3, col="grey")
+    }
+    return(invisible(NULL))
+  }
+
+  image(0:nrow(countMat)-2,0:ncol(countMat)-2,countMat, xlab="# Reads (allele 1)",ylab="# Reads (allele 1)",col=newCol,zlim=c(0,max(countMat,na.rm=T)),
+        cex.lab=cex,cex.axis=cex, xlim=c(-2,maxplot), ylim=c(-2,maxplot), mgp=c(3*sqrt(cex),sqrt(cex),0),
+        panel.first=grid_add(), add=F)
+  ticks <- seq(par()$xaxp[1],par()$xaxp[2],par()$xaxp[2]/par()$xaxp[3])
+  axis(side = 3, at = ticks-2,labels = ticks)
+  axis(side = 4, at = ticks-2,labels = ticks)
   abline(0,1)
   if(ploid > 2){
     rat1 = 1:(ceiling(ploid/2)-1)
@@ -160,8 +180,10 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth=
     junk <- sapply(1:length(rat1), function(x) abline(-rat1[x]/rat2[x],rat1[x]/rat2[x], lty=3))
     junk <- sapply(1:length(rat1), function(x) abline(1,rat2[x]/rat1[x], lty=3))
   }
-  mtext("Observed",side=3,cex=cex, font=2, line=1*sqrt(cex))
-  mtext("Expected (Binomial Model)", side=4,cex=cex, font=2,line=1*sqrt(cex))
+  #mtext("Observed",side=3,cex=cex, font=2, line=1*sqrt(cex))
+  #mtext("Expected (Binomial Model)", side=4,cex=cex, font=2,line=1*sqrt(cex))
+  mtext("(Observed)\n# Reads (allele 2)",side=3,cex=cex, font=1, line=2.5*sqrt(cex))
+  mtext("# Reads (allele 2)\n(Expected)", side=4,cex=cex, font=1,line=3.5*sqrt(cex))
   legend_image <- as.raster(matrix(rev(newCol), ncol = 1))
   adj = min(max(ref,alt),maxCount)*0.05
   rasterImage(legend_image,xleft = min(max(ref,alt),maxCount)-adj*2, ybottom = adj, ytop = 5*adj, xright = min(max(ref,alt),maxCount)-adj )
