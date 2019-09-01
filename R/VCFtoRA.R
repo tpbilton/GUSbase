@@ -126,7 +126,11 @@ VCFtoRA <- function(infilename, direct="./", makePed=F){
       else if("DP4" %in% format)
         dp4_pos = which(format == "DP4")
       else
-        stop("We can't use this vcf file. AD (alleleic depth) or RO (Reference allele observation count) and AO (Alternate allele observation count) information is needed.\n")
+        stop(paste0("Error at line ", i,". No allelic depth information found. Either:\n",
+            "   AD (alleleic depth)\n",
+            "   RO (Reference allele observation count) and AO (Alternate allele observation count) information is needed.\n",
+            "   DP4 (forward and reverse allele counts for reference and alternate alleles)\n",
+            "is required."))
       ## Extract the alleles depths
       newline = c()
       for(j in line[10:length(line)]){
@@ -145,14 +149,14 @@ VCFtoRA <- function(infilename, direct="./", makePed=F){
             newline = c(newline, ad)
           }
           else if(!is.null(dp4_pos) && (length(dp4_pos) > 0) ){
-            counts = strsplit(j[dp4_pos], split=",")
+            counts = strsplit(j[dp4_pos], split=",")[[1]]
             allele1 = as.integer(counts[1]) + as.integer(counts[2])
             allele2 = as.integer(counts[3]) + as.integer(counts[4])
             ad = paste0(allele1, ",", allele2)
             newline = c(newline, ad)
           }
           else ##Should never really get here, but if AD, AO and RO are all null, it will break the script
-            stop("Can't Find either Allele Depth (AD) or RO (Reference allele observation count) and AO (Alternate allele observation count) at this position.\n")
+            stop(paste0("Can't find either Allele Depth (AD) or RO (Reference allele observation count) and AO (Alternate allele observation count) position ", j,".\n"))
         }
       }
       newLines[[i-(start)+1]] <- paste0(c(chrom,pos,newline), collapse = "\t")
