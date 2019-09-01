@@ -126,7 +126,7 @@ VCFtoRA <- function(infilename, direct="./", makePed=F){
       else if("DP4" %in% format)
         dp4_pos = which(format == "DP4")
       else
-        stop(paste0("Error at line ", i,". No allelic depth information found. Either:\n",
+        stop(paste0("Error at SNP ", i,". No allelic depth information found. Either:\n",
             "   AD (alleleic depth)\n",
             "   RO (Reference allele observation count) and AO (Alternate allele observation count) information is needed.\n",
             "   DP4 (forward and reverse allele counts for reference and alternate alleles)\n",
