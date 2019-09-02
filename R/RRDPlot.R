@@ -16,19 +16,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 
-#' Produce a reference ratio density (RRD) plot
+#' Produce a reference dosage density (RDD) plot
 #' #'
 #' #' Some discription
 #' #'
 #' @usage
-#' RAobj$RRDPlot(model="random", alpha=NULL, filename=NULL, cex=1, maxdepth=500, ...)
+#' RAobj$RDDPlot(ref, alt, ploid=2, gfreq=NULL, file=NULL, maxdepth=500, maxSNPs=1e5, ...)
 #'
-#' @name $RRDPlot
+#' @name $RDDPlot
 #'
 #'
 #'
 #' @export
-RRDPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, maxdepth=500, maxSNPs=1e5, ...){
+RDDPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, maxdepth=500, maxSNPs=1e5, ...){
 
   ## Do some checks
   if(!is.matrix(ref) || GUSbase::checkVector(as.vector(ref)))
@@ -47,7 +47,7 @@ RRDPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, maxdepth=500, maxS
   if(!is.null(file)){
     if(!is.vector(file) || !is.character(file) || length(file) != 1)
       stop("Filename input is invalid")
-    filename <- paste0(tail(strsplit(file,split=.Platform$file.sep)[[1]],1),"_RRD.png")
+    filename <- paste0(tail(strsplit(file,split=.Platform$file.sep)[[1]],1),"_RDD.png")
     if(!file.create(filename,showWarnings = F))
       stop("Unable to create output file.")
   }

@@ -163,7 +163,7 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth=
     }
     return(invisible(NULL))
   }
-  image(0:nrow(countMat)-2,0:ncol(countMat)-2,countMat, xlab="# Reads (allele 1)",ylab="# Reads (allele 1)",col=newCol,zlim=c(0,max(countMat,na.rm=T)),
+  image(0:nrow(countMat)-2,0:ncol(countMat)-2,countMat, xlab="Major Read Depth",ylab="Major Read Depth",col=newCol,zlim=c(0,max(countMat,na.rm=T)),
         cex.lab=cex,cex.axis=cex, xlim=c(-2,maxplot), ylim=c(-2,maxplot), mgp=c(3*sqrt(cex),sqrt(cex),0),
         panel.last=grid_add(), xaxt = "n", yaxt="n")
   grid_add()
@@ -172,17 +172,17 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth=
   axis(side = 2, at = ticks-0.5,labels = ticks, cex.axis=cex)
   axis(side = 3, at = ticks-1.5,labels = ticks, cex.axis=cex)
   axis(side = 4, at = ticks-1.5,labels = ticks, cex.axis=cex)
-  abline(0,1)
+  abline(0,1, cex=cex)
   if(ploid > 2){
     rat1 = 1:(ceiling(ploid/2)-1)
     rat2 = (ploid-1):(floor(ploid/2)+1)
-    junk <- sapply(1:length(rat1), function(x) abline(-rat1[x]/rat2[x],rat1[x]/rat2[x], lty=3))
-    junk <- sapply(1:length(rat1), function(x) abline(1,rat2[x]/rat1[x], lty=3))
+    junk <- sapply(1:length(rat1), function(x) abline(-1.5,rat1[x]/rat2[x], lty=3, cex=cex))
+    junk <- sapply(1:length(rat1), function(x) abline(rat2[x]/rat1[x]*1.5,rat2[x]/rat1[x], lty=3, cex=cex))
   }
   #mtext("Observed",side=3,cex=cex, font=2, line=1*sqrt(cex))
   #mtext("Expected (Binomial Model)", side=4,cex=cex, font=2,line=1*sqrt(cex))
-  mtext("(Observed)\n# Reads (allele 2)",side=3,cex=cex, font=1, line=2.5*sqrt(cex))
-  mtext("# Reads (allele 2)\n(Expected)", side=4,cex=cex, font=1,line=3.5*sqrt(cex))
+  mtext("(Observed)\nMinor Read Depth",side=3,cex=cex, font=1, line=2.5*sqrt(cex))
+  mtext("Minor Read Depth\n(Expected)", side=4,cex=cex, font=1,line=3.5*sqrt(cex))
   legend_image <- as.raster(matrix(rev(newCol), ncol = 1))
   adj = min(max(ref,alt),maxCount)*0.05
   rasterImage(legend_image,xleft = min(max(ref,alt),maxCount)-adj*2, ybottom = adj, ytop = 5*adj, xright = min(max(ref,alt),maxCount)-adj )

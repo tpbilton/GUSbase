@@ -94,8 +94,8 @@ RA <- R6Class("RA",
                   cometPlot(private$ref, private$alt, ploid=ploid, file=filename, cex=cex, maxdepth=maxdepth, maxSNPs=maxSNPs, res=res, ...)
                 },
                 # Ratio of alleles for heterozygous genotype calls (observed vs expected)
-                RRDPlot = function(ploid=2, filename=NULL, maxdepth=500, maxSNPs=1e5, ...){
-                  RRDPlot(private$ref, private$alt, ploid=ploid, file=filename, maxdepth=maxdepth, maxSNPs=maxSNPs, ...)
+                RDDPlot = function(ploid=2, filename=NULL, maxdepth=500, maxSNPs=1e5, ...){
+                  RDDPlot(private$ref, private$alt, ploid=ploid, file=filename, maxdepth=maxdepth, maxSNPs=maxSNPs, ...)
                 },
                 ###############################
                 writeVCF = function(snpsubset=NULL, indsubset=NULL, file="GUSbase", IDuse=NULL){
