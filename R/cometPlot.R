@@ -307,7 +307,7 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth=
       maxdepth <- min(max(ref,alt),maxdepth)
       newMat <- (obsTab-expMat)
       newMat2 <- newMat[0:maxdepth+1,0:maxdepth+1]
-      newMat2 <- newMat2/(expMat[0:maxdepth+1,0:maxdepth+1])
+      newMat2 <- newMat2/sqrt(expMat[0:maxdepth+1,0:maxdepth+1])
       newMat2[which(newMat2< -20)] <- -20
       newMat2[which(newMat2> 20)] <- 20
       ran <- max(abs(newMat2),na.rm=T)
