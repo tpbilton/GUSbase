@@ -24,10 +24,11 @@
 #' @section Usage:
 #' \preformatted{
 #' ## Create RA object
-#' RAobj <- readRA(rafile, sampthres = 0.01, excsamp = NULL)
+#' RAobj <- readRA(rafile, snpsubset=NULL, sampthres = 0.01, excsamp = NULL)
 #'
 #' ## RA Functions (Methods)
 #' RAobj$extractVar(nameList)
+#' RAobj$writRA(snpsubset=NULL, indsubset=NULL, file="GUSbase")
 #' RAobj$writeVCF(snpsubset=NULL, indsubset=NULL, file="GUSbase", IDuse=NULL)
 #' }
 #'
@@ -41,6 +42,7 @@
 #' \describe{
 # #'   \item{\code{\link{$cometPlot}}}{Function for create a comet plot}
 #'     \item{\code{\link{$extractVar}}}{Extract private variables stored in an RA object}
+#'     \item{\code{\link{$writeRA}}}{Convert the data in the RA object back to an RA file}
 #'     \item{\code{\link{$writeVCF}}}{Convert the data in the RA object back to VCF format}
 #' }
 #' @format NULL
@@ -51,7 +53,7 @@
 
 
 ### R6 class for data aligned to reference assembly
-RA <- R6Class("RA",
+RA <- R6::R6Class("RA",
               public = list(
                 initialize = function(List){
                   private$genon      <- List$genon
@@ -106,10 +108,10 @@ RA <- R6Class("RA",
 
                   ## Do some checks
                   if(is.null(snpsubset)) snpsubset <- 1:private$nSnps
-                  else if(isValue(snpsubset, type="pos_integer", minv=1, maxv=private$nSnps))
+                  else if(checkVector(snpsubset, type="pos_integer", minv=1, maxv=private$nSnps))
                     stop("Invalid for snpsubset argument.")
                   if(is.null(indsubset)) indsubset <- 1:private$nInd
-                  else if(isValue(indsubset, type="pos_integer", minv=1, maxv=private$nInd))
+                  else if(checkVector(indsubset, type="pos_integer", minv=1, maxv=private$nInd))
                     stop("Invalid for indsubset argument.")
                   if(is.null(IDuse)) IDuse <- private$indID[indsubset]
                   else if(!is.vector(IDuse) || length(IDuse) != length(indsubset))
@@ -151,7 +153,35 @@ RA <- R6Class("RA",
                   ## write data to vcf file
                   data.table::fwrite(split(t(out), 1:(length(indsubset)+9)), file=outfilename, sep="\t", append=TRUE, nThread = 1)
                   cat("Name of VCF file:    \t",outfilename,"\n")
-                  cat("Location of RA file: \t",outpath,"/\n\n",sep="")
+                  cat("Location of VCF file:\t",outpath,"/\n\n",sep="")
+                  return(invisible(NULL))
+                },
+                writeRA = function(snpsubset=NULL, indsubset=NULL, file="GUSbase"){
+                  ## Do some checks
+                  if(is.null(snpsubset)) snpsubset <- 1:private$nSnps
+                  else if(checkVector(snpsubset, type="pos_integer", minv=1, maxv=private$nSnps))
+                    stop("Invalid for snpsubset argument.")
+                  if(is.null(indsubset)) indsubset <- 1:private$nInd
+                  else if(checkVector(indsubset, type="pos_integer", minv=1, maxv=private$nInd))
+                    stop("Invalid for indsubset argument.")
+                  if(!is.vector(file) || length(file) != 1 || !is.character(file))
+                    stop("Invalid input for file name.")
+                  outfilename <- paste0(tail(strsplit(file,split=.Platform$file.sep)[[1]],1),".ra.tab")
+                  outpath <- dts(normalizePath("./", winslash=.Platform$file.sep, mustWork=T))
+
+                  ## Subset the data
+                  ref <- t(private$ref[indsubset,snpsubset])
+                  alt <- t(private$alt[indsubset,snpsubset])
+
+                  out <- matrix(nrow=length(snpsubset),ncol=2+length(indsubset))
+                  out[,1] <- private$chrom[snpsubset]
+                  out[,2] <- private$pos[snpsubset]
+                  out[,-c(1:2)] <- paste(ref,alt, sep = ",")
+                  colnames(out) <- c("#CHROM", "POS", private$indID[indsubset])
+                  ## write out the data
+                  write.table(x = out, file = outfilename, sep="\t", row.names = FALSE, col.names = TRUE, quote=FALSE)
+                  cat("Name of RA file:    \t",outfilename,"\n")
+                  cat("Location of RA file:\t",outpath,"/\n\n", sep = "")
                   return(invisible(NULL))
                 }
               ),
