@@ -90,10 +90,18 @@ RA <- R6::R6Class("RA",
                   names(res) <- nameList
                   return(res)
                 },
-                #### Diagonostic functions ####
-                ## Ratio of alleles for heterozygous genotype calls (observed vs expected)
-                cometPlot = function(model="random", alpha=NULL, filename=NULL, cex=1, maxdepth=500, ...){
-                  cometPlot(private$ref, private$alt, model=model, alpha=alpha, filename=filename, cex=cex, maxdepth=maxdepth, ...)
+                #### Diagonostic plots ####
+                # Ratio of alleles for heterozygous genotype calls (observed vs expected)
+                cometPlot = function(ploid=2, filename=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, ...){
+                  cometPlot(private$ref, private$alt, ploid=ploid, file=filename, cex=cex, maxdepth=maxdepth, maxSNPs=maxSNPs, res=res, ...)
+                },
+                # Counts of reference and alternate reads scaled by square root of the expected counts
+                rocketPlot = function(ploid=2, filename=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, scaled=TRUE, ...){
+                  rocketPlot(private$ref, private$alt, ploid=ploid, file=filename, cex=cex, maxdepth=maxdepth, maxSNPs=maxSNPs, res=res, scaled=scaled, ...)
+                },
+                # Ratio of alleles for heterozygous genotype calls (observed vs expected)
+                RDDPlot = function(ploid=2, filename=NULL, maxdepth=500, maxSNPs=1e5, ...){
+                  RDDPlot(private$ref, private$alt, ploid=ploid, file=filename, maxdepth=maxdepth, maxSNPs=maxSNPs, ...)
                 },
                 ###############################
                 writeVCF = function(snpsubset=NULL, indsubset=NULL, file="GUSbase", IDuse=NULL){

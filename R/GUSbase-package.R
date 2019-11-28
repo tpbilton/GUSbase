@@ -26,7 +26,7 @@
 #' }
 #'
 #' \tabular{ll}{ Package: \tab GUSbase\cr Type: \tab Package\cr Version: \tab
-#' 0.1.2\cr Date: \tab 2019-03-20\cr License: \tab GPL 3\cr }
+#' 0.2.0\cr Date: \tab 2019-11-29\cr License: \tab GPL 3\cr }
 #'
 #' @name GUSbase-package
 #' @aliases GUSbase
