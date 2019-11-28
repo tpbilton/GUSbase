@@ -1,7 +1,7 @@
 Package: GUSbase
 Title: Genotyping Uncertainty with Sequencing Data: Base Package
-Date: 2019-08-08
-Version: 0.1.2
+Date: 2019-11-29
+Version: 0.2.0
 Authors@R: c(
     person("Timothy P.", "Bilton", email = "tbilton@maths.otago.ac.nz", role = c("aut", "cre", "cph")),
     person("Ken G.", "Dodds", role = c("ctb")))
