@@ -48,7 +48,7 @@
 #' @param res Positive numeric value: The resolution of the graph when saving to a file
 #' @param scaled Logical: If TRUE, the counts in the rocket plot are scaled
 #'
-#' @aliases cometPlot $rocketPlot $cometPlot RRDplot $RRDplot
+#' @aliases cometPlot rocketPlot $rocketPlot $cometPlot RDDplot $RDDplot
 #' @author Timothy P. Bilton
 #' @examples
 #'

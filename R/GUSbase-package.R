@@ -23,6 +23,7 @@
 #' \itemize{
 #' \item{GUSMap: Genotyping Uncertainty with Sequencing data and linkage MAPping}
 #' \item{GUSLD: Genotyping Uncertainty with Sequencing data - Linkage Disequilibrium}
+#' \item{GUSrelate: Genotyping Uncertainty with Sequencing data and RELATEdness}
 #' }
 #'
 #' \tabular{ll}{ Package: \tab GUSbase\cr Type: \tab Package\cr Version: \tab

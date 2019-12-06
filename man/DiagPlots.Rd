@@ -3,22 +3,27 @@
 \name{DiagPlots}
 \alias{DiagPlots}
 \alias{cometPlot}
+\alias{rocketPlot}
 \alias{$rocketPlot}
 \alias{$cometPlot}
-\alias{RRDplot}
-\alias{$RRDplot}
+\alias{RDDplot}
+\alias{$RDDplot}
 \title{Produce a comet plot, rocket plot or RDD plot}
 \usage{
 \preformatted{
 ## Method for RA object
 RAobj$cometPlot(ploid=2, filename=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, ...)
+
 RAobj$rocketPlot(ploid=2, filename=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, scaled=TRUE, ...)
+
 RAobj$RDDPlot(ploid=2, filename=NULL, maxdepth=500, maxSNPs=1e5, ...)
 }
 
 ## Stand-alone functions
 cometPlot(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, ...)
+
 rocketPlot(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, scaled=TRUE, ...)
+
 RDDPlot(ref, alt, ploid=2, gfreq=NULL, file=NULL, maxdepth=500, maxSNPs=1e5, ...)
 }
 \arguments{
