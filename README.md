@@ -7,7 +7,7 @@ Genotyping Uncertainty with Sequencing data - Base package
 An R package for the basis of performing analysis on high-throughput sequencing data for a number of R packages, namely:
 - [GUSMap](https://github.com/tpbilton/GUSMap)
 - [GUSLD](https://github.com/AgResearch/GUS-LD)
-- [GUSrelate](https://github.com/AgResearch/GUSrelate)
+- [GUSrelate](https://github.com/tpbilton/GUSrelate)
 
 The novelty of these packages is the methods account for errors associated with low sequencing depth and miscalled bases, so that filtering with respect to read depth is not required. 
 
