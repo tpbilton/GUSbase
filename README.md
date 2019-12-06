@@ -24,7 +24,7 @@ Note: Some of the functions are coded in C and therefore an appropriate C compil
 
 ### License:
 
-GUSbase is Copyright 2017-2018 Timothy P. Bilton, released under the GNU General Public License version 3.
+GUSbase is Copyright 2017-2019 Timothy P. Bilton, released under the GNU General Public License version 3.
 
 ### Funding:
 The initial development of this package was partially funed by the Ministry of Business, Innovation and Employment via its funding of the “Genomics for Production & Security in a Biological Economy” programme (Contract ID C10X1306).
