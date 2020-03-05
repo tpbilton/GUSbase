@@ -47,6 +47,7 @@
 #' @param maxSNPs Postive integer: The maximum number of SNPs to use in creating the graph
 #' @param res Positive numeric value: The resolution of the graph when saving to a file
 #' @param scaled Logical: If TRUE, the counts in the rocket plot are scaled
+#' @param color Vector: Color palette used for the heatmap.
 #'
 #' @aliases cometPlot rocketPlot $rocketPlot $cometPlot RDDplot $RDDplot
 #' @author Timothy P. Bilton
@@ -68,7 +69,7 @@
 #'
 #' @name DiagPlots
 #' @export cometPlot
-cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, ...){
+cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, color=NULL, ...){
 
   ## Do some checks
   if(!is.matrix(ref) || GUSbase::checkVector(as.vector(ref)))
@@ -99,6 +100,8 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth=
     stop("Argument `res` is invalid")
   if(GUSbase::checkVector(cex, type="pos_numeric"))
     stop("Argument `cex` is invalid")
+  if(!is.null(color) & (!is.vector(color) | !all(network::is.color(color))))
+    stop("Argument `color` is invalid")
 
   ### check if there are too many SNPs
   if(ncol(ref) > maxSNPs){
@@ -186,13 +189,17 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth=
   indx_entry <- temp[,c(2:3)]
   indx_entry[,1] <- indx_entry[,1]+1
   countMat[indx_entry] <- log(temp[,1]+1)
+  countMat[which(countMat < 0)] <- 0
+  countMat[1,2] <- countMat[2,1] <- NA
 
   ### Produce the plot
   maxplot <- min(max(ref,alt),maxdepth)
   if(!is.null(file))
     png(filename, width=max(maxplot*3,640)*4+sqrt(cex)*maxplot,height=max(maxplot*3,640)*4+sqrt(cex)*maxplot, res=res)
   par(mar = c(5.1,5.1,5.1,5.1)*sqrt(cex), ...)
-  newCol <- colorRampPalette(c("white","red","orange","yellow","green","cyan","blue"))(200)
+  #newCol <- colorRampPalette(c("white","red","orange","yellow","green","cyan","blue"))(200)
+  if(is.null(color)) newCol <- viridis::viridis(200, direction = -1, option = "A")
+  else newCol <- color
   grid_add <- function(){
     xaxp <- par("xaxp")
     ticks <- seq(par()$xaxp[1],par()$xaxp[2],par()$xaxp[2]/par()$xaxp[3])
