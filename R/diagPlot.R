@@ -266,7 +266,7 @@ rocketPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth
   if(!is.null(file)){
     if(!is.vector(file) || !is.character(file) || length(file) != 1)
       stop("Filename input is invalid")
-    filename <- paste0(tail(strsplit(file,split=.Platform$file.sep)[[1]],1),"_comet.png")
+    filename <- paste0(tail(strsplit(file,split=.Platform$file.sep)[[1]],1),"_rocket.png")
     if(!file.create(filename,showWarnings = F))
       stop("Unable to create output file.")
   }
