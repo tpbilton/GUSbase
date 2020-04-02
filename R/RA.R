@@ -53,7 +53,7 @@
 
 
 ### R6 class for data aligned to reference assembly
-RA <- R6::R6Class("RA",
+RA <- R6::R6Class("GUSbase::RA",
               public = list(
                 initialize = function(List){
                   private$genon      <- List$genon

@@ -111,7 +111,7 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, ind=FALSE, cex=1
     if(!is.null(file)){
       if(!is.vector(file) || !is.character(file) || length(file) != 1)
         stop("Filename input is invalid")
-      filename <- paste0(tail(strsplit(file,split=.Platform$file.sep)[[1]],1),"_comet.png")
+      filename <- paste0(file,"_comet.png")
       if(!file.create(filename,showWarnings = F))
         stop("Unable to create output file.")
     }
@@ -266,12 +266,12 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, ind=FALSE, cex=1
     else {
       if(!is.vector(file) || !is.character(file) || length(file) != 1)
         stop("Filename is invalid")
-      filename <- paste0(tail(strsplit(file,split=.Platform$file.sep)[[1]],1),"_test.png")
+      filename <- paste0(file,"_test.png")
       if(!file.create(filename,showWarnings = F))
         stop("Unable to create output file.")
       else {
         file.remove(filename)
-        filename <- paste0(tail(strsplit(file,split=.Platform$file.sep)[[1]],1),"_comet")
+        filename <- paste0(file,"_comet")
       }
     }
     ## If genotype frequencies not given, estimate allele frequecies
@@ -381,7 +381,7 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, ind=FALSE, cex=1
 
       ### Produce the plot
       maxplot <- maxCount/2
-      tempfilename = paste0(filename,"_ind-",ind,".png")
+      tempfilename = paste0(filename,"_ind-",indID[ind],".png")
       png(tempfilename, width=max(maxplot*3,640)*4+sqrt(cex)*maxplot,height=max(maxplot*3,640)*4+sqrt(cex)*maxplot, res=res)
       par(mar = c(5.1,5.1,5.1,5.1)*sqrt(cex), ...)
       #newCol <- colorRampPalette(c("white","red","orange","yellow","green","cyan","blue"))(200)
@@ -454,7 +454,7 @@ rocketPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth
   if(!is.null(file)){
     if(!is.vector(file) || !is.character(file) || length(file) != 1)
       stop("Filename input is invalid")
-    filename <- paste0(tail(strsplit(file,split=.Platform$file.sep)[[1]],1),"_rocket.png")
+    filename <- paste0(file,"_rocket.png")
     if(!file.create(filename,showWarnings = F))
       stop("Unable to create output file.")
   }
@@ -631,7 +631,7 @@ RDDPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, maxdepth=500, maxS
   if(!is.null(file)){
     if(!is.vector(file) || !is.character(file) || length(file) != 1)
       stop("Filename input is invalid")
-    filename <- paste0(tail(strsplit(file,split=.Platform$file.sep)[[1]],1),"_RDD.png")
+    filename <- paste0(file,"_RDD.png")
     if(!file.create(filename,showWarnings = F))
       stop("Unable to create output file.")
   }
