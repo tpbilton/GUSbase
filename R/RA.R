@@ -92,8 +92,9 @@ RA <- R6::R6Class("RA",
                 },
                 #### Diagonostic plots ####
                 # Ratio of alleles for heterozygous genotype calls (observed vs expected)
-                cometPlot = function(ploid=2, filename=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, ...){
-                  cometPlot(private$ref, private$alt, ploid=ploid, file=filename, cex=cex, maxdepth=maxdepth, maxSNPs=maxSNPs, res=res, ...)
+                cometPlot = function(ploid=2, filename=NULL, cex=1, maxdepth=500, maxSNPs=1e6, res=300, ind=FALSE, ncores=1, ...){
+                  cometPlot(private$ref, private$alt, ploid=ploid, file=filename, cex=cex, maxdepth=maxdepth, maxSNPs=maxSNPs, res=res,
+                            ind=ind, ncores=ncores, indID=private$indID, ...)
                 },
                 # Counts of reference and alternate reads scaled by square root of the expected counts
                 rocketPlot = function(ploid=2, filename=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, scaled=TRUE, ...){

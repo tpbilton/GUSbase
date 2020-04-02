@@ -23,7 +23,7 @@
 #' @usage
 #' \preformatted{
 #' ## Method for RA object
-#' RAobj$cometPlot(ploid=2, filename=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, ...)
+#' RAobj$cometPlot(ploid=2, filename=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, ind=FALSE, ncores=1, ...)
 #'
 #' RAobj$rocketPlot(ploid=2, filename=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, scaled=TRUE, ...)
 #'
@@ -31,7 +31,8 @@
 #' }
 #'
 #' ## Stand-alone functions
-#' cometPlot(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, ...)
+#' cometPlot(ref, alt, ploid=2, gfreq=NULL, file=NULL, ind=FALSE, cex=1, maxdepth=500, maxSNPs=1e5, res=300,
+#'           color=NULL, ncores=1, indID=NULL, ...)
 #'
 #' rocketPlot(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, scaled=TRUE, ...)
 #'
@@ -49,6 +50,7 @@
 #' @param scaled Logical: If TRUE, the counts in the rocket plot are scaled
 #' @param color Vector: Color palette used for the heatmap.
 #' @param ind Logical: If TRUE, cometPlots are produced for each individual separately
+#' @param indID Character vector: Sample IDs corresponding to the rows of the reference and alternative allele matrices
 #' @param ncores Postive integer: Number of cores to use in the parallelization when
 #' constructing comet plots for each individual.
 #'
@@ -72,7 +74,8 @@
 #'
 #' @name DiagPlots
 #' @export cometPlot
-cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, ind=FALSE, cex=1, maxdepth=500, maxSNPs=1e5, res=300, color=NULL, ncores=1, ...){
+cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, ind=FALSE, cex=1, maxdepth=500, maxSNPs=1e5, res=300,
+                      color=NULL, ncores=1, indID=NULL, ...){
 
   ## Do some checks
   if(!is.matrix(ref) || GUSbase::checkVector(as.vector(ref)))
@@ -251,7 +254,14 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, ind=FALSE, cex=1
     return(invisible())
   } else{ ## plots for each individual
 
-    if(is.null(filename))
+    ## check the sample ID vector
+    if(is.null(indID))
+      indID = 1:nrow(ref)
+    else if(!is.vector(indID) || !is.character(indID) || length(indID) != nrow(ref) || any(is.na(indID)))
+      stop("Argument `indID` is invalid")
+
+    ## Check the filename
+    if(is.null(file))
       stop("A filename must be specified to produce plots for each individual")
     else {
       if(!is.vector(file) || !is.character(file) || length(file) != 1)
