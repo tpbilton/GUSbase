@@ -132,7 +132,7 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, ind=FALSE, cex=1
 
     ## compute the observed depths
     heteCall <- which(ref > 0 | alt > 0)
-    maxCount <- max(100,2*maxdepth)
+    maxCount <- 2*min(max(ref,alt,100),maxdepth)
     ref_sub <- factor(ref[heteCall],levels=0:maxCount,labels=0:maxCount)
     alt_sub <- factor(alt[heteCall],levels=0:maxCount,labels=0:maxCount)
     obsTab <- table(ref_sub,alt_sub)
@@ -206,7 +206,7 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, ind=FALSE, cex=1
     countMat[1,2] <- countMat[2,1] <- NA
 
     ### Produce the plot
-    maxplot <- min(max(ref,alt),maxdepth)
+    maxplot <- min(max(ref,alt,100),maxdepth)
     if(!is.null(file))
       png(filename, width=max(maxplot*3,640)*4+sqrt(cex)*maxplot,height=max(maxplot*3,640)*4+sqrt(cex)*maxplot, res=res)
     par(mar = c(5.1,5.1,5.1,5.1)*sqrt(cex), ...)
@@ -308,7 +308,7 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, ind=FALSE, cex=1
 
       ## compute the observed depths
       heteCall <- which(ref_ind > 0 | alt_ind > 0)
-      maxCount <- 2*max(100,min(max(depth),maxdepth))
+      maxCount <- 2*min(max(ref,alt,100),maxdepth)
       ref_sub <- factor(ref_ind[heteCall],levels=0:maxCount,labels=0:maxCount)
       alt_sub <- factor(alt_ind[heteCall],levels=0:maxCount,labels=0:maxCount)
       obsTab <- table(ref_sub,alt_sub)
@@ -380,7 +380,7 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, ind=FALSE, cex=1
       countMat[1,2] <- countMat[2,1] <- NA
 
       ### Produce the plot
-      maxplot <- maxCount/2
+      maxplot <- min(max(ref,alt,100),maxdepth)
       tempfilename = paste0(filename,"_ind-",indID[ind],".png")
       png(tempfilename, width=max(maxplot*3,640)*4+sqrt(cex)*maxplot,height=max(maxplot*3,640)*4+sqrt(cex)*maxplot, res=res)
       par(mar = c(5.1,5.1,5.1,5.1)*sqrt(cex), ...)
