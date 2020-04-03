@@ -4,8 +4,7 @@
 \alias{readRA}
 \title{Read an Reference/Alternate (RA) file.}
 \usage{
-readRA(rafile, snpsubset = NULL, sampthres = 0.01, excsamp = NULL,
-  ...)
+readRA(rafile, snpsubset = NULL, sampthres = 0.01, excsamp = NULL, ...)
 }
 \arguments{
 \item{rafile}{Character string giving the path to the RA file to be read into R. Typically the required string is

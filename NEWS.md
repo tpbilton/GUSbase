@@ -1,4 +1,24 @@
 
+# GUSbase 0.2.1
+
+* Comet plot can now be produced for each individual. A few bugs in the comet plot function have also been fixed
+* Add a function to the RA object `$mergeSamples` which can merge samples in the RA object.
+* Summary information in a RA object is computed once and stored to same time in recomputing
+
+Various other bugs have been fixed
+
+
+# GUSbase 0.2.0
+
+Version released for Thesis by Bilton (2020). 
+
+New plot functions added:
+* Comet plot which is produced using `$cometPlot` in an RA object
+* rocket plot which is produced using `$rocketPlot` in an RA object
+* RDD (read ratio density) plot which is produced using `$RDDPlot` in an RA object
+
+Various other bugs have also been fixed.
+
 # GUSbase 0.1.1
 
 * Added `$writeVCF` function to RA object. Converts the allele count data in the RA object back to a VCF file.
@@ -25,3 +45,6 @@ This is the first release of GUSbase. This package forms a base for reading in d
 * Additionally features are due to be added on to this package as the other packages of the GUSverse are developed and released to CRAN.
 
 
+# References
+
+* Bilton, T.P. (2020). "Developing statistical methods for genetic analysis of genotypes from genotyping-by-sequencing data" (Doctoral Thesis, University of Otago, Dunedin, New Zealand).

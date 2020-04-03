@@ -1,6 +1,6 @@
 ##########################################################################
 # Genotyping Uncertainty with Sequencing data - Base package (GUSbase)
-# Copyright 2017-2018 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
+# Copyright 2017-2020 Timothy P. Bilton <timothy.bilton@agresearch.co.nz>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #'
 #' ## RA Functions (Methods)
 #' RAobj$extractVar(nameList)
+#' RAobj$mergeSamples(samID, useID=TRUE)
 #' RAobj$writRA(snpsubset=NULL, indsubset=NULL, file="GUSbase")
 #' RAobj$writeVCF(snpsubset=NULL, indsubset=NULL, file="GUSbase", IDuse=NULL)
 #' }
@@ -42,6 +43,7 @@
 #' \describe{
 # #'   \item{\code{\link{$cometPlot}}}{Function for create a comet plot}
 #'     \item{\code{\link{$extractVar}}}{Extract private variables stored in an RA object}
+#'     \item{\code{\link{$mergeSamples}}}{Merge read counts for different samples}
 #'     \item{\code{\link{$writeRA}}}{Convert the data in the RA object back to an RA file}
 #'     \item{\code{\link{$writeVCF}}}{Convert the data in the RA object back to VCF format}
 #' }
@@ -68,17 +70,38 @@ RA <- R6::R6Class("RA",
                   private$gform      <- List$gform
                   private$AFrq       <- List$AFrq
                   private$infilename <- List$infilename
+                  private$summaryInfo <- List$summaryInfo
                 },
                 print = function(...){
-                  cat("Data Summary:\n")
-                  cat("Data file:\t",private$infilename,"\n")
-                  temp <- private$ref + private$alt
-                  cat("Mean Depth:\t", mean(temp),"\n")
-                  cat("Mean Call Rate:\t",sum(temp!=0)/length(temp),"\n")
-                  cat("Number of...\n")
-                  cat("  Samples:\t",private$nInd,"\n")
-                  cat("  SNPs:\t\t",private$nSnps,"\n")
-                  cat("  Reads:\t",sum(temp),"\n")
+                  cat(unlist(private$summaryInfo))
+                },
+                ## Function for merging samples
+                mergeSamples = function(samID, useID=TRUE){
+
+                  ## check input
+                  if(!is.vector(samID) || !is.character(samID) || length(samID) != private$nInd)
+                    stop("Argument `samID` is invalid")
+                  if(!is.logical(useID) || !is.vector(useID) || length(useID) != 1 || is.na(useID))
+                    stop("Argument `useID` is invalid")
+
+                  ## determine groupings
+                  group = as.numeric(factor(samID, levels=unique(samID), labels=unique(samID)))
+
+                  ## check which IDs to use after the merge
+                  if(!useID) newID = unique(samID)
+                  else newID = private$indID[which(!duplicated(samID))]
+
+                  ## Now merge information
+                  private$ref = rowsum(private$ref, group)
+                  private$alt = rowsum(private$alt, group)
+                  private$genon <- (private$ref > 0) + (private$alt == 0)
+                  private$genon[private$ref == 0 & private$alt == 0] <- NA
+                  private$indID = newID
+                  private$nInd = length(private$indID)
+
+                  ## update summary information
+                  private$computeSummary()
+                  return(invisible(NULL))
                 },
                 extractVar = function(nameList){
                   res <- NULL
@@ -199,10 +222,23 @@ RA <- R6::R6Class("RA",
                 gform = NULL,
                 AFrq = NULL,
                 infilename = NULL,
+                summaryInfo = NULL,
                 updatePrivate = function(List){
                   for(elem in names(List)){
                     private[[elem]] <- List[[elem]]
                   }
+                },
+                computeSummary = function(){
+                  temp <- private$ref + private$alt
+                  private$summaryInfo = list(
+                    header="Data Summary:\n",
+                    file="Data file:\t\t",private$infilename,"\n",
+                    meandepth="Mean Depth:\t\t", round(mean(temp),2),"\n",
+                    callrate="Mean Call Rate:\t",round(sum(temp!=0)/length(temp),2),"\n",
+                    num="Number of...\n",
+                    samples="  Samples:\t\t",private$nInd,"\n",
+                    snps="  SNPs:\t\t",private$nSnps,"\n",
+                    reads="  Reads:\t\t",sum(temp),"\n")
                 }
               )
 )

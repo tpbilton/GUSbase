@@ -4,9 +4,14 @@
 \alias{makeUR}
 \title{Make an unrelated (UR) population}
 \usage{
-makeUR(RAobj, ploid = 2, indsubset = NULL, filter = list(MAF = 0.01,
-  MISS = 0.5, BIN = 100, HW = c(-0.05, Inf), MAXDEPTH = 500),
-  mafEst = TRUE, nThreads = 2)
+makeUR(
+  RAobj,
+  ploid = 2,
+  indsubset = NULL,
+  filter = list(MAF = 0.01, MISS = 0.5, BIN = 100, HW = c(-0.05, Inf), MAXDEPTH = 500),
+  mafEst = TRUE,
+  nThreads = 2
+)
 }
 \arguments{
 \item{RAobj}{Object of class RA created via the \code{\link{readRA}} function.}

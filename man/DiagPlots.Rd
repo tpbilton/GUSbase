@@ -12,7 +12,7 @@
 \usage{
 \preformatted{
 ## Method for RA object
-RAobj$cometPlot(ploid=2, filename=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, ...)
+RAobj$cometPlot(ploid=2, filename=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, ind=FALSE, ncores=1, ...)
 
 RAobj$rocketPlot(ploid=2, filename=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, scaled=TRUE, ...)
 
@@ -20,7 +20,8 @@ RAobj$RDDPlot(ploid=2, filename=NULL, maxdepth=500, maxSNPs=1e5, ...)
 }
 
 ## Stand-alone functions
-cometPlot(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, ...)
+cometPlot(ref, alt, ploid=2, gfreq=NULL, file=NULL, ind=FALSE, cex=1, maxdepth=500, maxSNPs=1e5, res=300,
+          color=NULL, ncores=1, indID=NULL, ...)
 
 rocketPlot(ref, alt, ploid=2, gfreq=NULL, file=NULL, cex=1, maxdepth=500, maxSNPs=1e5, res=300, scaled=TRUE, ...)
 
@@ -35,6 +36,8 @@ RDDPlot(ref, alt, ploid=2, gfreq=NULL, file=NULL, maxdepth=500, maxSNPs=1e5, ...
 
 \item{gfreq}{Numeric matrix: Genotype probabilities for each SNP and individual}
 
+\item{ind}{Logical: If TRUE, cometPlots are produced for each individual separately}
+
 \item{cex}{Numeric value: A magnification value for the size of the text and labels on the axes}
 
 \item{maxdepth}{Postive integer: The maximum depth for the x-axis and y-axis}
@@ -42,6 +45,13 @@ RDDPlot(ref, alt, ploid=2, gfreq=NULL, file=NULL, maxdepth=500, maxSNPs=1e5, ...
 \item{maxSNPs}{Postive integer: The maximum number of SNPs to use in creating the graph}
 
 \item{res}{Positive numeric value: The resolution of the graph when saving to a file}
+
+\item{color}{Vector: Color palette used for the heatmap.}
+
+\item{ncores}{Postive integer: Number of cores to use in the parallelization when
+constructing comet plots for each individual.}
+
+\item{indID}{Character vector: Sample IDs corresponding to the rows of the reference and alternative allele matrices}
 
 \item{filename}{Character: The name of the file to save the plot to}
 

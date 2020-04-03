@@ -16,10 +16,10 @@ It forms the base to a number of other packages with specialised methods for ana
 }
 \details{
 \tabular{ll}{ Package: \tab GUSbase\cr Type: \tab Package\cr Version: \tab
-0.2.0\cr Date: \tab 2019-11-29\cr License: \tab GPL 3\cr }
+0.2.1\cr Date: \tab 2020-04-03\cr License: \tab GPL 3\cr }
 }
 \author{
 Timothy P. Bilton, Maintainer: Timothy P. Bilton
-<tbilton@maths.otago.ac.nz>
+<timothy.bilton@agresearch.co.nz>
 }
 \keyword{package}

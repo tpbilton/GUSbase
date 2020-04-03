@@ -6,3 +6,4 @@
 *.log
 *.status
 src/Makevars
+*.dll

@@ -1,6 +1,6 @@
 ##########################################################################
 # Genotyping Uncertainty with Sequencing data (GUSbase)
-# Copyright 2017-2018 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
+# Copyright 2017-2020 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -155,11 +155,23 @@ readRA <- function(rafile, snpsubset=NULL, sampthres = 0.01, excsamp = NULL, ...
     }
   }
 
+  ## Compute summary information
+  temp <- ref + alt
+  summaryInfo = list(
+    header="Data Summary:\n",
+    file=paste0("Data file:\t\t",rafile,"\n"),
+    meandepth=paste0("Mean Depth:\t\t", round(mean(temp),2),"\n"),
+    callrate=paste0("Mean Call Rate:\t",round(sum(temp!=0)/length(temp),2),"\n"),
+    num="Number of...\n",
+    samples=paste0("  Samples:\t\t",nInd,"\n"),
+    snps=paste0("  SNPs:\t\t",nSnps,"\n"),
+    reads=paste0("  Reads:\t\t",sum(temp),"\n"))
+
   ## Create the R6 object
   obj <- RA$new(
     list(genon = genon, ref = ref, alt = alt, chrom = chrom, pos = pos,
          SNP_Names = SNP_Names, indID = indID, nSnps = as.integer(nSnps), nInd = as.integer(nInd),
-         gform = gform, AFrq = AFrq, infilename = rafile)
+         gform = gform, AFrq = AFrq, infilename = rafile, summaryInfo = summaryInfo)
   )
 
   return(obj)

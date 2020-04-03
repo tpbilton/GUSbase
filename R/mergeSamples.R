@@ -1,6 +1,6 @@
 ##########################################################################
 # Genotyping Uncertainty with Sequencing data - Base package (GUSbase)
-# Copyright 2017-2020 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
+# Copyright 2017-2020 Timothy P. Bilton <timothy.bilton@agresearch.co.nz>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,32 +15,41 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
-#' RA Method: Write genotype data to RA format
+#' RA Method: Merge samples in an RA object
 #'
-#' Method for converting allele count data in an RA object back to an RA file.
+#' Method for merging read count information from multiple samples in an RA object
+#'
+#' The main argument is \code{samID} which expects a character vector (length equal to the number of individuals in
+#' the dataset) where the enteries correspond to the sample IDs. Enteries in \code{samID} that are identical
+#' result in the corresponding samples being merged. See the examples for an illustration.
 #'
 #' @section Usage:
 #' \preformatted{
-#' RAobj$writeRA(snpsubset=NULL, indsubset=NULL, file="GUSbase")
+#' RAobj$mergeSamples(samID, useID=TRUE)
 #' }
 #'
 #' @section Arguments:
 #' \describe{
-#' \item{snpsubset}{Integer vector giving the indices of the SNPs to retain in the VCF file}
-#' \item{indsubset}{Integer vector giving the indices of the samples to retain in the VCF file}
-#' \item{file}{Character giving the name of the VCF file to be written}
-# #' \item{IDuse}{Character vector specifying alternative samples names. Useful for anonymizing sample IDs.}
+#' \item{samID}{Character vector:  }
+#' \item{useID}{Logical: If \code{TRUE}, the values in \code{samID} are used. Otherwise, the original sample
+#' IDs in the RA object are used.}
 #' }
 #'
-#' @name $writeRA
+#' @name $mergeSamples
 #' @author Timothy P. Bilton
 #' @seealso \code{\link{RA}}
 #' @examples
+#' ## Load simulated dataset with GUSbase into R
 #' file <- simDS()
 #' RAfile <- VCFtoRA(file$vcf)
 #' subset <- readRA(RAfile, snpsubset = 10:30)
 #'
-#' ## write the subset of the data back to VCF format
-#' subset$writeRA(indsubset=1:10, file = "subset")
+#' ## create new sample ID vector
+#' samID = substr(ra$.__enclos_env__$private$indID, 1, 2) ## sample IDs from RA object
+#' samID[5:104] = paste0(samID[5:104],"_", 1:100)
+#' head(samID) # will merge first row with third and second row with fourth row
+#'
+#' ## merge samples
+#' subset$mergeSamples(samID)
 #'
 NULL
