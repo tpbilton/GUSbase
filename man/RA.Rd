@@ -48,21 +48,21 @@ Timothy P. Bilton
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{RA$new()}}
-\item \href{#method-print}{\code{RA$print()}}
-\item \href{#method-mergeSamples}{\code{RA$mergeSamples()}}
-\item \href{#method-extractVar}{\code{RA$extractVar()}}
-\item \href{#method-cometPlot}{\code{RA$cometPlot()}}
-\item \href{#method-rocketPlot}{\code{RA$rocketPlot()}}
-\item \href{#method-RDDPlot}{\code{RA$RDDPlot()}}
-\item \href{#method-writeVCF}{\code{RA$writeVCF()}}
-\item \href{#method-writeRA}{\code{RA$writeRA()}}
-\item \href{#method-clone}{\code{RA$clone()}}
+\item \href{#method-RA-new}{\code{RA$new()}}
+\item \href{#method-RA-print}{\code{RA$print()}}
+\item \href{#method-RA-mergeSamples}{\code{RA$mergeSamples()}}
+\item \href{#method-RA-extractVar}{\code{RA$extractVar()}}
+\item \href{#method-RA-cometPlot}{\code{RA$cometPlot()}}
+\item \href{#method-RA-rocketPlot}{\code{RA$rocketPlot()}}
+\item \href{#method-RA-RDDPlot}{\code{RA$RDDPlot()}}
+\item \href{#method-RA-writeVCF}{\code{RA$writeVCF()}}
+\item \href{#method-RA-writeRA}{\code{RA$writeRA()}}
+\item \href{#method-RA-clone}{\code{RA$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-RA-new"></a>}}
+\if{latex}{\out{\hypertarget{method-RA-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RA$new(List)}\if{html}{\out{</div>}}
@@ -70,8 +70,8 @@ Timothy P. Bilton
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-print"></a>}}
-\if{latex}{\out{\hypertarget{method-print}{}}}
+\if{html}{\out{<a id="method-RA-print"></a>}}
+\if{latex}{\out{\hypertarget{method-RA-print}{}}}
 \subsection{Method \code{print()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RA$print(...)}\if{html}{\out{</div>}}
@@ -79,8 +79,8 @@ Timothy P. Bilton
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-mergeSamples"></a>}}
-\if{latex}{\out{\hypertarget{method-mergeSamples}{}}}
+\if{html}{\out{<a id="method-RA-mergeSamples"></a>}}
+\if{latex}{\out{\hypertarget{method-RA-mergeSamples}{}}}
 \subsection{Method \code{mergeSamples()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RA$mergeSamples(samID, useID = TRUE)}\if{html}{\out{</div>}}
@@ -88,8 +88,8 @@ Timothy P. Bilton
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-extractVar"></a>}}
-\if{latex}{\out{\hypertarget{method-extractVar}{}}}
+\if{html}{\out{<a id="method-RA-extractVar"></a>}}
+\if{latex}{\out{\hypertarget{method-RA-extractVar}{}}}
 \subsection{Method \code{extractVar()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RA$extractVar(nameList)}\if{html}{\out{</div>}}
@@ -97,8 +97,8 @@ Timothy P. Bilton
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-cometPlot"></a>}}
-\if{latex}{\out{\hypertarget{method-cometPlot}{}}}
+\if{html}{\out{<a id="method-RA-cometPlot"></a>}}
+\if{latex}{\out{\hypertarget{method-RA-cometPlot}{}}}
 \subsection{Method \code{cometPlot()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RA$cometPlot(
@@ -116,8 +116,8 @@ Timothy P. Bilton
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-rocketPlot"></a>}}
-\if{latex}{\out{\hypertarget{method-rocketPlot}{}}}
+\if{html}{\out{<a id="method-RA-rocketPlot"></a>}}
+\if{latex}{\out{\hypertarget{method-RA-rocketPlot}{}}}
 \subsection{Method \code{rocketPlot()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RA$rocketPlot(
@@ -134,8 +134,8 @@ Timothy P. Bilton
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-RDDPlot"></a>}}
-\if{latex}{\out{\hypertarget{method-RDDPlot}{}}}
+\if{html}{\out{<a id="method-RA-RDDPlot"></a>}}
+\if{latex}{\out{\hypertarget{method-RA-RDDPlot}{}}}
 \subsection{Method \code{RDDPlot()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RA$RDDPlot(ploid = 2, filename = NULL, maxdepth = 500, maxSNPs = 1e+05, ...)}\if{html}{\out{</div>}}
@@ -143,8 +143,8 @@ Timothy P. Bilton
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-writeVCF"></a>}}
-\if{latex}{\out{\hypertarget{method-writeVCF}{}}}
+\if{html}{\out{<a id="method-RA-writeVCF"></a>}}
+\if{latex}{\out{\hypertarget{method-RA-writeVCF}{}}}
 \subsection{Method \code{writeVCF()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RA$writeVCF(snpsubset = NULL, indsubset = NULL, file = "GUSbase", IDuse = NULL)}\if{html}{\out{</div>}}
@@ -152,8 +152,8 @@ Timothy P. Bilton
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-writeRA"></a>}}
-\if{latex}{\out{\hypertarget{method-writeRA}{}}}
+\if{html}{\out{<a id="method-RA-writeRA"></a>}}
+\if{latex}{\out{\hypertarget{method-RA-writeRA}{}}}
 \subsection{Method \code{writeRA()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RA$writeRA(snpsubset = NULL, indsubset = NULL, file = "GUSbase")}\if{html}{\out{</div>}}
@@ -161,8 +161,8 @@ Timothy P. Bilton
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-RA-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-RA-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

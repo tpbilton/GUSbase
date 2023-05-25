@@ -1,7 +1,7 @@
 Package: GUSbase
 Title: Genotyping Uncertainty with Sequencing Data: Base Package
-Date: 2020-04-03
-Version: 0.2.1
+Date: 2023-05-25
+Version: 0.2.2
 Authors@R: c(
     person("Timothy P.", "Bilton", email = "timothy.bilton@agresearch.co.nz", role = c("aut", "cre", "cph")),
     person("Ken G.", "Dodds", role = c("ctb")))
@@ -12,4 +12,4 @@ RdMacros: Rdpack
 URL: https://github.com/tpbilton/GUSbase 
 License: GPL-3 | file LICENSE
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.2.3

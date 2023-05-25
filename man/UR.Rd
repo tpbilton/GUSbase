@@ -35,27 +35,27 @@ Timothy P. Bilton
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{UR$new()}}
-\item \href{#method-clone}{\code{UR$clone()}}
+\item \href{#method-UR-new}{\code{UR$new()}}
+\item \href{#method-UR-clone}{\code{UR$clone()}}
 }
 }
-\if{html}{
-\out{<details ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="GUSbase" data-topic="RA" data-id="cometPlot">}\href{../../GUSbase/html/RA.html#method-cometPlot}{\code{GUSbase::RA$cometPlot()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="GUSbase" data-topic="RA" data-id="extractVar">}\href{../../GUSbase/html/RA.html#method-extractVar}{\code{GUSbase::RA$extractVar()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="GUSbase" data-topic="RA" data-id="mergeSamples">}\href{../../GUSbase/html/RA.html#method-mergeSamples}{\code{GUSbase::RA$mergeSamples()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="GUSbase" data-topic="RA" data-id="print">}\href{../../GUSbase/html/RA.html#method-print}{\code{GUSbase::RA$print()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="GUSbase" data-topic="RA" data-id="RDDPlot">}\href{../../GUSbase/html/RA.html#method-RDDPlot}{\code{GUSbase::RA$RDDPlot()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="GUSbase" data-topic="RA" data-id="rocketPlot">}\href{../../GUSbase/html/RA.html#method-rocketPlot}{\code{GUSbase::RA$rocketPlot()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="GUSbase" data-topic="RA" data-id="writeRA">}\href{../../GUSbase/html/RA.html#method-writeRA}{\code{GUSbase::RA$writeRA()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="GUSbase" data-topic="RA" data-id="writeVCF">}\href{../../GUSbase/html/RA.html#method-writeVCF}{\code{GUSbase::RA$writeVCF()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="GUSbase" data-topic="RA" data-id="RDDPlot"><a href='../../GUSbase/html/RA.html#method-RA-RDDPlot'><code>GUSbase::RA$RDDPlot()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="GUSbase" data-topic="RA" data-id="cometPlot"><a href='../../GUSbase/html/RA.html#method-RA-cometPlot'><code>GUSbase::RA$cometPlot()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="GUSbase" data-topic="RA" data-id="extractVar"><a href='../../GUSbase/html/RA.html#method-RA-extractVar'><code>GUSbase::RA$extractVar()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="GUSbase" data-topic="RA" data-id="mergeSamples"><a href='../../GUSbase/html/RA.html#method-RA-mergeSamples'><code>GUSbase::RA$mergeSamples()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="GUSbase" data-topic="RA" data-id="print"><a href='../../GUSbase/html/RA.html#method-RA-print'><code>GUSbase::RA$print()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="GUSbase" data-topic="RA" data-id="rocketPlot"><a href='../../GUSbase/html/RA.html#method-RA-rocketPlot'><code>GUSbase::RA$rocketPlot()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="GUSbase" data-topic="RA" data-id="writeRA"><a href='../../GUSbase/html/RA.html#method-RA-writeRA'><code>GUSbase::RA$writeRA()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="GUSbase" data-topic="RA" data-id="writeVCF"><a href='../../GUSbase/html/RA.html#method-RA-writeVCF'><code>GUSbase::RA$writeVCF()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-UR-new"></a>}}
+\if{latex}{\out{\hypertarget{method-UR-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{UR$new(R6obj, ploid)}\if{html}{\out{</div>}}
@@ -63,8 +63,8 @@ Timothy P. Bilton
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-UR-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-UR-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{
