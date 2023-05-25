@@ -39,5 +39,6 @@
 ## Wrapper function for reading in the F1 simulate data set
 simDS <- function(){
   return(list(vcf=system.file("extdata", "simDS.vcf", package="GUSbase"),
-              ped=system.file("extdata", "simDS_ped.csv", package="GUSbase")))
+              ped=system.file("extdata", "simDS_ped.csv", package="GUSbase"),
+              meta=system.file("extdata", "simDS_metaInfo.csv", package="GUSbase")))
 }
