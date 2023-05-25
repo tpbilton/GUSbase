@@ -1,6 +1,6 @@
 ##########################################################################
 # Genotyping Uncertainty with Sequencing data - Base package (GUSbase)
-# Copyright 2017-2019 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
+# Copyright 2017-2020 Timothy P. Bilton
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -51,8 +51,10 @@
 #' @param color Vector: Color palette used for the heatmap.
 #' @param ind Logical: If TRUE, cometPlots are produced for each individual separately
 #' @param indID Character vector: Sample IDs corresponding to the rows of the reference and alternative allele matrices
-#' @param ncores Postive integer: Number of cores to use in the parallelization when
+#' @param ncores Positive integer: Number of cores to use in the parallelization when
 #' constructing comet plots for each individual.
+#' @param xleg Positive value: Scaling factor for the horizontal width of the legend.
+#' @param yleg Positive value: Scaling factor for the vertical height of the legend.
 #'
 #' @aliases cometPlot rocketPlot $rocketPlot $cometPlot RDDplot $RDDplot
 #' @author Timothy P. Bilton
@@ -75,7 +77,7 @@
 #' @name DiagPlots
 #' @export cometPlot
 cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, ind=FALSE, cex=1, maxdepth=500, maxSNPs=1e5, res=300,
-                      color=NULL, ncores=1, indID=NULL, ...){
+                      color=NULL, ncores=1, indID=NULL, yleg=5, xleg=2, ...){
 
   ## Do some checks
   if(!is.matrix(ref) || GUSbase::checkVector(as.vector(ref)))
@@ -105,6 +107,11 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, ind=FALSE, cex=1
     stop("Argument `ind` is invalid")
   if(GUSbase::checkVector(ncores, type="pos_integer",minv=1) || length(ncores) != 1)
     stop("Argument `ncores` is invalid")
+  if(GUSbase::checkVector(yleg, type="pos_numeric",minv=0, equal=F) || length(yleg) != 1)
+    stop("Argument `yleg` is invalid")
+  if(GUSbase::checkVector(xleg, type="pos_numeric",minv=0, equal=F) || length(xleg) != 1)
+    stop("Argument `xleg` is invalid")
+
 
   if(!ind){
     ### check for filename
@@ -224,7 +231,7 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, ind=FALSE, cex=1
       }
       return(invisible(NULL))
     }
-    image(0:nrow(countMat)-2,0:ncol(countMat)-2,countMat, xlab="Major Read Depth",ylab="Major Read Depth",col=newCol,zlim=c(0,max(countMat,na.rm=T)),
+    image(0:nrow(countMat)-2,0:ncol(countMat)-2,countMat, xlab="Major Read Depth (Expected)",ylab="Major Read Depth (Observed)",col=newCol,zlim=c(0,max(countMat,na.rm=T)),
           cex.lab=cex,cex.axis=cex, xlim=c(-2,maxplot), ylim=c(-2,maxplot), mgp=c(3*sqrt(cex),sqrt(cex),0),
           xaxt = "n", yaxt="n")
     box()
@@ -241,14 +248,14 @@ cometPlot <- function(ref, alt, ploid=2, gfreq=NULL, file=NULL, ind=FALSE, cex=1
       junk <- sapply(1:length(rat1), function(x) abline(-1.5,rat1[x]/rat2[x], lty=3, cex=cex))
       junk <- sapply(1:length(rat1), function(x) abline(rat2[x]/rat1[x]*1.5,rat2[x]/rat1[x], lty=3, cex=cex))
     }
-    mtext("(Observed)\nMinor Read Depth",side=3,cex=cex, font=1, line=2.5*sqrt(cex))
-    mtext("Minor Read Depth\n(Expected)", side=4,cex=cex, font=1,line=3.5*sqrt(cex))
+    mtext("Minor Read Depth (Observed)",side=3,cex=cex, font=1, line=2.5*sqrt(cex))
+    mtext("Minor Read Depth (Expected)", side=4,cex=cex, font=1,line=3.5*sqrt(cex))
     legend_image <- as.raster(matrix(rev(newCol), ncol = 1))
     adj = min(max(ref,alt),maxplot)*0.05
-    rasterImage(legend_image,xleft = min(max(ref,alt),maxplot)-adj*2, ybottom = adj, ytop = 5*adj, xright = min(max(ref,alt),maxplot)-adj)
-    lines(x = c(rep(min(max(ref,alt),maxplot)-adj*2,2),rep(min(max(ref,alt),maxplot)-adj,2),min(max(ref,alt),maxplot)-adj*2), y=c(adj,rep(5*adj,2),adj,adj),cex=cex)
-    text(x = min(max(ref,alt),maxplot)-adj*2-1, y = adj + seq(0,4*adj,length.out=6), labels = format(exp(seq(0,max(countMat,na.rm=T),length.out=6))-1,digits=1, scientific=F),cex=cex, pos=2)
-    junk <- sapply(adj + seq(0,4*adj,length.out=6), function(y) lines(min(max(ref,alt),maxplot) - adj*2 + c(0,-1), y=rep(y,2), cex=cex))
+    rasterImage(legend_image,xleft = min(max(ref,alt),maxplot)-adj*xleg, ybottom = adj, ytop = yleg*adj, xright = min(max(ref,alt),maxplot)-adj)
+    lines(x = c(rep(min(max(ref,alt),maxplot)-adj*xleg,2),rep(min(max(ref,alt),maxplot)-adj,2),min(max(ref,alt),maxplot)-adj*xleg), y=c(adj,rep(yleg*adj,2),adj,adj),cex=cex)
+    text(x = min(max(ref,alt),maxplot)-adj*xleg-1, y = adj + seq(0,(yleg-1)*adj,length.out=6), labels = format(exp(seq(0,max(countMat,na.rm=T),length.out=6))-1,digits=1, scientific=F),cex=cex, pos=2)
+    junk <- sapply(adj + seq(0,(yleg-1)*adj,length.out=6), function(y) lines(min(max(ref,alt),maxplot) - adj*xleg + c(0,-1), y=rep(y,2), cex=cex))
     if(!is.null(file))
       dev.off()
     return(invisible())
