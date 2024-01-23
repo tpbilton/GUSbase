@@ -48,10 +48,14 @@ RDDPlot(ref, alt, ploid=2, gfreq=NULL, file=NULL, maxdepth=500, maxSNPs=1e5, ...
 
 \item{color}{Vector: Color palette used for the heatmap.}
 
-\item{ncores}{Postive integer: Number of cores to use in the parallelization when
+\item{ncores}{Positive integer: Number of cores to use in the parallelization when
 constructing comet plots for each individual.}
 
 \item{indID}{Character vector: Sample IDs corresponding to the rows of the reference and alternative allele matrices}
+
+\item{yleg}{Positive value: Scaling factor for the vertical height of the legend.}
+
+\item{xleg}{Positive value: Scaling factor for the horizontal width of the legend.}
 
 \item{filename}{Character: The name of the file to save the plot to}
 

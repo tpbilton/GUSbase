@@ -1,4 +1,9 @@
 
+# GUSbase 0.2.3
+
+* Add function makeRA to add user to create a RA object from count matrices of reference and alternate alleles.
+* Added another data file for an example of the makeRA object.
+
 # GUSbase 0.2.1
 
 * Comet plot can now be produced for each individual. A few bugs in the comet plot function have also been fixed

@@ -16,7 +16,14 @@ It forms the base to a number of other packages with specialised methods for ana
 }
 \details{
 \tabular{ll}{ Package: \tab GUSbase\cr Type: \tab Package\cr Version: \tab
-0.2.2\cr Date: \tab 2023-05-25\cr License: \tab GPL 3\cr }
+0.2.3\cr Date: \tab 2024-01-24\cr License: \tab GPL 3\cr }
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/tpbilton/GUSbase}
+}
+
 }
 \author{
 Timothy P. Bilton, Maintainer: Timothy P. Bilton

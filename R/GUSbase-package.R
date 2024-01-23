@@ -1,6 +1,6 @@
 ##########################################################################
 # Genotyping Uncertainty with Sequencing data - Base package (GUSbase)
-# Copyright 2017-2023 Timothy P. Bilton <timothy.bilton@agresearch.co.nz>
+# Copyright 2017-2024 Timothy P. Bilton <timothy.bilton@agresearch.co.nz>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,11 +27,10 @@
 #' }
 #'
 #' \tabular{ll}{ Package: \tab GUSbase\cr Type: \tab Package\cr Version: \tab
-#' 0.2.2\cr Date: \tab 2023-05-25\cr License: \tab GPL 3\cr }
+#' 0.2.3\cr Date: \tab 2024-01-24\cr License: \tab GPL 3\cr }
 #'
 #' @name GUSbase-package
 #' @aliases GUSbase
-#' @docType package
 #' @author Timothy P. Bilton, Maintainer: Timothy P. Bilton
 #' <timothy.bilton@agresearch.co.nz>
 # #' @references
@@ -40,7 +39,7 @@
 #' @importFrom Rdpack reprompt
 #' @importFrom R6 R6Class
 #' @importFrom foreach %dopar%
-NULL
+"_PACKAGE"
 
 
 

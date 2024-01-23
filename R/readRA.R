@@ -1,6 +1,6 @@
 ##########################################################################
 # Genotyping Uncertainty with Sequencing data (GUSbase)
-# Copyright 2017-2020 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
+# Copyright 2017-2024 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
