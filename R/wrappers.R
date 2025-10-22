@@ -1,6 +1,6 @@
 ##########################################################################
 # Genotyping Uncertainty with Sequencing data - Base package (GUSbase)
-# Copyright 2017-2018 Timothy P. Bilton <tbilton@maths.otago.ac.nz>
+# Copyright 2017-2025 Timothy P. Bilton <timothy.bilton@agresearch.co.nz>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,4 +35,8 @@ ll_pest <- function(para, v=v, ref=ref, alt=alt, nInd=nInd, nSnps=nSnps, seqErr=
 
 score_pest <- function(para, ...){
   return(get(".score", envir = parent.frame(3)))
+}
+
+extractAlleleCounts_wrapper <- function(fmt, dat, ref, alt) {
+  extractAlleleCounts(fmt, dat, ref, alt)
 }
