@@ -1,14 +1,17 @@
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <R.h>
 #include <Rinternals.h>
 #include <Rmath.h>
 #include <math.h>
 #include "functions.h"
 
-#ifdef _OPENMP
-#include <omp.h>
-#else
+#ifndef _OPENMP
 inline int omp_get_max_threads() { return 1; }
 #endif
+
 
 // estimate the genotype frequencies
 SEXP pest_em_c(SEXP pinit, SEXP ep, SEXP ploid, SEXP ref, SEXP alt, SEXP nInd, SEXP nSnps,
